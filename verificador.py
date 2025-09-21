@@ -1,5 +1,5 @@
-from database import SessionFactory
-from administrador import Administrador
+from models.database import SessionFactory
+from models.administrador import Administrador
 
 with SessionFactory() as session:
     adm = Administrador(ADMIN_NAME='José', ADMIN_EMAIL='jose@jose', ADMIN_ROLE='editor', ADMIN_ACTIVE=True)

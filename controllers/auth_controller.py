@@ -12,19 +12,22 @@ def logar_no_sistema():
         admin_email = request.form.get('email')
         admin_password = request.form.get('password')
 
+
         administrador = AdministradorLog.get_by_email(admin_email)
-        if administrador and administrador.check_password(admin_password):
+        if administrador and administrador.check_password(admin_email, admin_password):
+            
             login_user(administrador)
             session['ADMIN_ID'] = administrador.ADMIN_ID
             if administrador.is_root():
-                return redirect(url_for('auth.enviar_para_setor-administrativo-root'))
+                return redirect(url_for('auth.enviar_para_setor_de_administração_root'))
             else:
-                return redirect(url_for('auth.enviar_para_setor-administrativo-comum'))
+                return redirect(url_for('auth.enviar_para_setor_de_administração_comum'))
+
         else:
             flash ('Email ou senha incorretos', 'danger')
-        
+            
 
-    return render_template('auth/login.html')
+    return render_template('login.html')
 
 
 
@@ -33,14 +36,14 @@ def logar_no_sistema():
 @login_required
 def deslogar_do_sistema():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('auth.logar_no_sistema'))
 
-@auth_bp.route('/enviar_para_setor-administrativo-comum')
+@auth_bp.route('/enviar_para_setor-administrativo_comum')
 @login_required
 def enviar_para_setor_de_administração_comum():
-    return redirect(url_for('secretario.index'))
+    return redirect(url_for('administrador.index'))
 
-@auth_bp.route('/enviar_para_setor-administrativo-root')
+@auth_bp.route('/enviar_para_setor-administrativo_root')
 @login_required
 def enviar_para_setor_de_administração_root():
     return redirect(url_for('administrador.index'))
