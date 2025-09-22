@@ -10,5 +10,6 @@ administrador_bp = Blueprint('administrador', __name__, url_prefix='/admin')
 @administrador_bp.route('/')
 @login_required
 def index():
+    dados_sensiveis = request.args.get('dados_sensiveis')
     return render_template('admin.html')
 1

@@ -1,0 +1,67 @@
+🚨 NÃO faça isso da forma que você está tentando!
+Você está enviando dados sensíveis via parâmetros de URL (request.args.get), o que é uma falha grave de segurança.
+❌ Problemas da sua abordagem:
+
+Dados sensíveis na URL: Qualquer um pode ver nos logs, histórico do navegador, etc.
+URL ficaria assim: /admin?dados_sensiveis=Aaaaaah,%20estou%20chorando%20:(&administrador=...
+Objetos não podem ser passados via URL: administrador=administrador não funciona
+Dados podem vazar: Se alguém compartilhar o link, expõe informações
+
+✅ Formas CORRETAS de fazer:
+Opção 1: Usar current_user (RECOMENDADA)
+python# No login (auth.py) - SIMPLES
+return redirect(url_for('administrador.index'))  # SEM parâmetros!
+
+# No controller (admin_controller.py)
+@administrador_bp.route('/')
+@login_required
+def index():
+    # ✅ Dados vêm do usuário logado
+    dados_sensiveis = None
+    
+    if current_user.is_root():
+        dados_sensiveis = "Aaaaaah, estou chorando :("
+    
+    return render_template('admin.html', 
+                         administrador=current_user, 
+                         dados_sensiveis=dados_sensiveis)
+Opção 2: Usar Session (alternativa)
+python# No login
+if administrador.is_root():
+    session['dados_sensiveis'] = "Aaaaaah, estou chorando :("
+return redirect(url_for('administrador.index'))
+
+# No controller  
+@administrador_bp.route('/')
+@login_required
+def index():
+    dados_sensiveis = session.get('dados_sensiveis')
+    return render_template('admin.html', 
+                         administrador=current_user,
+                         dados_sensiveis=dados_sensiveis)
+Opção 3: Buscar dados diretamente (MAIS SEGURA)
+python# No controller - dados sempre frescos
+@administrador_bp.route('/')
+@login_required
+def index():
+    dados_sensiveis = None
+    
+    # ✅ Verificação em tempo real
+    if current_user.is_root():
+        dados_sensiveis = get_sensitive_data_for_root()
+    
+    return render_template('admin.html', 
+                         administrador=current_user,
+                         dados_sensiveis=dados_sensiveis)
+🎯 Recomendação Final:
+Use a Opção 1 - é simples, segura e não passa dados desnecessários pela URL:
+python# auth.py - login
+return redirect(url_for('administrador.index'))  # Limpo!
+
+# admin_controller.py  
+@administrador_bp.route('/')
+@login_required
+def index():
+    dados_sensiveis = None
+    if current_user.is_root():
+        dados_sensiveis = "Aaaaaah, estou chorando :("

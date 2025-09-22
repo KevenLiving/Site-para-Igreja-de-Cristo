@@ -14,14 +14,17 @@ def logar_no_sistema():
 
 
         administrador = AdministradorLog.get_by_email(admin_email)
-        if administrador and administrador.check_password(admin_email, admin_password):
+        if administrador and administrador.check_password(admin_email, admin_password) and administrador.ADMIN_ACTIVE==True:
             
+            # Variaveis para dados especiais que ó podem ser utilizados por um usuário root
+            dados_sensiveis = None
             login_user(administrador)
             session['ADMIN_ID'] = administrador.ADMIN_ID
             if administrador.is_root():
-                return redirect(url_for('auth.enviar_para_setor_de_administração_root'))
+                dados_sensiveis = "Aaaaaah, estou chorando :("
+                return redirect(url_for('administrador.index', dados_sensiveis=dados_sensiveis, administrador=administrador))
             else:
-                return redirect(url_for('auth.enviar_para_setor_de_administração_comum'))
+                return redirect(url_for('administrador.index', administrador=administrador))
 
         else:
             flash ('Email ou senha incorretos', 'danger')
@@ -30,20 +33,8 @@ def logar_no_sistema():
     return render_template('login.html')
 
 
-
-
 @auth_bp.route('/logout')
 @login_required
 def deslogar_do_sistema():
     logout_user()
     return redirect(url_for('auth.logar_no_sistema'))
-
-@auth_bp.route('/enviar_para_setor-administrativo_comum')
-@login_required
-def enviar_para_setor_de_administração_comum():
-    return redirect(url_for('administrador.index'))
-
-@auth_bp.route('/enviar_para_setor-administrativo_root')
-@login_required
-def enviar_para_setor_de_administração_root():
-    return redirect(url_for('administrador.index'))

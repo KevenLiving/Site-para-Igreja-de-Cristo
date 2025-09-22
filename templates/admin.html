@@ -6,7 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Seja bem-vindo à área administrativa</h1>
+    <h1>Seja bem-vindo(a) {{administrador.ADMIN_NAME}} à área administrativa</h1>
+    <h3>Sessão root</h3>
+    {% if administrador.ADMIN_ROLE == 'root' %}
+    <p>{{ dados_sensiveis }}</p>
+    {% endif %}
+
     <a href="{{ url_for('auth.deslogar_do_sistema') }}">Logout</a>
 </body>
 </html>
