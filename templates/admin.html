@@ -11,6 +11,7 @@
     {% if administrador.ADMIN_ROLE == 'root' %}
     <p>{{ dados_sensiveis }}</p>
     {% endif %}
+    <p>{{ administrador.ADMIN_ROLE }}</p>
 
     <a href="{{ url_for('auth.deslogar_do_sistema') }}">Logout</a>
 </body>

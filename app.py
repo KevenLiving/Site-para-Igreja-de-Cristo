@@ -6,10 +6,22 @@ from models.admnistrador_log import AdministradorLog
 # Importando Bluenprints 
 from controllers.auth_controller import auth_bp
 from controllers.admin_controller import administrador_bp
+# Bibliotecas para limitar tentativas de login por IP
+from security.extensions import limiter
+# Bloquear ataques vindos de outros sites, especificamente contra CSRF
+from flask_wtf import CSRFProtect
+
 
 
 app = Flask(__name__)
 app.secret_key = 'Abracadabra' # Configurando a chave secreta
+
+# Configurando CSRF
+crf = CSRFProtect(app)
+
+# Isso faz com que o Flask-limiter funcione
+# Ele é útil na segurança do sistema uma vez que limita o numero de requisições que um IP pode fazer
+limiter.init_app(app)
 
 # Configurando o Flask-Login
 login_manager = LoginManager()

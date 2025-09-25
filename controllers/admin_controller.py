@@ -1,5 +1,5 @@
 import os
-from flask import url_for, render_template, Blueprint, redirect, request, flash
+from flask import url_for, render_template, Blueprint, redirect, request, flash, session
 from flask_login import login_required, current_user
 
 
@@ -10,6 +10,6 @@ administrador_bp = Blueprint('administrador', __name__, url_prefix='/admin')
 @administrador_bp.route('/')
 @login_required
 def index():
-    dados_sensiveis = request.args.get('dados_sensiveis')
-    return render_template('admin.html')
-1
+    dados_sensiveis = session.get('dados_sensiveis')
+    administrador = current_user
+    return render_template('admin.html', dados_sensiveis=dados_sensiveis, administrador=administrador)

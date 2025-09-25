@@ -7,38 +7,26 @@
 </head>
 <body>
     <form id="loginForm" action="{{ url_for('auth.logar_no_sistema')}}" method="POST">
-            <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input"
-                    placeholder="seu.email@exemplo.com"
-                    required
-                    autocomplete="email"
-                >
-            </div>
+            
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.email.label }} <br>
+            {{ formulario.email(size=32)}} <br>
 
-            <div class="form-group">
-                <label for="password" class="form-label">Senha</label>
-                <div class="password-wrapper">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-input"
-                        placeholder="Digite sua senha"
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
-            </div>
+            {% for error in formulario.email.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
 
-            <button type="submit" class="login-button" id="loginBtn">
-                Entrar
-            </button>
+            {{ formulario.password.label }} <br>
+            {{ formulario.password(size=32)}} <br>
 
-        </form>
+            {% for error in formulario.password.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.submit()}}
+        </p>
+
+    </form>
 </body>
 </html>
