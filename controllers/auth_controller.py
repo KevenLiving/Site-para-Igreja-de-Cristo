@@ -5,8 +5,6 @@ from models.admnistrador_log import AdministradorLog
 from security.forms_security import LoginForm
 from security.extensions import limiter
 
-
-
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
