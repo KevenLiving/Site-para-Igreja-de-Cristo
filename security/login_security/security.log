@@ -1,0 +1,5 @@
+2025-09-27 13:28:45 | security | WARNING | LOGIN_FAILURE: thiago@gmail.com from 127.0.0.1
+2025-09-27 13:29:17 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-27 13:30:09 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-27 13:32:14 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-27 13:32:36 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
