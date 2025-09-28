@@ -7,6 +7,7 @@ import time
 import os
 from dotenv import load_dotenv
 
+# HAHAHAHAHAHA
 # Cadastramento de usuário novo
 """
 with SessionFactory() as session:
