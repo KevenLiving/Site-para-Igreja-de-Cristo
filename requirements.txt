@@ -22,6 +22,7 @@ mdurl==0.1.2
 ordered-set==4.1.0
 packaging==25.0
 Pygments==2.19.2
+python-dotenv==1.1.1
 rich==14.1.0
 SQLAlchemy==2.0.43
 typing_extensions==4.15.0

@@ -17,12 +17,36 @@ from flask_wtf import CSRFProtect
 # como conexões HTTPS obrigatórias, impedir injeções de arquivos maliciosos (impede que o navegador interprete aquele arquivo com base na sua tipificação(".txt, .js, .py, etc...")). 
 # Impede também ataques de frame, e SOMENTE CARREGA RECURSOS DO PRÓPRIO DOMINIO.
 from flask_talisman import Talisman
+# Para usar no tempo de duração máximo de um cookie
+from datetime import timedelta
+# A biblioteca a seguir é nativa do python, usada para gerar valores aleatoriamente de forma segura e criptografada, previnida contra hackers. Pode gerar tokes, senhas, esolher opções aleatoriamente de uma lista, etc..
+# Usarei ela para gerar uma chave secreta para o sistema 
+import secrets
+# Para importar as variáveis de ambiente
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.secret_key = 'Abracadabra' # Configurando a chave secreta
 
 # Para verificar se o sistema está em fase de desenvolvimento ou em produção
 IS_PRODUCTION = os.getenv('FLASK_ENV') == 'production' 
+
+# Configurando o APP de modo mais seguro ao invés de só colocar uma senha
+
+# Carregando as variáveis do ambiente
+load_dotenv()
+
+app.config.update(
+        SECRET_KEY = os.environ.get('senha_do_app') or secrets.token_hex(64), # A senha da aplicação não fica exposta aqui, mas nas variáveis do sistema. Isso é uma forma extremamente mais segura de guardar a senha.
+        SESSION_COOKIE_SECURE = IS_PRODUCTION, # Cookies somente serão usados em sessão https segura. Isso previne roubo de sessão em público. Se o sistema estiver em desenvolvimento, ele desliga, se estiver em produção, ele ativa
+        SESSION_COOKIE_HTTPONLY = True, # Isso faz com que JavaScript malicioso não acesse o Cookie
+        SESSION_COOKIE_SAMESITE = 'Strict', # O Cookie é somente para requesições feitas unicamente no mesmo site. Outros sites não tem acesso aos meus cookies, é unica e exclusivamente para o usuário usar somente naquele ambiente.
+        PERMANENT_SESSION_LIFETIME = timedelta(minutes=30 if IS_PRODUCTION else 180), # Caso o hacker tente roubar seu cookie, e tentar invadir usando ele, o tempo máximo em que o cookie fica disponível é por uma hora, o que reduz a janela de ataques ao invés de deixar por tempo infinito.
+        SESSION_COOKIE_NAME = 'secure_session' if IS_PRODUCTION else 'dev_secure', # Nome do cookie que o navegador irá utilizar
+        SESSION_COOKIE_DOMAIN = None, # O cookie só vale para o site que está sendo utilizado. Não funciona em subdominios ou outros sites
+        SESSION_REFRESH_EACH_REQUEST = True, # Isso aqui é genial: A sessão expira com 30 minutos como nos definimos, certo? E se o usuário ainda estiver usando? Acontece que sempre que o usuário entra em uma nova página, faz uma requisição, ou algo do tipo, ele automáticamente regenera o cronometro de 30 minutos. Ou seja: Se ele ficar parado e ausente por 30 minutos, a sessão fecha, evitando que ela fique exposta a ataques por muito tempo ou por tempo infinito. É semelhante a sessão que a página do IF tem, que tem que ficar renovando a todo momento.
+        MAX_CONTENT_LENGTH= 16 * 1024 * 1024 # Limita o tamanho dos arquivos que o usuário pode mandar por sessão, evitando envio de arquivos enormes que sobrecarregue o site e quebre
+    )
+    
 
 
 # Configurando a Talisman 
