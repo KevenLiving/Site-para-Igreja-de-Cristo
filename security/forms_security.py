@@ -1,7 +1,7 @@
 from wtforms import ValidationError
 import re
 # Formulário de login mais seguro e prático
-from wtforms import StringField, PasswordField, SubmitField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, IntegerField
 from wtforms.validators import DataRequired, Email, Length
 from flask_wtf import FlaskForm
 
@@ -177,3 +177,15 @@ class LoginForm(FlaskForm):
     # BOTÃO DE ENVIO
 
     submit = SubmitField('Login')
+
+class Two_Factor(FlaskForm):
+
+    code = StringField(
+        'Código', validators=[
+            DataRequired(),
+            Length(min=6, max=6)
+        ]
+    )
+
+    submit = SubmitField('Enviar')
+

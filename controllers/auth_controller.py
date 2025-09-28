@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_user, login_required, logout_user, current_user
 from models.admnistrador_log import AdministradorLog
 # Ele foi importado de extensions para evitar problemas de importação circular
-from security.forms_security import LoginForm
+from security.forms_security import LoginForm, Two_Factor
 from security.extensions import limiter
 # Essa é uma tag para usar futuramente para os pedidos de oração que a comunidade irá realizar para evitar ataques com <scripit>
 import bleach
@@ -13,6 +13,14 @@ import bleach
 # Ela será utilizada para verificar atividades de login. Ajuda também no processo de depuração
 import logging
 import logging.handlers
+# Bibliotecas para realizar autenticação 2F
+import pyotp
+import qrcode
+import time
+# Importando decorador que eu criei para impedir um usuário de entrar sem ter a autenticação de 2 fatores
+from security.two_factor_authentication.decorador import adm_2af_required
+# Para importar as variáveis de ambiente
+from dotenv import load_dotenv
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -20,6 +28,9 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 # Configurando a biblioteca de segurança para logs
 # Garantindo que a pasta sempre exista
 os.makedirs('security/login_security', exist_ok=True)
+
+# Carregando as variáveis do ambiente
+load_dotenv()
 
 # Criando loggers específico para segurança que não intervenham ou afetem outros logs
 security_logger = logging.getLogger('security')
@@ -42,6 +53,8 @@ formatter = logging.Formatter(
 handler.setFormatter(formatter)
 security_logger.addHandler(handler)
 
+# Váriavel para definir se o usuário passou na primeira etapa
+login = False
 
 # Rota para login
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -61,17 +74,14 @@ def logar_no_sistema():
             administrador = AdministradorLog.get_by_email(admin_email)
             if administrador and administrador.check_password(admin_email, admin_password) and administrador.ADMIN_ACTIVE==True:
                 
-                # Para que adm possa ter acesso ao sistema
+                # Para que adm possa passar pela primeira etapa de autenticação
                 login_user(administrador)
 
-                # Registando o registro efetivo de log de segurança 
-                security_logger.info(f'LOGIN_SUCESS: {admin_email} from {request.remote_addr}')
+                # Criando sessão para verificar se o usuário passou pela segunda etapa de autenticação
+                session['admin_2af_verifield'] = False
 
-                if administrador.is_root():
-                    session['dados_sensiveis'] = "Aaaaaah, estou chorando :("
-                    return redirect(url_for('administrador.index'))
-                else:
-                    return redirect(url_for('administrador.index'))
+                # Retorna para o segundo passo de autenticação
+                return redirect(url_for('auth.two_factor_authentication'))
 
             else:
                 # Registrando tentativa falha de login no log de segurança
@@ -81,6 +91,41 @@ def logar_no_sistema():
             
 
     return render_template('login.html', formulario=formulario)
+
+
+# Rota para autenticação de 2 fatores
+@auth_bp.route('/two_factor', methods=['POST', 'GET'])
+@login_required
+def two_factor_authentication():
+    code_form = Two_Factor()
+    key = os.environ.get('secure_AF2')
+
+    if request.method == 'POST':
+        codigo = int(code_form.code.data)
+        time_out = pyotp.TOTP(key)
+
+        if time_out.verify(codigo):
+            session['admin_2af_verifield'] = True
+
+            # Registrando o registro efetivo de log de segurança 
+            security_logger.info(f'LOGIN_SUCESS: {current_user.ADMIN_EMAIL} from {request.remote_addr}')
+
+            # Se for root carrega dados importantes
+            if current_user.is_root:
+                session['dados_sensiveis'] = "Mister President"
+                return redirect(url_for('administrador.index'))
+            
+            else:
+                return redirect(url_for('administrador.index'))
+        
+        else:
+            return redirect(url_for('auth.two_factor_authentication'))
+        
+    else:
+        return render_template('two_factor.html', code_form=code_form)
+
+
+
 
 
 @auth_bp.route('/logout')
