@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, ForeignKey, Boolean, Enum, DateTime, Date, func
+from sqlalchemy import String, Integer, ForeignKey, Boolean, Enum, DateTime, Date, func, Text
 from models.database import Base, SessionFactory
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-
 
 class Administrador(Base):
     __tablename__='tb_admins'
@@ -16,6 +15,8 @@ class Administrador(Base):
     ADMIN_ACTIVE: Mapped[bool] = mapped_column(Boolean, default=True)
     ADMIN_CREATED_AT: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
     ADMIN_UPDATED_AT: Mapped[datetime.datetime] = mapped_column(DateTime, onupdate=func.now(), nullable=True)
+    ADMIN_TWO_FACTOR_FIRST: Mapped[bool] = mapped_column(Boolean, default=False)
+    ADMIN_CODE: Mapped[str] = mapped_column(Text, nullable=True, default=None)
 
  
     def set_password(self, password):
@@ -53,3 +54,7 @@ class Administrador(Base):
     def get_id(self):
         # Retornando o id
         return str(self.ADMIN_ID)
+    
+
+            
+            

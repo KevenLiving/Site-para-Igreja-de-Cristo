@@ -17,3 +17,15 @@
 2025-09-28 17:02:50 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
 2025-09-28 17:17:47 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
 2025-09-28 17:18:19 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 16:17:39 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 22:27:41 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 22:35:39 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 22:36:06 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 23:08:48 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 23:12:08 | security | INFO | LOGIN_SUCESS: keven@gmail.com from 127.0.0.1
+2025-09-29 23:47:34 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
+2025-09-29 23:47:36 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
+2025-09-29 23:47:37 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
+2025-09-29 23:47:39 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
+2025-09-30 00:14:18 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
+2025-09-30 00:17:15 | security | INFO | LOGIN_SUCESS: claricemesquita@gmail.com from 127.0.0.1
