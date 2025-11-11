@@ -29,3 +29,6 @@
 2025-09-29 23:47:39 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
 2025-09-30 00:14:18 | security | WARNING | LOGIN_FAILURE: keven@gmail.com from 127.0.0.1
 2025-09-30 00:17:15 | security | INFO | LOGIN_SUCESS: claricemesquita@gmail.com from 127.0.0.1
+2025-11-11 13:45:54 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-11 13:45:55 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-11 13:55:51 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
