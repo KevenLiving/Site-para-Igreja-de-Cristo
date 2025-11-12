@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # Cadastramento de usuário novo
 
 with SessionFactory() as session:
-    adm = Administrador(ADMIN_NAME='Clarinha', ADMIN_EMAIL='claricemesquita@gmail.com', ADMIN_ROLE='root', ADMIN_ACTIVE=True)
+    adm = Administrador(ADMIN_NAME='Juan', ADMIN_EMAIL='Juan@gmail.com', ADMIN_ACTIVE=True)
     adm.set_password('Tg7!kR@9wZ')
     session.add(adm)
     session.commit()
