@@ -23,6 +23,9 @@ def init_db():
     from models.administrador import Administrador
     from models.admnistrador_log import AdministradorLog
 
+    # Criando o banco de dados 
+    Base.metadata.create_all(myengine)
+
     # Verificando a existencia de um usuário root 
     with SessionFactory() as session:
         root = session.query(Administrador).filter_by(ADMIN_ROLE='root').first()
@@ -47,4 +50,4 @@ def init_db():
     
 
 
-    Base.metadata.create_all(myengine)
+    

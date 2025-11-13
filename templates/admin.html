@@ -9,7 +9,7 @@
     <h1>Seja bem-vindo(a) {{administrador.ADMIN_NAME}} à área administrativa</h1>
     <h3>Sessão root</h3>
     {% if administrador.ADMIN_ROLE == 'root' %}
-    <p>{{ dados_sensiveis }}</p>
+    <p><a href="{{ url_for('administrador.cadastrar_adm') }}">Cadastrar administrador</a></p>
     {% endif %}
     <p>{{ administrador.ADMIN_ROLE }}</p>
 
