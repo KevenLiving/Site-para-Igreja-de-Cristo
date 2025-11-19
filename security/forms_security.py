@@ -225,6 +225,89 @@ class CadastroForm(FlaskForm):
             )
         ])
     
+    password_confirm = PasswordField('Confirme sua senha', 
+                                     validators=[DataRequired(message='Confirme sua senha')])
+    
+    # STATUS DE ATIVIDADE 
+    ativo = SelectField(
+        'Status de atividade',
+        choices=[('ativo', 'Em atividade'),
+                 ('desativo', 'Conta desativada')
+                 ],
+                 default='desativado'
+    )
+    
+    # Validação de email personalizado
+
+    def validate_email(self, email):
+        # Como a proposta do site é ser seguro, eu restringi os tipos de emails que podem ser usados para logar no sistema. Coloquei apenas os tipos mais comuns e seguros usados mundialmente.
+        emails_permitidos = [""
+            # Google
+            'gmail.com', 'googlemail.com',
+            
+            # Microsoft
+            'outlook.com', 'hotmail.com', 'live.com', 'msn.com',
+            
+            # Yahoo
+            'yahoo.com', 'yahoo.com.br', 'yahoo.co.uk', 'yahoo.fr', 
+            'yahoo.de', 'yahoo.es', 'yahoo.it', 'yahoo.ca',
+            'ymail.com', 'rocketmail.com',
+            
+            # Apple
+            'icloud.com', 'me.com', 'mac.com',
+        ""]
+
+        dominio = email.data.split('@')[-1].lower()
+        if dominio not in emails_permitidos:
+            raise ValidationError("Esse dominio de email não é permitido por questões de segurança.")
+    
+    def validate_confirm_password(self, field):
+        if field.data and self.password.data != self.data:
+            raise ValidationError("As senhas devem ser correspondentes!")
+
+
+
+    # BOTÃO DE ENVIO
+    submit = SubmitField('Cadastrar')
+
+    
+
+
+
+
+# Formulário de atualização
+
+class AtualizarForm(FlaskForm):
+
+    # NOME 
+    nome = StringField('Nome', validators=[
+        DataRequired(message="O nome é obrigatório."),
+        Length(max=100, message="O nome deve ter entre 3 e 100 caracteres.")
+    ])
+
+    # EMAIL
+    email = StringField('Email', validators=[
+        DataRequired(message="O email é obrigatório."),
+        Length(max=100, message="O email deve ter entre 5 e 120 caracteres."),
+        Email(message="Por favor, insira um email válido.")
+    ])
+
+    # SENHA 
+
+    password = PasswordField('Senha', validators=[
+            DataRequired(),
+            PasswordValidator(
+                min_length=8,
+                require_uppercase=True,
+                require_lowercase=True,
+                require_digits=True,
+                require_symbols=True,
+                min_unique_chars=6,
+                check_common_passwords=True,
+                check_personal_info=True
+            )
+        ])
+    
     # STATUS DE ATIVIDADE 
     ativo = SelectField(
         'Status de atividade',
@@ -262,4 +345,4 @@ class CadastroForm(FlaskForm):
 
     # BOTÃO DE ENVIO
 
-    submit = SubmitField('Cadastrar')
+    submit = SubmitField('Atualizar')

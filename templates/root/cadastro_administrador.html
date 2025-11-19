@@ -34,6 +34,14 @@
                 <span style="color: red;">{{ error }}</span><br>
             {% endfor %}
 
+            {{ formulario.password_confirm.label }} <br>
+            {{ formulario.password_confirm(size=32)}} <br>
+
+            {% for error in formulario.password_confirm.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+            
+
             {{ formulario.submit()}}
         </p>
 

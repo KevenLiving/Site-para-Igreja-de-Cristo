@@ -45,3 +45,11 @@
 2025-11-13 16:06:09 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
 2025-11-13 16:10:30 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
 2025-11-13 16:14:01 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2025-11-19 13:39:49 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-19 13:39:50 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-19 13:41:27 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-19 13:41:27 | security | WARNING | LOGIN_FAILURE: claricemesquita@gmail.com from 127.0.0.1
+2025-11-19 13:52:16 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2025-11-19 14:16:07 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2025-11-19 14:24:57 | security | WARNING | LOGIN_FAILURE: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2025-11-19 14:25:29 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1

@@ -50,6 +50,15 @@ def cadastrar_adm():
         # Redirecionando para a página principal de administradores
         return redirect(url_for('administrador.index'))
     return render_template('root/cadastro_administrador.html', formulario=formulario)
+
+
+# Atualizar administrador 
+@administrador_bp.route('/atualizar_adm', methods=['POST', 'GET'])
+@adm_2af_required
+@root_permission
+def atualizar_adm():
+    # Configurando formulário 
+    return "Olá meu caro amigo"
         
 
     
