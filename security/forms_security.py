@@ -1,7 +1,7 @@
 from wtforms import ValidationError
 import re
 # Formulário de login mais seguro e prático
-from wtforms import StringField, PasswordField, SubmitField, ValidationError, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, IntegerField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Email, Length
 from flask_wtf import FlaskForm
 
@@ -135,48 +135,16 @@ class LoginForm(FlaskForm):
     # SENHA 
 
     password = PasswordField('Senha', validators=[
-            DataRequired(),
-            PasswordValidator(
-                min_length=8,
-                require_uppercase=True,
-                require_lowercase=True,
-                require_digits=True,
-                require_symbols=True,
-                min_unique_chars=6,
-                check_common_passwords=True,
-                check_personal_info=True
-            )
+            DataRequired(message="A senha é obrigatória")
         ])
     
-    # Validação de email personalizado
-
-    def validate_email(self, email):
-        # Como a proposta do site é ser seguro, eu restringi os tipos de emails que podem ser usados para logar no sistema. Coloquei apenas os tipos mais comuns e seguros usados mundialmente.
-        emails_permitidos = [""
-            # Google
-            'gmail.com', 'googlemail.com',
-            
-            # Microsoft
-            'outlook.com', 'hotmail.com', 'live.com', 'msn.com',
-            
-            # Yahoo
-            'yahoo.com', 'yahoo.com.br', 'yahoo.co.uk', 'yahoo.fr', 
-            'yahoo.de', 'yahoo.es', 'yahoo.it', 'yahoo.ca',
-            'ymail.com', 'rocketmail.com',
-            
-            # Apple
-            'icloud.com', 'me.com', 'mac.com',
-        ""]
-
-        dominio = email.data.split('@')[-1].lower()
-        if dominio not in emails_permitidos:
-            raise ValidationError("Esse dominio de email não é permitido por questões de segurança.")
     
 
 
     # BOTÃO DE ENVIO
 
     submit = SubmitField('Login')
+
 
 class Two_Factor(FlaskForm):
 
@@ -199,7 +167,7 @@ class CadastroForm(FlaskForm):
     # NOME 
     nome = StringField('Nome', validators=[
         DataRequired(message="O nome é obrigatório."),
-        Length(max=100, message="O nome deve ter entre 3 e 100 caracteres.")
+        Length(max=100, min=3, message="O nome deve ter entre 3 e 100 caracteres.")
     ])
 
     # EMAIL
@@ -234,14 +202,14 @@ class CadastroForm(FlaskForm):
         choices=[('ativo', 'Em atividade'),
                  ('desativo', 'Conta desativada')
                  ],
-                 default='desativado'
+                 default='desativo'
     )
     
     # Validação de email personalizado
 
     def validate_email(self, email):
         # Como a proposta do site é ser seguro, eu restringi os tipos de emails que podem ser usados para logar no sistema. Coloquei apenas os tipos mais comuns e seguros usados mundialmente.
-        emails_permitidos = [""
+        emails_permitidos = [
             # Google
             'gmail.com', 'googlemail.com',
             
@@ -261,8 +229,8 @@ class CadastroForm(FlaskForm):
         if dominio not in emails_permitidos:
             raise ValidationError("Esse dominio de email não é permitido por questões de segurança.")
     
-    def validate_confirm_password(self, field):
-        if field.data and self.password.data != self.data:
+    def validate_password_confirm(self, field):
+        if field.data != self.password.data:
             raise ValidationError("As senhas devem ser correspondentes!")
 
 
@@ -271,8 +239,6 @@ class CadastroForm(FlaskForm):
     submit = SubmitField('Cadastrar')
 
     
-
-
 
 
 # Formulário de atualização
@@ -292,21 +258,6 @@ class AtualizarForm(FlaskForm):
         Email(message="Por favor, insira um email válido.")
     ])
 
-    # SENHA 
-
-    password = PasswordField('Senha', validators=[
-            DataRequired(),
-            PasswordValidator(
-                min_length=8,
-                require_uppercase=True,
-                require_lowercase=True,
-                require_digits=True,
-                require_symbols=True,
-                min_unique_chars=6,
-                check_common_passwords=True,
-                check_personal_info=True
-            )
-        ])
     
     # STATUS DE ATIVIDADE 
     ativo = SelectField(
@@ -346,3 +297,48 @@ class AtualizarForm(FlaskForm):
     # BOTÃO DE ENVIO
 
     submit = SubmitField('Atualizar')
+
+
+# Formulário para atualizar senha
+
+class PasswordUpdate(FlaskForm):
+
+    # SENHA 
+
+    password = PasswordField('Senha', validators=[
+            DataRequired(),
+            PasswordValidator(
+                min_length=8,
+                require_uppercase=True,
+                require_lowercase=True,
+                require_digits=True,
+                require_symbols=True,
+                min_unique_chars=6,
+                check_common_passwords=True,
+                check_personal_info=True
+            )
+        ])
+    
+    password_confirm = PasswordField('Confirme sua senha', 
+                                     validators=[DataRequired(message='Confirme sua senha')])
+    
+    # BOTÃO DE ENVIO
+
+    submit = SubmitField('Atualizar senha')
+
+# Formulário de confirmação de senha
+class PasswordConfirm(FlaskForm):
+
+    # SENHA 
+
+    password = PasswordField('Senha', validators=[
+            DataRequired(message="A senha é obrigatória")
+        ])
+    
+    
+    # BOTÃO DE ENVIO
+
+    submit = SubmitField('Confirmar exclusão')
+
+
+

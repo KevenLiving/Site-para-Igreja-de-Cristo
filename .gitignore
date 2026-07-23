@@ -1,3 +1,4 @@
 env/
 .env
 church.db
+__pycache__/

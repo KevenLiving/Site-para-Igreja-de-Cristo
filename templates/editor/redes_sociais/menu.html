@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Redes Sociais</h1>
+    <a href="{{ url_for('administrador.adicionar_rede_social') }}">Adicionar nova rede social</a>
+
+    <br>
+    <br>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div style="color: red;" class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% for link in redes_sociais %}
+    <div class="social_item">
+        <h3>{{ link.SOCIAL_PLATFORM }}</h3>
+        <p>{{ link.SOCIAL_URL }}</p>
+        <p>Ícone: {% if link.SOCIAL_ICON %} {{ link.SOCIAL_ICON }} {% else %} Não informado {% endif %}</p>
+        <p>Status: {% if link.SOCIAL_ACTIVE %} ATIVO {% else %} DESATIVADO {% endif %}</p>
+        <a href="{{ url_for('administrador.editar_rede_social', social_id=link.SOCIAL_ID) }}">Editar</a>
+        <a href="{{ url_for('administrador.excluir_rede_social', social_id=link.SOCIAL_ID) }}">Excluir</a>
+    </div>
+    <br>
+    {% endfor %}
+</body>
+</html>

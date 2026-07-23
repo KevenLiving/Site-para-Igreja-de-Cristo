@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="loginForm" action="{{ url_for('public.prayer_request') }}" method="POST">
+
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+
+            <div id="campos_contato">
+                {{ formulario.nome.label }} <br>
+                {{ formulario.nome(size=32) }} <br>
+
+                {% for error in formulario.nome.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+
+                {{ formulario.contato_email.label }} <br>
+                {{ formulario.contato_email(size=32) }} <br>
+
+                {% for error in formulario.contato_email.errors %}
+                    <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+
+                {{ formulario.contato_telefone.label }} <br>
+                {{ formulario.contato_telefone(size=32) }} <br>
+
+                {% for error in formulario.contato_telefone.errors %}
+                    <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+
+
+            {{ formulario.pedido.label }} <br>
+            {{ formulario.pedido }} <br>
+
+            {% for error in formulario.pedido.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.categoria.label }} <br>
+            {{ formulario.categoria }} <br>
+
+            {% for error in formulario.categoria.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.prioridade.label }} <br>
+            {{ formulario.prioridade }} <br>
+
+            {% for error in formulario.prioridade.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.anonimo.label }}
+            {{ formulario.anonimo(id='anonimo') }}
+
+            {% for error in formulario.anonimo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div style="color: red;" class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {{ formulario.submit }}
+        </p>
+
+    </form>
+
+    <script>
+        const anonimo = document.getElementById('anonimo');
+        const camposContato = document.getElementById('campos_contato');
+
+        anonimo.addEventListener("change", function() {
+            camposContato.style.display = this.checked ? "none" : "block";
+        });
+    </script>
+</body>
+</html>

@@ -9,6 +9,7 @@ from models.admnistrador_log import AdministradorLog
 # Importando Bluenprints 
 from controllers.auth_controller import auth_bp
 from controllers.admin_controller import administrador_bp
+from controllers.public_controler import public_bp
 # Bibliotecas para limitar tentativas de login por IP
 from security.extensions import limiter
 # Bloquear ataques vindos de outros sites, especificamente contra CSRF
@@ -29,6 +30,9 @@ app = Flask(__name__)
 
 # Para verificar se o sistema está em fase de desenvolvimento ou em produção
 IS_PRODUCTION = os.getenv('FLASK_ENV') == 'production' 
+
+# Configurando pasta de uploads
+app.config["UPLOADS_FOLDER"] = r"static\uploads"
 
 # Configurando o APP de modo mais seguro ao invés de só colocar uma senha
 
@@ -62,9 +66,15 @@ if IS_PRODUCTION:
             strict_transport_security_include_subdomains=True, # Proteje subdominios além da rota principal 
             content_security_policy={ # Aqui define a regra de quais recursos podem ser carregados 
                 'default-src': "'self'", # Somente aceita recursos do proprio servidor
-                'script-src': "'self'",  # Só scripts internos, não aceita scripts soltos pela internet, evitando ataques XSS
-                'style-src': "'self' 'unsafe-inline'", # Aceita CSS inline porque não oferece perigo
-                'img-src': "'self' data:", # Aceita imagens próprias e em formato Base64(diretamente no html precisar carregá-las)
+                'script-src': [ # Só scripts internos, não aceita scripts soltos pela internet, evitando ataques XSS, com excessão do editor de texto para estudos e pregações.
+                    "'self'",
+                    "https://cdn.jsdelivr.net"
+                    ],  
+                'style-src':["'self'", # Aceita CSS inline porque não oferece perigo
+                             "'unsafe-inline'",
+                             "https://cdn.jsdelivr.net"
+                             ],
+                'img-src': "'self' data: https://i.ytimg.com", # Aceita imagens próprias (do próprio servidor) e em formato Base64(diretamente no html precisar carregá-las) e as que venham da base de thumbnail do youtube
                 'font-src': "'self'", # Fontes de letras somente vindas do meu servidor
                 'connect-src': "'self'", # Controla de onde o site por abrir conexões dinâmicas (somente do proprio servidor). Isso permite controle sobre quem meu servidor está se relacionando. Posso liberar acesso a servidores externos específicos e de confiança.
                 'object-src': "'none'", # Proibe plugins externos comuns que as individuos maliciosos utilizam para acessar o sistema.
@@ -81,9 +91,15 @@ else:
         strict_transport_security=False,  # Desabilita o redirecionamento para HTTPS caso tente por outra via
         content_security_policy={
             'default-src': "'self'", # Continua aceitando recursos somente do proprio servidor
-            'script-src': "'self' 'unsafe-inline' 'unsafe-eval'",  # Permite scripts externos em inline(código js direto no html) e eval(), que transforma textos em códigos java script que auxilia na detecção de erros no sistema
-            'style-src': "'self' 'unsafe-inline'", # Permenece igual ao de produção, permitindo css direto no html
-            'img-src': "'self' data:", # Permanece igual, permitindo imagens carregadas, e também aquelas já processadas direto no html
+            'script-src': ["'self'", # Permite scripts externos em inline(código js direto no html) e eval(), que transforma textos em códigos java script que auxilia na detecção de erros no sistema
+                           "'unsafe-inline'",
+                           "https://cdn.jsdelivr.net"
+                           ],  
+            'style-src': ["'self'", # Permenece igual ao de produção, permitindo css direto no html
+                          "'unsafe-inline'",
+                          "https://cdn.jsdelivr.net"
+                         ], 
+            'img-src': "'self' data: https://i.ytimg.com", # Permanece igual, permitindo imagens carregadas, e também aquelas já processadas direto no html
         }
     )
 
@@ -126,6 +142,7 @@ def main():
 # Registradando Blueprints
 app.register_blueprint(administrador_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(public_bp)
 
 # Inicio do banco 
 init_db()

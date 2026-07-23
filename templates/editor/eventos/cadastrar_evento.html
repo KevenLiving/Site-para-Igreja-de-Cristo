@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="loginForm" action="{{ url_for('administrador.adicionar_evento') }}" method="POST" enctype="multipart/form-data">
+
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.titulo.label }} <br>
+            {{ formulario.titulo(size=32) }} <br>
+
+            {% for error in formulario.titulo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.descricao.label }} <br>
+            {{ formulario.descricao }} <br>
+
+            {% for error in formulario.descricao.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.banner.label }} <br>
+            {{ formulario.banner }} <br>
+
+            {% for error in formulario.banner.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.local.label }} <br>
+            {{ formulario.local(size=32) }} <br>
+
+            {% for error in formulario.local.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.data.label }}
+            {{ formulario.data(type="date", min=hoje) }}
+
+            {% for error in formulario.data.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.hora.label }}
+            {{ formulario.hora(type="time") }}
+
+            {% for error in formulario.hora.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.inscricao_necessaria.label }}
+            {{ formulario.inscricao_necessaria }}
+
+            {{ formulario.destaque.label }}
+            {{ formulario.destaque }}
+
+            {{ formulario.publicar.label }}
+            {{ formulario.publicar }}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div style="color: red;" class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {{ formulario.submit }}
+        </p>
+
+    </form>
+</body>
+</html>

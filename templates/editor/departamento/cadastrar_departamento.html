@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="loginForm" action="{{ url_for('administrador.adicionar_departamento') }}" method="POST" enctype="multipart/form-data">
+
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.nome.label }} <br>
+            {{ formulario.nome(size=32) }} <br>
+
+            {% for error in formulario.nome.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.descricao.label }} <br>
+            {{ formulario.descricao }} <br>
+
+            {% for error in formulario.descricao.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.lider_nome.label }} <br>
+            {{ formulario.lider_nome(size=32) }} <br>
+
+            {% for error in formulario.lider_nome.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.lider_foto.label }} <br>
+            {{ formulario.lider_foto }} <br>
+
+            {% for error in formulario.lider_foto.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.lider_bio.label }} <br>
+            {{ formulario.lider_bio }} <br>
+
+            {% for error in formulario.lider_bio.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.contato_email.label }} <br>
+            {{ formulario.contato_email(size=32) }} <br>
+
+            {% for error in formulario.contato_email.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.contato_telefone.label }} <br>
+            {{ formulario.contato_telefone(size=32) }} <br>
+
+            {% for error in formulario.contato_telefone.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.ordem.label }} <br>
+            {{ formulario.ordem }} <br>
+
+            {% for error in formulario.ordem.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.ativo.label }}
+            {{ formulario.ativo }}
+
+            {% for error in formulario.ativo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div style="color: red;" class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {{ formulario.submit }}
+        </p>
+
+    </form>
+</body>
+</html>

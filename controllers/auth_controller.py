@@ -73,40 +73,40 @@ login = False
 def logar_no_sistema():
     # Resolvi realizar um formulário efetivamente seguro. Para não sujar meu código, coloquei ele dentro da pasta de segurança e importei ele aqui.
     formulario = LoginForm()
-    if request.method == 'POST':
+    
+    # Verificando a sua validação
+    if formulario.validate_on_submit():
         # Pegando os dados do formulário e limpando possíveis scripts maliciosos com a biblioteca bleach
         admin_email = formulario.email.data
         admin_password = formulario.password.data 
 
-        # Verificando a sua validação
-        if formulario.validate_on_submit():
-
-            administrador = AdministradorLog.get_by_email(admin_email)
-            if administrador and administrador.check_password(admin_email, admin_password) and administrador.ADMIN_ACTIVE==True:
+        administrador = AdministradorLog.get_by_email(admin_email)
+        if administrador and administrador.check_password(admin_email, admin_password) and administrador.ADMIN_ACTIVE==True:
                 
-                # Para que adm possa passar pela primeira etapa de autenticação
-                login_user(administrador)
+            # Para que adm possa passar pela primeira etapa de autenticação
+            login_user(administrador)
                 
 
-                # Criando sessão para verificar se o usuário passou pela segunda etapa de autenticação
-                session['admin_2af_verifield'] = False
+            # Criando sessão para verificar se o usuário passou pela segunda etapa de autenticação
+            session['admin_2af_verifield'] = False
 
 
-                # PLANO DE AUTENTICAÇÃO ETAPA 01
-                # Aqui o sistema detectará se esse usuário é novato, nunca fez login, ou já passou pelo cadastramento do sistema de autenticação dupla
-                # Caso ele seja novato, o ADM_TWO_FACTOR_FIRST enviará ele para a rota de cadastramento de autenticação de 2 fatores
-                if not current_user.ADMIN_TWO_FACTOR_FIRST:
-                    return redirect(url_for('auth.two_factor_first'))
+            # PLANO DE AUTENTICAÇÃO ETAPA 01
+            # Aqui o sistema detectará se esse usuário é novato, nunca fez login, ou já passou pelo cadastramento do sistema de autenticação dupla
+            # Caso ele seja novato, o ADM_TWO_FACTOR_FIRST enviará ele para a rota de cadastramento de autenticação de 2 fatores
+            if not current_user.ADMIN_TWO_FACTOR_FIRST:
+                return redirect(url_for('auth.two_factor_first'))
 
-                # Caso ele já tenha passado por essa etapa, ele vai direto para a rota de checegem do codigo de verificação de duas etapas
-                else:
-                    # Retorna para o segundo passo de autenticação
-                    return redirect(url_for('auth.two_factor_authentication'))
-
+            # Caso ele já tenha passado por essa etapa, ele vai direto para a rota de checegem do codigo de verificação de duas etapas
             else:
-                # Registrando tentativa falha de login no log de segurança
-                security_logger.warning(f'LOGIN_FAILURE: {admin_email} from {request.remote_addr}')
-                flash ('Email ou senha incorretos', 'danger')
+                # Retorna para o segundo passo de autenticação
+                return redirect(url_for('auth.two_factor_authentication'))
+
+        else:
+            # Registrando tentativa falha de login no log de segurança
+            security_logger.warning(f'LOGIN_FAILURE: {admin_email} from {request.remote_addr}')
+            flash ('Email ou senha incorretos', 'danger')
+            return render_template('login.html', formulario=formulario)
         
             
 
@@ -222,7 +222,7 @@ def two_factor_authentication():
     chave_descriptografada = object_cript.decrypt(current_user.ADMIN_CODE).decode()
 
     if request.method == 'POST':
-        codigo = int(code_form.code.data)
+        codigo = code_form.code.data
         time_out = pyotp.TOTP(chave_descriptografada)
 
         if time_out.verify(codigo):

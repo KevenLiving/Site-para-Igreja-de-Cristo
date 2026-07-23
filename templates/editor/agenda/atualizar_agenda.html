@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="loginForm" action="{{ url_for('administrador.atualizar_agenda', agenda_id=agenda.SCHEDULE_ID) }}" method="POST">
+            
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.titulo.label }} <br>
+            {{ formulario.titulo(size=32) }} <br>
+
+
+            {% for error in formulario.titulo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.descricao.label }} <br>
+            {{ formulario.descricao }} <br>
+
+
+            {% for error in formulario.descricao.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.local.label }} <br>
+            {{ formulario.local}} <br>
+
+            {% for error in formulario.local.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.dia.label }} <br>
+            {{ formulario.dia}} <br>
+
+
+            {% for error in formulario.dia.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+
+
+            {{ formulario.hora.label }}
+            {{ formulario.hora }}
+
+            {% for error in formulario.hora.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+            
+
+
+            {{ formulario.activate.label }}
+            {{ formulario.activate }}
+
+
+
+            {% for error in formulario.activate.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.submit(value='Atualizar')}}
+        </p>
+
+    </form>
+</body>
+</html>

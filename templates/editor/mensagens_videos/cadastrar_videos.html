@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Vídeo</title>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div style="color: red;" class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <form id="loginForm" action="{{ url_for('administrador.cadastrar_video') }}" method="POST">
+
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.titulo.label }} <br>
+            {{ formulario.titulo(size=32) }} <br>
+
+            {% for error in formulario.titulo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.url.label }} <br>
+            {{ formulario.url(size=32) }} <br>
+
+            {% for error in formulario.url.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.pregador.label }} <br>
+            {{ formulario.pregador }} <br>
+
+            {% for error in formulario.pregador.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.categoria.label }} <br>
+            {{ formulario.categoria }} <br>
+
+            {% for error in formulario.categoria.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.destaque.label }}
+            {{ formulario.destaque }}
+
+            {% for error in formulario.destaque.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.publicar.label }}
+            {{ formulario.publicar }}
+
+            {% for error in formulario.publicar.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.submit() }}
+        </p>
+
+    </form>
+
+</body>
+</html>

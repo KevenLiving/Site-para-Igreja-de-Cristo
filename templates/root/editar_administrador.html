@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <form id="loginForm" action="{{ url_for('administrador.atualizar_adm', user_id=administrador_selected.ADMIN_ID)}}" method="POST">
+            
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.nome.label }} <br>
+            {{ formulario.nome(size=32, value=administrador_selected.ADMIN_NAME) }} <br>
+
+            {% for error in formulario.nome.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.email.label }} <br>
+            {{ formulario.email(size=32, value=administrador_selected.ADMIN_EMAIL)}} <br>
+
+            {% for error in formulario.email.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.ativo.label }} <br>
+            {{ formulario.ativo}} <br>          
+
+            {{ formulario.submit()}}
+        </p>
+
+    </form>
+</body>
+</html>

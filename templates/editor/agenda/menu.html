@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Seja bem vindo as agendas</h1>
+    {% for evento in agenda %}
+        <li>
+            <ul>{{evento.SCHEDULE_TITLE}}</ul>
+            <ul>{{evento.SCHEDULE_DAY}}</ul>
+            <ul>{{evento.SCHEDULE_TIME}}</ul>
+            <ul>{{evento.SCHEDULE_LOCATION}}</ul>
+            <ul>{{evento.SCHEDULE_DESCRIPTION}}</ul>
+            <ul>{% if evento.SCHEDULE_ACTIVE %}Ativado{% else %} Desativado {% endif %}</ul>
+            <a href="{{ url_for('administrador.atualizar_agenda', agenda_id=evento.SCHEDULE_ID) }}">Editar</a>
+            <a href="{{ url_for('administrador.excluir_agenda', agenda_id=evento.SCHEDULE_ID) }}">Excluir</a>
+        </li>
+    {% endfor %}
+
+    <h2>Adicionar evento a agenda semanal</h2>
+    <form id="loginForm" action="{{ url_for('administrador.adicionar_agenda') }}" method="POST">
+            
+        <p>
+            {{ formulario.hidden_tag() }} <br>
+            {{ formulario.titulo.label }} <br>
+            {{ formulario.titulo(size=32) }} <br>
+
+
+            {% for error in formulario.titulo.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.descricao.label }} <br>
+            {{ formulario.descricao }} <br>
+
+
+            {% for error in formulario.descricao.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.local.label }} <br>
+            {{ formulario.local}} <br>
+
+            {% for error in formulario.local.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.dia.label }} <br>
+            {{ formulario.dia}} <br>
+
+
+            {% for error in formulario.dia.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+
+
+            {{ formulario.hora.label }}
+            {{ formulario.hora }}
+
+            {% for error in formulario.hora.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+            
+
+
+            {{ formulario.activate.label }}
+            {{ formulario.activate }}
+
+
+
+            {% for error in formulario.activate.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+
+            {{ formulario.submit}}
+        </p>
+
+    </form>
+</body>
+</html>
