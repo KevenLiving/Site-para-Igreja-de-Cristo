@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar {{ meta.nome }} — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		:root{--marca:{{ meta.cor }};--marca2:{{ meta.cor2 or meta.cor }};--sombra:{{ meta.sombra }};}
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;text-decoration:none;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_outline{background:transparent;color:var(--marca);border-color:var(--marca);}
+		.adm_btn_outline:hover{background:var(--marca);color:#fff;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.flash{padding:14px 18px;border-radius:12px;margin-bottom:14px;font-size:14px;display:flex;align-items:center;gap:10px;}
+		.flash_success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.flash_danger{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.form_erro{display:block;color:#c81f45;font-size:12.5px;margin-top:6px;}
+		.form_erro i{margin-right:5px;}
+
+		.f_ficha_head{background:linear-gradient(135deg,var(--marca) 0%,var(--marca2) 100%);border-radius:20px;padding:36px 40px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.f_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0) 70%);}
+		.f_ficha_head:after{content:"";position:absolute;bottom:-160px;left:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0) 70%);}
+		.f_ficha_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:24px;}
+		.f_ficha_icone{width:96px;height:96px;border-radius:24px;background:rgba(255,255,255,0.18);border:3px solid rgba(255,255,255,0.28);color:#fff;display:flex;align-items:center;justify-content:center;font-size:44px;flex-shrink:0;box-shadow:0 18px 35px -12px rgba(0,0,0,.35);}
+		.f_ficha_info{flex:1;min-width:250px;}
+		.f_ficha_info .tag{display:inline-block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.85);margin-bottom:8px;font-weight:500;}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:32px;line-height:38px;color:#fff;margin:0 0 12px;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;}
+		.f_ficha_link{position:relative;z-index:2;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+		.f_ficha_link a{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);color:#fff;padding:10px 18px;border-radius:22px;font-size:13.5px;border:1px solid rgba(255,255,255,0.2);transition:.3s;font-family:'Courier New',monospace;}
+		.f_ficha_link a:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.4);}
+		.f_ficha_link a i{color:rgba(255,255,255,0.7);}
+
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(228,64,95,0.12);color:var(--marca);display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="url"],.f_campo input[type="number"]{width:100%;height:52px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;}
+		.f_campo input:focus{border-color:var(--marca);background:#fff;box-shadow:0 0 0 3px rgba(228,64,95,.12);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;line-height:20px;}
+		.f_ajuda i{color:var(--marca);margin-right:5px;}
+		.f_ajuda code{background:#f7fafd;padding:2px 8px;border-radius:5px;font-family:'Courier New',monospace;font-size:12px;color:var(--marca);border:1px solid #eef3f8;}
+
+		.f_url_wrap{position:relative;}
+		.f_url_wrap .prefixo{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--marca);font-size:16px;pointer-events:none;}
+		.f_url_wrap input{padding-left:44px !important;}
+
+		.f_teste_link{margin-top:8px;padding:10px 14px;background:linear-gradient(135deg,rgba(228,64,95,0.06) 0%,rgba(228,64,95,0.02) 100%);border:1px solid rgba(228,64,95,0.15);border-radius:8px;display:flex;align-items:center;gap:10px;font-size:12px;color:#5f6b7a;transition:.25s;}
+		.f_teste_link i{color:var(--marca);flex-shrink:0;}
+		.f_teste_link a{color:var(--marca);font-weight:600;text-decoration:none;margin-left:auto;font-family:inherit;font-size:12px;transition:.2s;display:inline-flex;align-items:center;gap:5px;}
+
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:var(--marca);}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:var(--marca);cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		.prev_wrap{position:sticky;top:24px;}
+		.prev_topo{background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);border-radius:16px;padding:26px 28px;margin-bottom:18px;position:relative;overflow:hidden;}
+		.prev_topo:before{content:"";position:absolute;top:-70px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(228,64,95,0.2) 0%,rgba(228,64,95,0) 70%);}
+		.prev_topo h4{position:relative;z-index:2;margin:0 0 18px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:var(--marca);}
+		.prev_footer{position:relative;z-index:2;padding:18px 22px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:12px;}
+		.prev_footer small{display:block;font-family:Georgia,serif;font-style:italic;font-size:11.5px;color:rgba(255,255,255,0.5);margin-bottom:12px;}
+		.prev_icons{display:flex;gap:10px;flex-wrap:wrap;}
+		.prev_icons .ic{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);display:inline-flex;align-items:center;justify-content:center;font-size:15px;transition:.3s;}
+		.prev_icons .ic.editando{background:var(--marca);color:#fff;transform:scale(1.15);box-shadow:0 8px 18px -3px var(--sombra);animation:pulseSocial 2s ease-in-out infinite;}
+		.prev_icons .ic.inativo{opacity:.35;text-decoration:line-through;}
+		@keyframes pulseSocial{0%,100%{transform:scale(1.15);}50%{transform:scale(1.25);}}
+		.prev_legenda{position:relative;z-index:2;margin-top:14px;font-size:11.5px;color:rgba(255,255,255,0.6);text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;}
+		.prev_legenda .dot{width:6px;height:6px;border-radius:50%;background:var(--marca);animation:pulseSocial 2s ease-in-out infinite;}
+
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:var(--marca);margin-right:7px;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 12px;font-size:13px;color:#747474;line-height:22px;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:var(--marca);}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions .salvar{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid var(--marca);background:var(--marca);color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px var(--sombra);}
+		.f_actions .salvar:hover{filter:brightness(0.9);}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group"><span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link ativo"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_redes_sociais') }}">Redes sociais</a> / <strong>Editar {{ meta.nome }}</strong></span>
+			</div>
+			<div style="display:flex;gap:10px;">
+				<a href="{{ link.SOCIAL_URL }}" target="_blank" rel="noopener" class="adm_btn adm_btn_outline"><i class="fa fa-external-link"></i>Abrir perfil</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+			</div>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for categoria, mensagem in messages %}
+					<div class="flash flash_{{ 'success' if categoria == 'success' else 'danger' }}">
+						<i class="fa fa-{{ 'check-circle' if categoria == 'success' else 'exclamation-circle' }}"></i>
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="f_ficha_head">
+			<div class="f_ficha_c">
+				<div class="f_ficha_icone"><i class="{{ meta.icone }}"></i></div>
+				<div class="f_ficha_info">
+					<span class="tag">Rede social conectada</span>
+					<h1>{{ meta.nome }}</h1>
+					<div class="metas">
+						<span>
+							<i class="fa fa-circle" style="font-size:8px;color:{{ '#22a75e' if link.SOCIAL_ACTIVE else '#c97a00' }};"></i>
+							{{ 'Ativo' if link.SOCIAL_ACTIVE else 'Pausado' }}
+						</span>
+						<span><i class="fa fa-sort"></i>Posição #{{ link.SOCIAL_ORDER or '—' }} no rodapé</span>
+						<span><i class="fa fa-calendar-o"></i>Desde {{ link.SOCIAL_CREATED_AT.strftime('%d/%m/%Y') }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="f_ficha_link">
+				<span style="font-size:12.5px;color:rgba(255,255,255,0.7);letter-spacing:.5px;">URL atual:</span>
+				<a href="{{ link.SOCIAL_URL }}" target="_blank" rel="noopener">
+					<i class="fa fa-link"></i>{{ link.SOCIAL_URL|replace('https://','')|replace('http://','') }}
+					<i class="fa fa-external-link" style="font-size:11px;margin-left:4px;"></i>
+				</a>
+			</div>
+		</div>
+
+		<form id="redeForm" action="{{ url_for('administrador.editar_rede_social', social_id=link.SOCIAL_ID) }}" method="POST">
+			{{ formulario.hidden_tag() }}
+			{# plataforma é imutável na edição — envia o valor atual como hidden #}
+			<input type="hidden" name="plataforma" value="{{ link.SOCIAL_PLATFORM }}" />
+
+			<div class="f_grid">
+
+				<div>
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Link do perfil</h3>
+							<div class="f_icone"><i class="fa fa-link"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="url">URL do {{ meta.nome }}</label>
+							<div class="f_url_wrap">
+								<i class="{{ meta.icone }} prefixo"></i>
+								<input type="url" id="url" name="url" value="{{ formulario.url.data or link.SOCIAL_URL }}" required />
+							</div>
+							{% if formulario.url.errors %}
+								{% for erro in formulario.url.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Formato esperado: <code>{{ meta.ex }}</code></small>
+
+							<div class="f_teste_link">
+								<i class="fa fa-external-link"></i>
+								<span>Link atual:</span>
+								<a href="{{ link.SOCIAL_URL }}" target="_blank" rel="noopener" id="teste_a">
+									{{ link.SOCIAL_URL|replace('https://','')|replace('http://','') }}
+									<i class="fa fa-arrow-right" style="font-size:10px;"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Exibição no rodapé</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="ordem">Ordem de exibição</label>
+							<input type="number" id="ordem" name="ordem"
+								value="{{ formulario.ordem.data if formulario.ordem.data is not none else link.SOCIAL_ORDER }}" min="0" />
+							{% if formulario.ordem.errors %}
+								{% for erro in formulario.ordem.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+							<small class="f_ajuda"><i class="fa fa-sort"></i>Números menores aparecem primeiro. Atualmente na <strong style="color:var(--marca);">posição #{{ link.SOCIAL_ORDER or '—' }}</strong>.</small>
+						</div>
+
+						<div class="f_campo">
+							<label class="f_toggle">
+								<input type="checkbox" id="ativo" name="ativo" value="y" {% if link.SOCIAL_ACTIVE %}checked{% endif %} />
+								<div class="info">
+									<label>Rede ativa</label>
+									<small>Desmarcado, o ícone some do rodapé — sem excluir a URL.</small>
+								</div>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<div class="prev_wrap">
+
+						<div class="prev_topo">
+							<h4><i class="fa fa-eye" style="margin-right:6px;"></i>Como aparece no site</h4>
+							<div class="prev_footer">
+								<small>Rodapé · Igreja de Cristo</small>
+								<div class="prev_icons">
+									{% for outra in redes_ativas %}
+										{% if outra.SOCIAL_ID == link.SOCIAL_ID %}
+											<span class="ic editando {{ 'inativo' if not link.SOCIAL_ACTIVE else '' }}" id="prev_edit" title="{{ meta.nome }} (editando)">
+												<i class="{{ meta.icone }}"></i>
+											</span>
+										{% else %}
+											{% set m = plataformas.get(outra.SOCIAL_PLATFORM, {}) %}
+											<span class="ic" title="{{ m.get('nome', outra.SOCIAL_PLATFORM) }}"
+											      style="background:{{ m.get('cor_bg','rgba(255,255,255,0.12)') }};color:{{ m.get('cor_ic','#fff') }};">
+												<i class="{{ outra.SOCIAL_ICON or m.get('icone','fa fa-globe') }}"></i>
+											</span>
+										{% endif %}
+									{% endfor %}
+									{# se o próprio não estiver ativo, ele não vem em redes_ativas — inclui aqui #}
+									{% if not link.SOCIAL_ACTIVE %}
+										<span class="ic editando inativo" id="prev_edit" title="{{ meta.nome }} (pausado, editando)">
+											<i class="{{ meta.icone }}"></i>
+										</span>
+									{% endif %}
+								</div>
+							</div>
+							<div class="prev_legenda">
+								<span class="dot"></span>
+								<span>Este é o ícone que você está editando</span>
+							</div>
+						</div>
+
+						<div class="f_meta_box">
+							<h4>Informações da conexão</h4>
+							<dl>
+								<dt>ID no banco</dt>
+								<dd>#{{ '%04d'|format(link.SOCIAL_ID) }}</dd>
+
+								<dt>Plataforma</dt>
+								<dd><i class="{{ meta.icone }}"></i>{{ meta.nome }}</dd>
+
+								<dt>Conectado em</dt>
+								<dd><i class="fa fa-calendar-o"></i>{{ link.SOCIAL_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+
+								{% if link.SOCIAL_UPDATED_AT %}
+									<dt>Última atualização</dt>
+									<dd><i class="fa fa-refresh"></i>{{ link.SOCIAL_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+								{% endif %}
+
+								<dt>Ícone (CSS class)</dt>
+								<dd style="font-family:'Courier New',monospace;font-size:12.5px;color:#5f6b7a;">{{ link.SOCIAL_ICON }}</dd>
+							</dl>
+						</div>
+
+						<div class="f_perigo">
+							<h4><i class="fa fa-exclamation-triangle"></i> Zona de perigo</h4>
+							<p>Desconectar remove permanentemente o {{ meta.nome }} do sistema. A URL será apagada e essa plataforma voltará a ficar disponível para cadastrar de novo.</p>
+							<a href="{{ url_for('administrador.excluir_rede_social', social_id=link.SOCIAL_ID) }}"
+							   class="adm_btn adm_btn_danger" style="width:100%;justify-content:center;"
+							   onclick="return confirm('Desconectar o {{ meta.nome }}? A URL será removida do sistema.');">
+								<i class="fa fa-unlink"></i>Desconectar {{ meta.nome }}
+							</a>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					{% if link.SOCIAL_UPDATED_AT %}
+						Última alteração em {{ link.SOCIAL_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% else %}
+						Conectado em {{ link.SOCIAL_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% endif %}
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit" class="salvar"><i class="fa fa-check"></i>Atualizar {{ meta.nome }}</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var url    = document.getElementById('url');
+	var testeA = document.getElementById('teste_a');
+	var ativo  = document.getElementById('ativo');
+	var iconePrev = document.getElementById('prev_edit');
+
+	url.addEventListener('input', function () {
+		var v = this.value.trim();
+		if (v) {
+			var limpa = v.replace(/^https?:\/\//, '').replace(/\/$/,'');
+			testeA.innerHTML = limpa + ' <i class="fa fa-arrow-right" style="font-size:10px;"></i>';
+			testeA.href = v;
+		} else {
+			testeA.innerHTML = 'Sem URL preenchida';
+			testeA.removeAttribute('href');
+		}
+	});
+
+	if (ativo && iconePrev) {
+		ativo.addEventListener('change', function () {
+			if (this.checked) iconePrev.classList.remove('inativo');
+			else iconePrev.classList.add('inativo');
+		});
+	}
+
+	document.getElementById('redeForm').addEventListener('submit', function (e) {
+		var v = url.value.trim();
+		if (!v) { e.preventDefault(); alert('A URL não pode ficar vazia.'); url.focus(); return; }
+		if (!/^https?:\/\//i.test(v)) { e.preventDefault(); alert('A URL deve começar com http:// ou https://'); url.focus(); }
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

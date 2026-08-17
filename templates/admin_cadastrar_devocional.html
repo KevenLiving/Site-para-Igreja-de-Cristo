@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Novo devocional — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+	<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error,.alert-message{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="url"],.f_campo input[type="date"],.f_campo select{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input:focus,.f_campo select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		span[style*="color: red"]{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+
+		.f_upload{position:relative;background:#f7fafd;border:2px dashed #d5dee8;border-radius:12px;padding:22px 20px;text-align:center;transition:.3s;cursor:pointer;}
+		.f_upload:hover{border-color:#ffaa17;background:#fff;}
+		.f_upload i{font-size:26px;color:#c3cdd9;margin-bottom:8px;display:block;transition:.3s;}
+		.f_upload:hover i{color:#ffaa17;}
+		.f_upload strong{display:block;color:#1b2032;font-weight:600;font-size:13.5px;margin-bottom:2px;}
+		.f_upload small{display:block;font-size:11.5px;color:#9aa3b0;}
+		.f_upload input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+		.f_upload.on{border-style:solid;border-color:#22a75e;background:#fff;}
+		.f_upload.on i{color:#22a75e;}
+
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		.ql-toolbar.ql-snow{background:#f9fcff !important;border:1px solid #e8eef5 !important;border-bottom:0 !important;border-radius:10px 10px 0 0 !important;padding:10px 14px !important;}
+		.ql-snow .ql-stroke{stroke:#4a5566 !important;}
+		.ql-snow .ql-fill{fill:#4a5566 !important;}
+		.ql-snow.ql-toolbar button:hover,.ql-snow.ql-toolbar button.ql-active{color:#ffaa17 !important;}
+		.ql-snow.ql-toolbar button:hover .ql-stroke,.ql-snow.ql-toolbar button.ql-active .ql-stroke{stroke:#ffaa17 !important;}
+		#editor-conteudo{background:#fff;border:1px solid #e8eef5 !important;border-top:0 !important;border-radius:0 0 10px 10px !important;}
+		#editor-conteudo .ql-editor{min-height:280px;padding:20px 22px !important;font-size:15px;line-height:26px;color:#1b2032;}
+		#editor-conteudo .ql-editor.ql-blank::before{color:#c3cdd9;font-style:italic;left:22px;}
+		#editor-conteudo .ql-editor h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:16px 0 8px;}
+		#editor-conteudo .ql-editor strong{color:#1b2032;font-weight:600;}
+		#editor-conteudo .ql-editor em{color:#0e5ca6;}
+
+		.cal_wrap{background:#fff;border:1px solid #eef3f8;border-radius:14px;padding:20px;}
+		.cal_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+		.cal_head h4{margin:0;font-size:16px;font-weight:600;color:#1b2032;text-transform:capitalize;}
+		.cal_nav button{width:34px;height:34px;border-radius:50%;background:#f7fafd;border:1px solid #eef3f8;color:#747474;cursor:pointer;transition:.3s;font-size:13px;}
+		.cal_nav button:hover{background:#ffaa17;color:#fff;border-color:#ffaa17;}
+		.cal_grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+		.cal_dow{text-align:center;font-family:oswald,sans-serif;font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:#9aa3b0;padding:6px 0;}
+		.cal_dia{position:relative;aspect-ratio:1;background:#f7fafd;border:1px solid #eef3f8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:oswald,sans-serif;font-size:13px;color:#1b2032;cursor:pointer;transition:.2s;}
+		.cal_dia.vazio{background:transparent;border-color:transparent;pointer-events:none;}
+		.cal_dia.passado{color:#c3cdd9;background:transparent;border-color:transparent;pointer-events:none;text-decoration:line-through;}
+		.cal_dia.ocupado{background:repeating-linear-gradient(45deg,#fce4e9,#fce4e9 4px,#fff 4px,#fff 8px);color:#c81f45;border-color:rgba(200,31,69,.2);cursor:not-allowed;pointer-events:none;font-weight:500;}
+		.cal_dia.hoje{outline:2px solid #1b2032;font-weight:600;}
+		.cal_dia:hover:not(.vazio):not(.passado):not(.ocupado){background:rgba(255,170,23,0.15);border-color:#ffaa17;transform:scale(1.05);}
+		.cal_dia.sel_inicio,.cal_dia.sel_fim{background:#ffaa17 !important;color:#fff !important;border-color:#ffaa17 !important;font-weight:600;box-shadow:0 6px 15px -5px rgba(255,170,23,.6);}
+		.cal_dia.sel_meio{background:rgba(255,170,23,0.2);border-color:rgba(255,170,23,0.3);color:#c97a00;}
+
+		.cal_legenda{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid #f2f6fa;font-size:12px;color:#747474;}
+		.cal_legenda span{display:inline-flex;align-items:center;gap:6px;}
+		.cal_legenda i{display:inline-block;width:14px;height:14px;border-radius:4px;}
+
+		.cal_resumo{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.15);border-radius:12px;padding:16px 18px;margin-top:16px;}
+		.cal_resumo strong{display:block;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#0e5ca6;margin-bottom:6px;}
+		.cal_resumo p{margin:0;font-size:14px;color:#1b2032;font-weight:500;}
+		.cal_resumo p .vago{color:#9aa3b0;font-style:italic;font-weight:400;}
+		.cal_resumo .duracao{font-size:12px;color:#747474;margin-top:4px;display:block;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions input[type="submit"],.f_actions button[type="submit"]{
+			display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;
+			background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(255,170,23,.6);
+		}
+		.f_actions input[type="submit"]:hover,.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link ativo"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ current_user.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info"><span>{{ current_user.ADMIN_NAME }}</span><small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small></div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_devocionais') }}">Devocional</a> / <strong>Novo</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Novo devocional</h1>
+			<p>Escolha um período livre no calendário e prepare o conteúdo que aparecerá na home.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<form id="loginForm" action="{{ url_for('administrador.adicionar_devocional') }}" method="POST" enctype="multipart/form-data" novalidate>
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.titulo.label }}
+							{{ formulario.titulo(placeholder="Ex.: A paz que excede todo entendimento") }}
+							{% for error in formulario.titulo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.versiculo.label }}
+							{{ formulario.versiculo(placeholder='Ex.: "Não andeis ansiosos..." Filipenses 4:6') }}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>O sistema separa automaticamente o texto (entre aspas) da referência.</small>
+							{% for error in formulario.versiculo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Conteúdo</h3>
+							<div class="f_icone"><i class="fa fa-file-text-o"></i></div>
+						</div>
+
+						<div id="editor-conteudo"></div>
+						{{ formulario.conteudo(id="conteudo_input", style="display:none;") }}
+						<small class="f_ajuda">Use "H2" para subtítulos, negrito e itálico para dar peso ao texto.</small>
+						{% for error in formulario.conteudo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Banner de capa</h3>
+							<div class="f_icone"><i class="fa fa-image"></i></div>
+						</div>
+
+						<div class="f_upload" id="banner_up">
+							<i class="fa fa-cloud-upload"></i>
+							<strong id="banner_txt">Clique ou arraste uma imagem</strong>
+							<small>JPG ou PNG, largura recomendada de 1600px</small>
+							{{ formulario.banner(id="banner_file") }}
+						</div>
+						{% for error in formulario.banner.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL: CALENDÁRIO ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Período de exibição</h3>
+							<div class="f_icone"><i class="fa fa-calendar"></i></div>
+						</div>
+
+						<div class="cal_wrap">
+							<div class="cal_head">
+								<h4 id="cal_titulo">—</h4>
+								<div class="cal_nav">
+									<button type="button" id="cal_prev"><i class="fa fa-angle-left"></i></button>
+									<button type="button" id="cal_next"><i class="fa fa-angle-right"></i></button>
+								</div>
+							</div>
+
+							<div class="cal_grid">
+								<div class="cal_dow">D</div><div class="cal_dow">S</div><div class="cal_dow">T</div><div class="cal_dow">Q</div><div class="cal_dow">Q</div><div class="cal_dow">S</div><div class="cal_dow">S</div>
+							</div>
+							<div class="cal_grid" id="cal_dias" style="margin-top:4px;"></div>
+
+							<div class="cal_legenda">
+								<span><i style="background:#f7fafd;border:1px solid #eef3f8;"></i>Livre</span>
+								<span><i style="background:repeating-linear-gradient(45deg,#fce4e9,#fce4e9 3px,#fff 3px,#fff 6px);border:1px solid rgba(200,31,69,.2);"></i>Ocupado</span>
+								<span><i style="background:#ffaa17;"></i>Selecionado</span>
+							</div>
+
+							<div class="cal_resumo">
+								<strong>Período escolhido</strong>
+								<p id="cal_resumo_txt"><span class="vago">Clique num dia para o início do período</span></p>
+								<span class="duracao" id="cal_duracao"></span>
+							</div>
+						</div>
+
+						<div style="display:none;">
+							{{ formulario.inicio(id='inicio') }}
+							{{ formulario.fim(id='fim') }}
+						</div>
+						{% for error in formulario.inicio.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						{% for error in formulario.fim.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Publicação</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<label class="f_toggle">
+							{{ formulario.publicar }}
+							<div class="info">
+								{{ formulario.publicar.label }}
+								<small>Marcado, o devocional entra no ar automaticamente na data de início.</small>
+							</div>
+						</label>
+						{% for error in formulario.publicar.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					Dias em rosa listrado já estão reservados por outros devocionais.
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					{{ formulario.submit() }}
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+(function () {
+	/* ============ QUILL ============ */
+	const quill = new Quill('#editor-conteudo', {
+		theme: 'snow',
+		placeholder: 'Escreva o devocional aqui...',
+		modules: { toolbar: [[{ 'header': 2 }], ['bold','italic']] }
+	});
+	const form = document.getElementById('loginForm');
+	form.addEventListener('submit', function (e) {
+		if (quill.getText().trim().length === 0) {
+			e.preventDefault();
+			alert('O conteúdo do devocional é obrigatório.');
+			return;
+		}
+		if (!document.getElementById('inicio').value || !document.getElementById('fim').value) {
+			e.preventDefault();
+			alert('Escolha o período de exibição no calendário.');
+			return;
+		}
+		document.getElementById('conteudo_input').value = quill.root.innerHTML;
+	});
+
+	/* ============ BANNER ============ */
+	const banFile = document.getElementById('banner_file');
+	const banUp   = document.getElementById('banner_up');
+	const banTxt  = document.getElementById('banner_txt');
+	banFile.addEventListener('change', function () {
+		if (this.files && this.files[0]) {
+			banUp.classList.add('on');
+			banTxt.textContent = this.files[0].name;
+		}
+	});
+
+	/* ============ CALENDÁRIO ============ */
+
+	/* Injetado do Flask: lista real de períodos ocupados no banco */
+	var OCUPADOS = {{ (ocupados if ocupados is defined else []) | tojson }};
+
+	var hoje = new Date();
+	hoje.setHours(0,0,0,0);
+	var mesVis = hoje.getMonth();
+	var anoVis = hoje.getFullYear();
+	var selInicio = null, selFim = null;
+
+	var MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+	var titulo   = document.getElementById('cal_titulo');
+	var grade    = document.getElementById('cal_dias');
+	var resumo   = document.getElementById('cal_resumo_txt');
+	var duracao  = document.getElementById('cal_duracao');
+	var inpIni   = document.getElementById('inicio');
+	var inpFim   = document.getElementById('fim');
+
+	function iso(d)      { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+	function parse(s)    { var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+	function ehIgual(a,b){ return a && b && a.getTime() === b.getTime(); }
+
+	function ocupado(d) {
+		var t = d.getTime();
+		return OCUPADOS.some(function (r) {
+			return t >= parse(r.inicio).getTime() && t <= parse(r.fim).getTime();
+		});
+	}
+
+	function conflita(a, b) {
+		return OCUPADOS.some(function (r) {
+			var ri = parse(r.inicio).getTime(), rf = parse(r.fim).getTime();
+			return a.getTime() <= rf && b.getTime() >= ri;
+		});
+	}
+
+	function fmtBR(d) {
+		return String(d.getDate()).padStart(2,'0') + ' de ' + MESES[d.getMonth()] + ' de ' + d.getFullYear();
+	}
+
+	function render() {
+		titulo.textContent = MESES[mesVis] + ' de ' + anoVis;
+		grade.innerHTML = '';
+		var primeiroDow = new Date(anoVis, mesVis, 1).getDay();
+		var totalDias   = new Date(anoVis, mesVis+1, 0).getDate();
+
+		for (var i = 0; i < primeiroDow; i++) {
+			var v = document.createElement('div');
+			v.className = 'cal_dia vazio';
+			grade.appendChild(v);
+		}
+
+		for (var d = 1; d <= totalDias; d++) {
+			var data = new Date(anoVis, mesVis, d);
+			var el = document.createElement('div');
+			el.className = 'cal_dia';
+			el.textContent = d;
+
+			if (data < hoje) el.classList.add('passado');
+			else if (ocupado(data)) el.classList.add('ocupado');
+			if (ehIgual(data, hoje)) el.classList.add('hoje');
+
+			if (selInicio && ehIgual(data, selInicio)) el.classList.add('sel_inicio');
+			if (selFim    && ehIgual(data, selFim))    el.classList.add('sel_fim');
+			if (selInicio && selFim && data > selInicio && data < selFim) el.classList.add('sel_meio');
+
+			(function (dataClick) {
+				el.addEventListener('click', function () { clicar(dataClick); });
+			})(data);
+
+			grade.appendChild(el);
+		}
+	}
+
+	function clicar(data) {
+		if (!selInicio || (selInicio && selFim)) {
+			selInicio = data;
+			selFim = null;
+		} else if (data < selInicio) {
+			selInicio = data;
+			selFim = null;
+		} else {
+			if (conflita(selInicio, data)) {
+				alert('Esse intervalo passa por dias já ocupados. Escolha um período menor ou outro início.');
+				return;
+			}
+			selFim = data;
+		}
+		atualizarResumo();
+		render();
+	}
+
+	function atualizarResumo() {
+		if (selInicio && selFim) {
+			resumo.innerHTML = '<strong style="color:#1b2032;">' + fmtBR(selInicio) + '</strong><br><span style="color:#9aa3b0;font-size:12px;">até</span><br><strong style="color:#1b2032;">' + fmtBR(selFim) + '</strong>';
+			var dias = Math.round((selFim - selInicio) / 86400000) + 1;
+			duracao.textContent = 'Duração: ' + dias + (dias === 1 ? ' dia' : ' dias');
+			inpIni.value = iso(selInicio);
+			inpFim.value = iso(selFim);
+		} else if (selInicio) {
+			resumo.innerHTML = '<strong style="color:#1b2032;">' + fmtBR(selInicio) + '</strong><br><span class="vago">Clique no dia final</span>';
+			duracao.textContent = '';
+			inpIni.value = iso(selInicio);
+			inpFim.value = '';
+		} else {
+			resumo.innerHTML = '<span class="vago">Clique num dia para o início do período</span>';
+			duracao.textContent = '';
+		}
+	}
+
+	document.getElementById('cal_prev').addEventListener('click', function () {
+		mesVis--; if (mesVis < 0) { mesVis = 11; anoVis--; }
+		render();
+	});
+	document.getElementById('cal_next').addEventListener('click', function () {
+		mesVis++; if (mesVis > 11) { mesVis = 0; anoVis++; }
+		render();
+	});
+	render();
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

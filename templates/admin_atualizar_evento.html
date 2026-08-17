@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar evento — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+		
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+
+		/* ===== CABEÇALHO DA FICHA ===== */
+		.f_ficha_head{background:linear-gradient(135deg,#22a75e 0%,#178f4a 100%);border-radius:18px;padding:32px 36px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.f_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0) 70%);}
+		.f_ficha_head_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:22px;}
+		.f_ficha_data{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.25);border-radius:14px;padding:14px 20px;text-align:center;min-width:110px;flex-shrink:0;}
+		.f_ficha_data .m{display:block;font-family:oswald,sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.85);}
+		.f_ficha_data .d{display:block;font-family:oswald,sans-serif;font-size:44px;font-weight:600;color:#fff;line-height:1;margin:2px 0;}
+		.f_ficha_data .dow{display:block;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.75);}
+		.f_ficha_info{flex:1;min-width:250px;}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:30px;line-height:38px;color:#fff;margin:0 0 10px;}
+		.f_ficha_info .meta{margin:0 0 12px;color:rgba(255,255,255,0.85);font-size:14px;display:flex;flex-wrap:wrap;gap:18px;}
+		.f_ficha_info .meta i{margin-right:8px;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="url"],.f_campo input[type="date"],.f_campo input[type="time"],.f_campo select,.f_campo textarea{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo textarea{height:auto;padding:14px 16px;min-height:130px;resize:vertical;line-height:22px;}
+		.f_campo input:focus,.f_campo select:focus,.f_campo textarea:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		span[style*="color: red"]{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+
+		.f_dupla{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+		@media (max-width:640px){.f_dupla{grid-template-columns:1fr;}}
+
+		/* ===== BANNER ATUAL + UPLOAD ===== */
+		.f_banner_atual{position:relative;border-radius:12px;overflow:hidden;background:#f7fafd;margin-bottom:14px;border:1px solid #eef3f8;}
+		.f_banner_atual img{width:100%;height:170px;object-fit:cover;display:block;}
+		.f_banner_atual .badge{position:absolute;top:12px;left:12px;background:rgba(27,32,50,0.85);color:#fff;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px;}
+		.f_upload{position:relative;background:#f7fafd;border:2px dashed #d5dee8;border-radius:12px;padding:22px 20px;text-align:center;transition:.3s;cursor:pointer;}
+		.f_upload:hover{border-color:#ffaa17;background:#fff;}
+		.f_upload i{font-size:26px;color:#c3cdd9;margin-bottom:8px;display:block;transition:.3s;}
+		.f_upload:hover i{color:#ffaa17;}
+		.f_upload strong{display:block;color:#1b2032;font-weight:600;font-size:13.5px;margin-bottom:2px;}
+		.f_upload small{display:block;font-size:11.5px;color:#9aa3b0;}
+		.f_upload input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+		.f_upload.on{border-style:solid;border-color:#22a75e;background:#fff;}
+		.f_upload.on i{color:#22a75e;}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;margin-bottom:10px;}
+		.f_toggle:last-child{margin-bottom:0;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== METADADOS LATERAIS ===== */
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:#ffaa17;margin-right:7px;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 16px;font-size:13px;color:#747474;line-height:22px;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions input[type="submit"],.f_actions button[type="submit"]{
+			display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;
+			background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(255,170,23,.6);
+		}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link ativo"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ administrador.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info"><span>{{ administrador.ADMIN_NAME }}</span><small>{{ 'Root' if administrador.ADMIN_ROLE == 'root' else 'Editor' }}</small></div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_eventos') }}">Eventos</a> / <strong>Editar</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		{% set MESES_CURTOS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'] %}
+		{% set DIAS_SEMANA = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'] %}
+
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="f_ficha_head">
+			<div class="f_ficha_head_c">
+				<div class="f_ficha_data">
+					<span class="m">{{ MESES_CURTOS[evento.EVENT_DATE.month - 1] if evento.EVENT_DATE else '—' }}</span>
+					<span class="d">{{ '%02d'|format(evento.EVENT_DATE.day) if evento.EVENT_DATE else '—' }}</span>
+					<span class="dow">{{ DIAS_SEMANA[evento.EVENT_DATE.weekday()] if evento.EVENT_DATE else '' }}</span>
+				</div>
+				<div class="f_ficha_info">
+					<h1>{{ evento.EVENT_TITLE }}</h1>
+					<div class="meta">
+						{% if evento.EVENT_TIME %}
+							<span><i class="fa fa-clock-o"></i>{{ evento.EVENT_TIME.strftime('%H:%M') }}</span>
+						{% endif %}
+						{% if evento.EVENT_LOCATION %}
+							<span><i class="fa fa-map-marker"></i>{{ evento.EVENT_LOCATION }}</span>
+						{% endif %}
+					</div>
+					<div class="metas">
+						{% if evento.EVENT_PUBLISHED %}
+							<span><i class="fa fa-check-circle"></i>Publicado</span>
+						{% else %}
+							<span><i class="fa fa-file-o"></i>Rascunho</span>
+						{% endif %}
+						{% if evento.EVENT_FEATURED %}
+							<span><i class="fa fa-star"></i>Destaque</span>
+						{% endif %}
+						{% if evento.EVENT_REGISTRATION_REQUIRED %}
+							<span><i class="fa fa-users"></i>Requer inscrição</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<form id="loginForm" action="{{ url_for('administrador.editar_evento', evento_id=evento.EVENT_ID) }}" method="POST" enctype="multipart/form-data">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.titulo.label }}
+							{{ formulario.titulo(placeholder="Ex.: Conferência de Jovens 2026") }}
+							{% for error in formulario.titulo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.descricao.label }}
+							{{ formulario.descricao(placeholder="Detalhes do evento, programação, o que esperar...") }}
+							{% for error in formulario.descricao.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							<small class="f_ajuda">Aparece na página interna do evento. Pode ter várias linhas.</small>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.local.label }}
+							{{ formulario.local(placeholder="Ex.: Templo Principal, Vila Invernada") }}
+							{% for error in formulario.local.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Endereço completo ou nome do local que aparece no card do evento.</small>
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Quando</h3>
+							<div class="f_icone"><i class="fa fa-calendar-o"></i></div>
+						</div>
+
+						<div class="f_dupla">
+							<div class="f_campo">
+								{{ formulario.data.label }}
+								{{ formulario.data(min=hoje) }}
+								{% for error in formulario.data.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							</div>
+							<div class="f_campo">
+								{{ formulario.hora.label }}
+								{{ formulario.hora() }}
+								{% for error in formulario.hora.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							</div>
+						</div>
+						<small class="f_ajuda" style="margin-top:12px;"><i class="fa fa-info-circle"></i>Se o evento durar o dia inteiro ou não tiver hora definida, deixe o campo de hora em branco.</small>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Banner do evento</h3>
+							<div class="f_icone"><i class="fa fa-image"></i></div>
+						</div>
+
+						<div class="f_banner_atual">
+							{% if evento.EVENT_BANNER %}
+								<img src="{{ url_for('static', filename='uploads/eventos/' ~ evento.EVENT_BANNER) }}" alt="{{ evento.EVENT_TITLE }}" />
+								<span class="badge">Banner atual</span>
+							{% else %}
+								<img src="{{ url_for('static', filename='assets/img/portfolio/5.jpg') }}" alt="Sem banner cadastrado" />
+								<span class="badge">Sem banner</span>
+							{% endif %}
+						</div>
+
+						<div class="f_upload" id="banner_up">
+							<i class="fa fa-cloud-upload"></i>
+							<strong id="banner_txt">Trocar imagem</strong>
+							<small>Envie um novo arquivo para substituir o atual</small>
+							{{ formulario.banner(id="banner_file") }}
+							{% for error in formulario.banner.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Publicação</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<label class="f_toggle">
+							{{ formulario.publicar }}
+							<div class="info">
+								{{ formulario.publicar.label }}
+								<small>Aparece na página pública de eventos e na home.</small>
+							</div>
+						</label>
+
+						<label class="f_toggle">
+							{{ formulario.destaque }}
+							<div class="info">
+								{{ formulario.destaque.label }}
+								<small>O evento vira o próximo evento em destaque na home.</small>
+							</div>
+						</label>
+
+						<label class="f_toggle">
+							{{ formulario.inscricao_necessaria }}
+							<div class="info">
+								{{ formulario.inscricao_necessaria.label }}
+								<small>Exibe o aviso de inscrição prévia no card e na página do evento.</small>
+							</div>
+						</label>
+					</div>
+
+					<div class="f_meta_box">
+						<h4>Informações do evento</h4>
+						<dl>
+							<dt>ID no banco</dt>
+							<dd>#{{ '%04d'|format(evento.EVENT_ID) }}</dd>
+
+							<dt>Data marcada</dt>
+							<dd><i class="fa fa-calendar-o"></i>{{ evento.EVENT_DATE.strftime('%d/%m/%Y') if evento.EVENT_DATE else '—' }}</dd>
+
+							{% if evento.EVENT_TIME %}
+							<dt>Horário</dt>
+							<dd><i class="fa fa-clock-o"></i>{{ evento.EVENT_TIME.strftime('%H:%M') }}</dd>
+							{% endif %}
+						</dl>
+					</div>
+
+					<div class="f_perigo">
+						<h4><i class="fa fa-exclamation-triangle"></i> Zona de perigo</h4>
+						<p>Excluir remove permanentemente o evento e a inscrição de quem já se inscreveu (se houver).</p>
+						<a href="{{ url_for('administrador.excluir_evento', evento_id=evento.EVENT_ID) }}"
+						   class="adm_btn adm_btn_danger"
+						   onclick="return confirm('Excluir o evento &quot;{{ evento.EVENT_TITLE }}&quot;? Esta ação não pode ser desfeita.');">
+							<i class="fa fa-trash"></i>Excluir evento
+						</a>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					Editando evento #{{ evento.EVENT_ID }}
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit" class="adm_btn adm_btn_primary"><i class="fa fa-check"></i>Atualizar evento</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	/* Banner — feedback visual ao trocar */
+	const banFile = document.getElementById('banner_file');
+	const banUp   = document.getElementById('banner_up');
+	const banTxt  = document.getElementById('banner_txt');
+	banFile.addEventListener('change', function () {
+		if (this.files && this.files[0]) {
+			banUp.classList.add('on');
+			banTxt.textContent = this.files[0].name;
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

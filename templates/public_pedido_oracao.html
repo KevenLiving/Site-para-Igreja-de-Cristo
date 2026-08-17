@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Igreja de Cristo - Pedido de Oração">
+		<title>Pedido de Oração | Igreja de Cristo</title>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+	</head>
+
+	<body data-spy="scroll" data-offset="80">
+
+		<div class="preloader">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>
+
+		<div class="site-mobile-menu site-navbar-target">
+		  <div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+			  <span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		  </div>
+		  <div class="site-mobile-menu-body"></div>
+		</div>
+
+		<header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+		  <div class="container">
+			<div class="row align-items-center">
+			  <div class="col-6 col-xl-2">
+				<h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+			  </div>
+			  <div class="col-12 col-md-10 d-none d-xl-block">
+				<nav class="site-navigation position-relative text-right" role="navigation">
+				  <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+					<li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Conteudo</a>
+					  <ul class="dropdown">
+						<li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+						<li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+					  </ul>
+					</li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Ministérios</a>
+					  <ul class="dropdown">
+						{% for ministerio in ministerios %}
+							<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="nav-link">{{ ministerio.DEPARTMENT_NAME }}</a></li>
+						{% else %}
+							<li><a href="#" class="nav-link">Em breve</a></li>
+						{% endfor %}
+					  </ul>
+					</li>
+					<li><a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a></li>
+					<li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+				  </ul>
+				</nav>
+			  </div>
+			  <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+				<a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+			  </div>
+			</div>
+		  </div>
+		</header>
+
+		{# ============================================================
+		   BANNER DO TOPO
+		============================================================ #}
+		<section style="background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);padding:150px 0 90px;position:relative;overflow:hidden;">
+			<div style="position:absolute;top:-100px;left:-90px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.14) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+			<div style="position:absolute;bottom:-140px;right:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.3) 0%,rgba(14,92,166,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+				<div class="row justify-content-center text-center">
+					<div class="col-lg-9 col-md-11">
+						<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:18px;">Estamos com você</span>
+						<h1 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:56px;line-height:66px;color:#fff;margin:0 0 22px;">Pedido de Oração</h1>
+						<p style="font-size:17px;line-height:30px;color:rgba(255,255,255,0.7);margin:0;">Seja qual for o motivo, você não precisa carregar sozinho. Escreva seu pedido e nossa equipe pastoral vai orar por você durante a semana.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ============================================================
+		   FORMULÁRIO
+		============================================================ #}
+		<section class="section-padding" style="background:linear-gradient(180deg,#ffffff 0%,#f6fafd 100%);position:relative;overflow:hidden;">
+
+			<div style="position:absolute;top:-120px;left:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.12) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+
+				{# Flash messages #}
+				{% with mensagens = get_flashed_messages(with_categories=true) %}
+					{% if mensagens %}
+						<div class="row justify-content-center">
+							<div class="col-lg-10">
+								{% for categoria, mensagem in mensagens %}
+									<div style="background:{% if categoria == 'success' %}#e8f7ee;border:1px solid #b6e2c5;color:#1e6a3a{% else %}#fdecec;border:1px solid #f3c2c2;color:#8a1f1f{% endif %};border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+										{{ mensagem }}
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					{% endif %}
+				{% endwith %}
+
+				<div class="row align-items-center">
+
+					<div class="col-lg-5 col-md-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+						<div style="padding-right:30px;margin-bottom:40px;">
+
+							<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;">Sigilo e cuidado</span>
+
+							<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:44px;line-height:56px;color:#1b2032;margin:0 0 22px;">Você não está sozinho.</h2>
+
+							<p style="font-size:16px;line-height:30px;color:#747474;margin-bottom:28px;">O que você compartilhar aqui fica entre você e a equipe pastoral. Oramos por cada pedido durante a semana.</p>
+
+							<div style="border-left:3px solid #ffaa17;padding-left:24px;margin-bottom:28px;">
+								<p style="font-size:17px;line-height:32px;font-style:italic;color:#1b2032;margin-bottom:8px;">“Confessai as vossas culpas uns aos outros e orai uns pelos outros, para que sareis.”</p>
+								<span style="font-family:oswald,sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;">Tiago 5:16</span>
+							</div>
+
+							<p style="font-size:14px;line-height:26px;color:#9aa3b0;">
+								<i class="icon-lock" style="color:#0e5ca6;margin-right:10px;"></i>Seu pedido é tratado com sigilo pela equipe pastoral.
+							</p>
+
+						</div>
+					</div>
+
+					<div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
+						<div style="background:#fff;border:1px solid rgba(14,92,166,0.07);border-radius:16px;box-shadow:0 30px 55px -35px rgba(0,64,128,.35);padding:36px 36px 32px;">
+
+							<form id="form_oracao" method="post" action="{{ url_for('public.pedido_oracao') }}">
+								<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+								<div style="margin-bottom:18px;">
+									<label for="ora_nome" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Nome <span style="color:#9aa3b0;font-weight:400;">(opcional)</span></label>
+									<input type="text" id="ora_nome" name="nome" placeholder="Como podemos te chamar?" style="width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:11px 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';" />
+									<p style="font-size:12px;line-height:20px;color:#9aa3b0;margin-top:6px;">Deixe em branco se preferir enviar sem se identificar.</p>
+								</div>
+
+								<div style="margin-bottom:18px;">
+									<label for="ora_pedido" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Seu pedido</label>
+									<textarea id="ora_pedido" name="pedido" rows="5" required placeholder="Escreva com liberdade — o que você compartilhar aqui fica entre você e a equipe pastoral." style="width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:13px 15px;font-size:14px;line-height:24px;color:#1b2032;font-family:'Poppins',sans-serif;resize:vertical;min-height:120px;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';"></textarea>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6 col-sm-12" style="margin-bottom:18px;">
+										<label for="ora_categoria" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Categoria</label>
+										<select id="ora_categoria" name="categoria" required style="width:100%;height:44px;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:0 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;cursor:pointer;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';">
+											<option value="">Selecione...</option>
+											<option value="espiritual">Espiritual</option>
+											<option value="saude">Saúde</option>
+											<option value="familia">Família</option>
+											<option value="trabalho">Trabalho e provisão</option>
+											<option value="relacionamentos">Relacionamentos</option>
+											<option value="gratidao">Gratidão</option>
+											<option value="outro">Outro</option>
+										</select>
+									</div>
+
+									<div class="col-md-6 col-sm-12" style="margin-bottom:18px;">
+										<label for="ora_email" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">E-mail para contato</label>
+										<input type="email" id="ora_email" name="email" placeholder="seuemail@exemplo.com" style="width:100%;height:44px;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:0 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';" />
+									</div>
+								</div>
+
+								<div style="background:#f7fafd;border:1px solid #eef3f8;border-radius:11px;padding:16px 18px;margin-bottom:22px;">
+									<label id="lbl_anonimato" for="ora_anonimato" style="display:flex;align-items:flex-start;cursor:pointer;margin-bottom:12px;transition:0.3s;">
+										<input type="checkbox" id="ora_anonimato" name="anonimato" value="1" onchange="oracaoAnonimato(this);" style="width:16px;height:16px;margin-right:12px;margin-top:3px;accent-color:#ffaa17;cursor:pointer;flex-shrink:0;" />
+										<span style="font-size:13.5px;line-height:22px;color:#747474;">Quero enviar <strong style="color:#1b2032;font-weight:600;">anonimamente</strong> — meu nome e contato não serão gravados.</span>
+									</label>
+
+									<label id="lbl_autorizacao" for="ora_autorizacao" style="display:flex;align-items:flex-start;cursor:pointer;transition:0.3s;">
+										<input type="checkbox" id="ora_autorizacao" name="autorizacao" value="1" onchange="oracaoAutorizacao(this);" style="width:16px;height:16px;margin-right:12px;margin-top:3px;accent-color:#ffaa17;cursor:pointer;flex-shrink:0;" />
+										<span style="font-size:13.5px;line-height:22px;color:#747474;">Autorizo a <strong style="color:#1b2032;font-weight:600;">equipe pastoral</strong> a entrar em contato comigo sobre este pedido.</span>
+									</label>
+								</div>
+
+								<button type="submit" style="width:100%;background:#ffaa17;border:2px solid #ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:16px;font-weight:500;letter-spacing:1px;padding:12px;border-radius:30px;cursor:pointer;box-shadow:0 12px 30px -12px rgba(255,170,23,.65);transition:0.3s;" onmouseover="this.style.background='#1b2032';this.style.borderColor='#1b2032';this.style.boxShadow='0 12px 30px -12px rgba(27,32,50,.5)';" onmouseout="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';this.style.boxShadow='0 12px 30px -12px rgba(255,170,23,.65)';">
+									Enviar pedido
+								</button>
+
+								<p style="text-align:center;font-size:12.5px;line-height:22px;color:#9aa3b0;margin-top:13px;">Recebemos cada pedido com carinho e oramos por ele durante a semana.</p>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ============================================================
+		FOOTER
+		============================================================ #}
+		<div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }});  background-size:cover;">
+			<div class="container">
+				<div class="row footer_bg">
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="footer_logo">
+							<img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+							<p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+						</div>
+						<div class="social_profile">
+							<ul>
+								{% for rede in redes_sociais_publicas %}
+									<li>
+										<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}">
+											<i class="fa {{ rede.SOCIAL_ICON }}"></i>
+										</a>
+									</li>
+								{% else %}
+									<li><a href="#"><i class="fa fa-share-alt" title="Redes sociais"></i></a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Experimente</h4>
+							<ul>
+								<li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+								<li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+								<li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Comunidade</h4>
+							<ul>
+								{% for ministerio in ministerios[:1] %}
+									<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}">Ministérios</a></li>
+								{% else %}
+									<li><a href="#">Ministérios</a></li>
+								{% endfor %}
+								<li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+								<li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+								<li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="newsletter-form">
+							<h4>Inscreva-se para receber mais conteúdos</h4>
+							<form id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+								<div class="input-group input-group-lg newsletter">
+									<input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+									<button type="submit" class="subs_btn">Inscrever-se</button>
+								</div>
+								<div id="mce-responses">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="footer_copyright">
+							<p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scrolltopcontrol.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+
+		<script>
+			function oracaoTravar(alvo, label, travar) {
+				if (travar) {
+					alvo.checked = false;
+					alvo.disabled = true;
+					label.style.opacity = '0.4';
+					label.style.cursor = 'not-allowed';
+				} else {
+					alvo.disabled = false;
+					label.style.opacity = '1';
+					label.style.cursor = 'pointer';
+				}
+			}
+			function oracaoAnonimato(el) {
+				oracaoTravar(document.getElementById('ora_autorizacao'), document.getElementById('lbl_autorizacao'), el.checked);
+				['ora_nome', 'ora_email'].forEach(function (id) {
+					var campo = document.getElementById(id);
+					campo.disabled = el.checked;
+					campo.style.opacity = el.checked ? '0.45' : '1';
+					if (el.checked) { campo.value = ''; }
+				});
+			}
+			function oracaoAutorizacao(el) {
+				oracaoTravar(document.getElementById('ora_anonimato'), document.getElementById('lbl_anonimato'), el.checked);
+			}
+		</script>
+
+	</body>
+</html>

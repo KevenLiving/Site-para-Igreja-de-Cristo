@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar administrador — Painel Root</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+	<link rel="stylesheet" href="assets/css/fonts.css">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:absolute;bottom:0;left:0;right:0;padding:20px 30px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.adm_ficha_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:18px;padding:36px 40px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.adm_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.adm_ficha_head_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:22px;}
+		.adm_ficha_av{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-family:oswald,sans-serif;font-size:28px;font-weight:600;border:3px solid rgba(255,255,255,0.2);flex-shrink:0;}
+		.adm_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:34px;line-height:42px;color:#fff;margin:0 0 6px;}
+		.adm_ficha_info p{margin:0 0 12px;color:rgba(255,255,255,0.7);font-size:14.5px;}
+		.adm_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.adm_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;}
+		.adm_ficha_info .metas .root{background:rgba(255,170,23,0.2);border-color:rgba(255,170,23,0.5);color:#ffcc70;}
+
+		.adm_ficha_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;}
+		@media (max-width:960px){.adm_ficha_grid{grid-template-columns:1fr;}}
+
+		.adm_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.adm_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.adm_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.adm_card_head .adm_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.adm_form_grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+		@media (max-width:640px){.adm_form_grid{grid-template-columns:1fr;}}
+		.adm_full{grid-column:1/-1;}
+
+		.adm_campo{margin-bottom:4px;}
+		.adm_campo label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.adm_campo input[type="text"],.adm_campo input[type="email"],.adm_campo input[type="password"],.adm_campo select,.adm_campo textarea{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.adm_campo input:focus,.adm_campo select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.adm_ajuda{font-size:12px;color:#9aa3b0;margin-top:6px;}
+
+		.adm_toggle{display:flex;align-items:center;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.adm_toggle input{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:0;}
+		.adm_toggle span{font-size:14px;color:#1b2032;font-weight:500;display:block;}
+		.adm_toggle small{display:block;font-size:12px;color:#9aa3b0;font-weight:400;margin-top:2px;}
+
+		.adm_form_actions{display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:22px;border-top:1px solid #f2f6fa;flex-wrap:wrap;}
+
+		.adm_side_info{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:26px 28px;margin-bottom:22px;}
+		.adm_side_info h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.adm_side_info dl{margin:0;}
+		.adm_side_info dt{font-size:12px;color:#9aa3b0;margin-top:14px;}
+		.adm_side_info dt:first-child{margin-top:0;}
+		.adm_side_info dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+
+		.adm_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:26px 28px;}
+		.adm_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.adm_perigo p{margin:0 0 16px;font-size:13.5px;color:#747474;line-height:22px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side">
+	<div class="adm_brand"><span>Painel Root</span><strong>Igreja de Cristo</strong></div>
+	<div class="adm_group">
+		<span class="adm_group_title">Principal</span>
+		<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+	</div>
+	<div class="adm_group">
+		<span class="adm_group_title">Gestão</span>
+		<a href="{{ url_for('administrador.listar_admins') }}" class="adm_link ativo"><i class="fa fa-users"></i>Administradores</a>
+		<a href="#" class="adm_link"><i class="fa fa-lock"></i>Permissões</a>
+		<a href="{{ url_for('administrador.registro_acessos') }}" class="adm_link"><i class="fa fa-history"></i>Registro de acessos</a>
+	</div>
+	<div class="adm_group">
+		<span class="adm_group_title">Sistema</span>
+		<a href="#" class="adm_link"><i class="fa fa-cog"></i>Configurações</a>
+		<a href="#" class="adm_link"><i class="fa fa-shield"></i>Segurança</a>
+	</div>
+	<div class="adm_user">
+		<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'RC')|upper }}</div>
+		<div class="adm_user_info">
+			<span>{{ current_user.ADMIN_NAME }}</span>
+			<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+		</div>
+		<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+	</div>
+</aside>
+
+<main class="adm_main">
+
+	<div class="adm_top">
+		<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.listar_admins') }}">Administradores</a> / <strong>Editar</strong></span>
+		<a href="{{ url_for('administrador.listar_admins') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+	</div>
+	
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="adm_ficha_head">
+			<div class="adm_ficha_head_c">
+				<div class="adm_ficha_av">AS</div>
+				<div class="adm_ficha_info">
+					<h1>Ana Silva</h1>
+					<p><i class="fa fa-envelope-o" style="margin-right:8px;color:#ffaa17;"></i>ana.silva@igreja.org</p>
+					<div class="metas">
+						<span>
+							<i class="fa fa-pencil-square-o"></i>
+							Editor
+						</span>
+						<span>
+							<i class="fa fa-circle" style="font-size:8px;color:#22a75e;"></i>
+							Ativo
+						</span>
+						<span>
+							<i class="fa fa-check-circle"></i>
+							2FA configurado
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="adm_ficha_grid">
+
+			<div>
+				<form action="#" method="POST">
+
+					<div class="adm_card">
+						<div class="adm_card_head">
+							<h3>Dados de identificação</h3>
+							<div class="adm_icone"><i class="fa fa-user"></i></div>
+						</div>
+
+						<div class="adm_form_grid">
+							<div class="adm_campo adm_full">
+								<label for="nome">Nome completo</label>
+								<input type="text" id="nome" name="nome" value="Ana Silva" placeholder="Nome completo" />
+							</div>
+
+							<div class="adm_campo adm_full">
+								<label for="email">E-mail</label>
+								<input type="email" id="email" name="email" value="ana.silva@igreja.org" placeholder="email@igreja.org" />
+								<span class="adm_ajuda">Usado para login e recuperação de acesso.</span>
+							</div>
+
+							<div class="adm_campo adm_full">
+								<label>Status da conta</label>
+								<label class="adm_toggle">
+									<input type="checkbox" name="ativo" checked />
+									<div>
+										<span>Conta ativa</span>
+										<small>Contas inativas não conseguem fazer login no painel.</small>
+									</div>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="adm_card">
+						<div class="adm_card_head">
+							<h3>Senha de acesso</h3>
+							<div class="adm_icone"><i class="fa fa-key"></i></div>
+						</div>
+						<p style="font-size:13.5px;color:#9aa3b0;margin-bottom:20px;">Deixe em branco para manter a senha atual. Preencha somente se quiser redefinir.</p>
+
+						<div class="adm_form_grid">
+							<div class="adm_campo">
+								<label for="password">Nova senha</label>
+								<input type="password" id="password" name="password" placeholder="Nova senha" />
+							</div>
+							<div class="adm_campo">
+								<label for="password_confirm">Confirmar nova senha</label>
+								<input type="password" id="password_confirm" name="password_confirm" placeholder="Repita a nova senha" />
+							</div>
+						</div>
+					</div>
+
+					<div class="adm_form_actions">
+						<a href="admins.html" class="adm_btn adm_btn_ghost">Cancelar</a>
+						<button type="submit" class="adm_btn adm_btn_primary"><i class="fa fa-check"></i>Salvar alterações</button>
+					</div>
+				</form>
+			</div>
+
+			<div>
+				<div class="adm_side_info">
+					<h4>Informações do sistema</h4>
+					<dl>
+						<dt>ID no banco</dt>
+						<dd>#0027</dd>
+
+						<dt>Papel atual</dt>
+						<dd>Editor (acesso ao conteúdo)</dd>
+
+						<dt>Cadastrado em</dt>
+						<dd>03/03/2026 às 14:22</dd>
+
+						<dt>Última atualização</dt>
+						<dd>18/03/2026 às 09:47</dd>
+
+						<dt>Autenticação em duas etapas</dt>
+						<dd>Ativa</dd>
+					</dl>
+				</div>
+
+				<div class="adm_perigo">
+					<h4><i class="fa fa-exclamation-triangle"></i> Zona de perigo</h4>
+					<p>Excluir este administrador é uma ação permanente. Todos os conteúdos criados por ela permanecem no sistema, mas ficam sem autor.</p>
+					<form method="POST" action="#" onsubmit="return confirm('Excluir Ana Silva? Esta ação não pode ser desfeita.');">
+						<button type="submit" class="adm_btn adm_btn_danger"><i class="fa fa-trash"></i>Excluir administrador</button>
+					</form>
+				</div>
+			</div>
+
+		</div>
+
+	</main>
+</div>
+
+</body>
+</html>

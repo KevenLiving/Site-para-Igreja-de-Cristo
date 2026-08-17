@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar vídeo — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_outline{background:transparent;color:#c81f45;border-color:#c81f45;}
+		.adm_btn_outline:hover{background:#c81f45;color:#fff;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		/* ===== ALERTAS ===== */
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.alert-warning{background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.3);color:#c97a00;}
+		.alert-info{background:rgba(14,92,166,0.08);border:1px solid rgba(14,92,166,0.25);color:#0e5ca6;}
+
+		/* ===== CABEÇALHO DA FICHA ===== */
+		.f_ficha_head{background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);border-radius:18px;padding:32px 36px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.f_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.16) 0%,rgba(255,170,23,0) 70%);}
+		.f_ficha_head_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:24px;}
+		.f_ficha_thumb{position:relative;width:180px;height:110px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.06);flex-shrink:0;border:2px solid rgba(255,255,255,0.12);}
+		.f_ficha_thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9;}
+		.f_ficha_thumb .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.95);color:#c81f45;display:flex;align-items:center;justify-content:center;font-size:14px;padding-left:3px;box-shadow:0 8px 20px rgba(0,0,0,.5);}
+		.f_ficha_thumb .dur{position:absolute;bottom:6px;right:6px;background:rgba(11,15,26,0.9);color:#fff;font-family:oswald,sans-serif;font-size:11px;letter-spacing:.5px;padding:3px 7px;border-radius:5px;}
+		.f_ficha_info{flex:1;min-width:250px;}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;line-height:36px;color:#fff;margin:0 0 8px;}
+		.f_ficha_info .preg{margin:0 0 12px;color:rgba(255,255,255,0.7);font-size:14px;}
+		.f_ficha_info .preg i{margin-right:8px;color:#ffaa17;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;}
+		.f_ficha_info .metas .destaque{background:rgba(255,170,23,0.2);border-color:rgba(255,170,23,0.5);color:#ffcc70;}
+
+		/* ===== GRID DO FORMULÁRIO ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:960px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		/* ===== CAMPOS ===== */
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="url"],.f_campo input[type="email"],.f_campo select{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input:focus,.f_campo select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		span[style*="color: red"]{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+
+		.f_input_icon{position:relative;}
+		.f_input_icon input{padding-left:44px !important;}
+		.f_input_icon > i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#c81f45;font-size:16px;pointer-events:none;}
+
+		/* ===== PREVIEW ===== */
+		.f_preview{margin-top:14px;background:#f7fafd;border:1px solid #eef3f8;border-radius:12px;overflow:hidden;transition:.3s;}
+		.f_preview.on{background:#fff;border-color:rgba(14,92,166,0.2);box-shadow:0 20px 40px -25px rgba(0,64,128,.3);}
+		.f_preview_thumb{position:relative;width:100%;padding-bottom:56.25%;background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);overflow:hidden;}
+		.f_preview_thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;display:none;}
+		.f_preview.on .f_preview_thumb img{display:block;}
+		.f_preview_thumb .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.35);gap:10px;text-align:center;padding:0 24px;}
+		.f_preview.on .f_preview_thumb .placeholder{display:none;}
+		.f_preview_thumb .placeholder i{font-size:44px;}
+		.f_preview_thumb .placeholder p{margin:0;font-size:13px;letter-spacing:.5px;}
+		.f_preview_thumb .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);color:#c81f45;display:none;align-items:center;justify-content:center;font-size:22px;padding-left:5px;box-shadow:0 12px 30px -8px rgba(0,0,0,.6);}
+		.f_preview.on .f_preview_thumb .play{display:flex;}
+		.f_preview_info{padding:14px 18px;font-size:13px;color:#747474;display:flex;align-items:center;gap:10px;}
+		.f_preview_info i{color:#22a75e;}
+		.f_preview:not(.on) .f_preview_info i{color:#c3cdd9;}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;margin-bottom:12px;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle:last-child{margin-bottom:0;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-family:'Poppins',sans-serif;font-size:14px;color:#1b2032;font-weight:600;text-transform:none;letter-spacing:0;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== METADADOS LATERAIS ===== */
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:#ffaa17;margin-right:7px;}
+		.f_meta_box dd code{background:#f7fafd;padding:2px 8px;border-radius:5px;font-family:'Courier New',monospace;font-size:12.5px;color:#0e5ca6;border:1px solid #eef3f8;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 16px;font-size:13px;color:#747474;line-height:22px;}
+
+		/* ===== BARRA DE AÇÕES ===== */
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions input[type="submit"]{
+			display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;
+			background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(255,170,23,.6);
+		}
+		.f_actions input[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ================== SIDEBAR ================== -->
+<aside class="adm_side" id="adm_side">
+	<div class="adm_brand">
+		<span>Painel Editor</span>
+		<strong>Igreja de Cristo</strong>
+	</div>
+
+	<div class="adm_side_nav">
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Conteúdo</span>
+			<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+			<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link ativo"><i class="fa fa-play-circle"></i>Vídeos</a>
+			<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Comunidade</span>
+			<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+			<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+			<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Instituição</span>
+			<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+			<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+			<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+		</div>
+	</div>
+
+	<div class="adm_user">
+		<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+		<div class="adm_user_info">
+			<span>{{ current_user.ADMIN_NAME }}</span>
+			<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+		</div>
+		<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+	</div>
+</aside>
+
+<!-- ================== MAIN ================== -->
+<main class="adm_main">
+
+	<div class="adm_top">
+		<div style="display:flex;align-items:center;">
+			<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+			<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_videos') }}">Vídeos</a> / <strong>Editar</strong></span>
+		</div>
+		<div style="display:flex;gap:10px;">
+			<a href="{{ video_selected.VIDEO_URL }}" target="_blank" rel="noopener" class="adm_btn adm_btn_outline"><i class="fa fa-youtube-play"></i>Abrir no YouTube</a>
+			<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+	</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="f_ficha_head">
+			<div class="f_ficha_head_c">
+				<div class="f_ficha_thumb">
+					{% if video_selected.VIDEO_THUMBNAIL %}
+						<img src="{{ video_selected.VIDEO_THUMBNAIL }}" alt="{{ video_selected.VIDEO_TITLE }}" />
+					{% else %}
+						<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);"><i class="fa fa-picture-o" style="font-size:32px;"></i></div>
+					{% endif %}
+					<span class="play"><i class="fa fa-play"></i></span>
+					{% if video_selected.VIDEO_DURATION %}
+											{% set _s = video_selected.VIDEO_DURATION or 0 %}
+					<span class="dur">
+						{%- if _s >= 3600 -%}
+							{{ '%d:%02d:%02d'|format(_s // 3600, (_s % 3600) // 60, _s % 60) }}
+						{%- else -%}
+							{{ '%d:%02d'|format(_s // 60, _s % 60) }}
+						{%- endif -%}
+					</span>
+					{% endif %}
+				</div>
+				<div class="f_ficha_info">
+					<h1>{{ video_selected.VIDEO_TITLE }}</h1>
+					{% if video_selected.VIDEO_PREACHER %}
+						<p class="preg"><i class="fa fa-user"></i>{{ video_selected.VIDEO_PREACHER }}</p>
+					{% endif %}
+					<div class="metas">
+						{% if video_selected.VIDEO_PUBLISHED %}
+							<span><i class="fa fa-circle" style="font-size:8px;color:#22a75e;"></i>Publicado</span>
+						{% else %}
+							<span><i class="fa fa-file-o"></i>Rascunho</span>
+						{% endif %}
+						{% if video_selected.VIDEO_FEATURED %}
+							<span class="destaque"><i class="fa fa-star"></i>Destaque</span>
+						{% endif %}
+						{% if video_selected.VIDEO_CATEGORY %}
+							<span><i class="fa fa-tag"></i>{{ video_selected.VIDEO_CATEGORY }}</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<form id="loginForm" action="{{ url_for('administrador.atualizar_video', video_id=video_selected.VIDEO_ID) }}" method="POST">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Origem do vídeo</h3>
+							<div class="f_icone"><i class="fa fa-youtube-play"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.url.label }}
+							<div class="f_input_icon">
+								<i class="fa fa-youtube-play"></i>
+								{{ formulario.url(id="video_url", placeholder="https://www.youtube.com/watch?v=...") }}
+							</div>
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Ao trocar a URL, o thumbnail e a duração serão atualizados ao salvar.</small>
+							{% for error in formulario.url.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+
+							<div class="f_preview" id="video_preview">
+								<div class="f_preview_thumb">
+									<img id="preview_img" src="" alt="" />
+									<span class="play"><i class="fa fa-play"></i></span>
+									<div class="placeholder">
+										<i class="fa fa-youtube-play"></i>
+										<p>O preview aparece aqui quando a URL for válida</p>
+									</div>
+								</div>
+								<div class="f_preview_info">
+									<i class="fa fa-check-circle" id="preview_status_icon"></i>
+									<span id="preview_status">Aguardando URL</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.titulo.label }}
+							{{ formulario.titulo(placeholder="Ex.: Teu nome é cura") }}
+							<small class="f_ajuda">Aparece no card e na página do vídeo.</small>
+							{% for error in formulario.titulo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.pregador.label }}
+							{{ formulario.pregador(placeholder="Ex.: Pr. Antônio Silva") }}
+							<small class="f_ajuda">Nome do pregador ou responsável pelo conteúdo.</small>
+							{% for error in formulario.pregador.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Publicação</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.categoria.label }}
+							{{ formulario.categoria }}
+							<small class="f_ajuda">Usado para filtrar vídeos por tipo.</small>
+							{% for error in formulario.categoria.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+
+						<label class="f_toggle">
+							{{ formulario.destaque }}
+							<div class="info">
+								{{ formulario.destaque.label }}
+								<small>O vídeo aparece no carrossel da home.</small>
+							</div>
+						</label>
+						{% for error in formulario.destaque.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+
+						<label class="f_toggle">
+							{{ formulario.publicar }}
+							<div class="info">
+								{{ formulario.publicar.label }}
+								<small>Desmarcado, fica salvo como rascunho.</small>
+							</div>
+						</label>
+						{% for error in formulario.publicar.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+					</div>
+
+					<div class="f_meta_box">
+						<h4>Informações do vídeo</h4>
+						<dl>
+							<dt>ID no banco</dt>
+							<dd>#{{ '%04d'|format(video_selected.VIDEO_ID) }}</dd>
+
+							<dt>Duração</dt>
+							<dd>
+    <i class="fa fa-clock-o"></i>
+    {% if video_selected.VIDEO_DURATION %}
+        {% set _d = video_selected.VIDEO_DURATION %}
+        {%- if _d >= 3600 -%}
+            {{ '%d:%02d:%02d'|format(_d // 3600, (_d % 3600) // 60, _d % 60) }}
+        {%- else -%}
+            {{ '%d:%02d'|format(_d // 60, _d % 60) }}
+        {%- endif -%}
+    {% else %}—{% endif %}
+</dd>
+
+							<dt>Cadastrado em</dt>
+							<dd><i class="fa fa-calendar-o"></i>{{ video_selected.VIDEO_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+
+							{% if video_selected.VIDEO_UPDATED_AT %}
+							<dt>Última atualização</dt>
+							<dd><i class="fa fa-refresh"></i>{{ video_selected.VIDEO_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+							{% endif %}
+
+							<dt>Total de views</dt>
+							<dd><i class="fa fa-eye"></i>{{ '{:,}'.format(video_selected.VIDEO_VIEWS).replace(',', '.') }}</dd>
+						</dl>
+					</div>
+
+	
+
+				</div>
+
+			</div>
+
+			<!-- BARRA DE AÇÕES -->
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					{% if video_selected.VIDEO_UPDATED_AT %}
+						Última alteração em {{ video_selected.VIDEO_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% else %}
+						Cadastrado em {{ video_selected.VIDEO_CREATED_AT.strftime('%d/%m/%Y') }}
+					{% endif %}
+				</div>
+				<div class="dir">
+					<a href="{{url_for('administrador.exibir_videos')}}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					{{ formulario.submit(value='Atualizar vídeo') }}
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var campoUrl = document.getElementById('video_url');
+	var preview  = document.getElementById('video_preview');
+	var img      = document.getElementById('preview_img');
+	var status   = document.getElementById('preview_status');
+	var iconeSt  = document.getElementById('preview_status_icon');
+
+	function extrairId(url) {
+		if (!url) return null;
+		var padroes = [
+			/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([\w-]{11})/,
+			/^([\w-]{11})$/
+		];
+		for (var i = 0; i < padroes.length; i++) {
+			var m = url.match(padroes[i]);
+			if (m) return m[1];
+		}
+		return null;
+	}
+
+	function atualizar() {
+		var url = campoUrl.value.trim();
+		if (!url) {
+			preview.classList.remove('on');
+			status.textContent = 'Aguardando URL';
+			iconeSt.className = 'fa fa-check-circle';
+			iconeSt.style.color = '#c3cdd9';
+			return;
+		}
+		var id = extrairId(url);
+		if (id) {
+			img.src = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg';
+			preview.classList.add('on');
+			status.textContent = 'Vídeo reconhecido — ID: ' + id;
+			iconeSt.className = 'fa fa-check-circle';
+			iconeSt.style.color = '#22a75e';
+		} else {
+			preview.classList.remove('on');
+			status.textContent = 'URL não reconhecida — verifique o formato';
+			iconeSt.className = 'fa fa-exclamation-circle';
+			iconeSt.style.color = '#c81f45';
+		}
+	}
+
+	campoUrl.addEventListener('input', atualizar);
+	campoUrl.addEventListener('paste', function () { setTimeout(atualizar, 20); });
+	atualizar(); /* dispara ao carregar, já com a URL preenchida pelo WTForms */
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

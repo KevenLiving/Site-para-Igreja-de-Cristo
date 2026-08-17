@@ -106,11 +106,11 @@ def logar_no_sistema():
             # Registrando tentativa falha de login no log de segurança
             security_logger.warning(f'LOGIN_FAILURE: {admin_email} from {request.remote_addr}')
             flash ('Email ou senha incorretos', 'danger')
-            return render_template('login.html', formulario=formulario)
+            return render_template('auth_login.html', formulario=formulario)
         
             
 
-    return render_template('login.html', formulario=formulario)
+    return render_template('auth_login.html', formulario=formulario)
 
 
 # Caso o usuário tenha passado pela condicional, ele é novato. Ai que o jogo começa
@@ -168,7 +168,7 @@ def two_factor_first():
 
 
             # Renderizando o QR CODE 
-            return render_template('two_factor_first.html', qr_img_base64=qr_img_base64)
+            return render_template('auth_qrcode.html', qr_img_base64=qr_img_base64)
         
         else:
             return "Você está quase chegando lá e consquistando seus sonhos, anima-te"
@@ -200,7 +200,7 @@ def two_factor_first():
 
 
         # Renderizando o QR CODE 
-        return render_template('two_factor_first.html', qr_img_base64=qr_img_base64)
+        return render_template('auth_qrcode.html', qr_img_base64=qr_img_base64)
         
 
             
@@ -259,7 +259,7 @@ def two_factor_authentication():
             return redirect(url_for('auth.two_factor_authentication'))
         
     else:
-        return render_template('two_factor.html', code_form=code_form)
+        return render_template('auth_codigo.html', code_form=code_form)
 
 
 
@@ -270,3 +270,11 @@ def two_factor_authentication():
 def deslogar_do_sistema():
     logout_user()
     return redirect(url_for('auth.logar_no_sistema'))
+
+
+@auth_bp.route('/cancelar_login', methods=['GET', 'POST'])
+def cancelar_login():
+    
+    formulario = LoginForm()
+    
+    return render_template('auth_login.html', formulario=formulario)

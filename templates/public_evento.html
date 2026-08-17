@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ evento.EVENT_TITLE }} — Igreja de Cristo</title>
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+    <style>
+        .evento-descricao p { margin-bottom: 18px; }
+        .evento-descricao p:last-child { margin-bottom: 0; }
+        .evento-descricao h2, .evento-descricao h3 { color: #1b2032; margin: 24px 0 12px; }
+        .evento-descricao ul, .evento-descricao ol { padding-left: 22px; margin-bottom: 18px; }
+    </style>
+</head>
+
+<body data-spy="scroll" data-offset="80">
+
+    {% set dias_semana_extenso = {
+        0: 'Segunda-feira', 1: 'Terça-feira', 2: 'Quarta-feira',
+        3: 'Quinta-feira', 4: 'Sexta-feira', 5: 'Sábado', 6: 'Domingo'
+    } %}
+    {% set meses_extenso = {
+        1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
+        5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
+        9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
+    } %}
+    {% set meses_curto = {
+        1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Abr',
+        5: 'Mai', 6: 'Jun', 7: 'Jul', 8: 'Ago',
+        9: 'Set', 10: 'Out', 11: 'Nov', 12: 'Dez'
+    } %}
+
+    <div class="preloader">
+        <div class="spinner"><div class="double-bounce1"></div><div class="double-bounce2"></div></div>
+    </div>
+
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close mt-3"><span class="icon-close2 js-menu-toggle"></span></div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    <header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6 col-xl-2">
+                    <h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+                </div>
+                <div class="col-12 col-md-10 d-none d-xl-block">
+                    <nav class="site-navigation position-relative text-right" role="navigation">
+                        <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                            <li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+                            <li class="has-children">
+                                <a href="#" class="nav-link">Conteudo</a>
+                                <ul class="dropdown">
+                                    <li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+                                    <li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+                                </ul>
+                            </li>
+                            <li class="has-children">
+                                <a href="#" class="nav-link">Ministérios</a>
+                                <ul class="dropdown">
+                                    {% for ministerio in ministerios %}
+                                        <li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="nav-link">{{ ministerio.DEPARTMENT_NAME }}</a></li>
+                                    {% else %}
+                                        <li><a href="#" class="nav-link">Em breve</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li><a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a></li>
+                            <li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+                    <a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {# ============================================================
+       BANNER DO EVENTO
+    ============================================================ #}
+    <section style="position:relative;min-height:520px;display:flex;align-items:flex-end;padding:170px 0 60px;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);
+        {% if evento.EVENT_BANNER %}background-image:url({{ url_for('static', filename='uploads/eventos/' ~ evento.EVENT_BANNER) }});background-size:cover;background-position:center center;{% endif %}">
+
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,15,26,0.4) 0%,rgba(11,15,26,0.9) 100%);"></div>
+
+        <div class="container" style="position:relative;z-index:2;">
+            <div class="row">
+                <div class="col-lg-9">
+
+                    <a href="{{ url_for('public.agenda') }}" style="display:inline-flex;align-items:center;font-family:oswald,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:20px;text-decoration:none;">
+                        <i class="fa fa-long-arrow-left" style="margin-right:10px;"></i>Voltar para a agenda
+                    </a>
+
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
+                        {% if evento.EVENT_FEATURED %}
+                            <span style="background:#ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:30px;">
+                                <i class="fa fa-star" style="margin-right:6px;"></i>Destaque
+                            </span>
+                        {% endif %}
+                        {% if evento.EVENT_DATE < hoje %}
+                            <span style="background:rgba(255,255,255,0.15);color:#fff;font-family:oswald,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:30px;">Evento encerrado</span>
+                        {% elif evento.EVENT_DATE == hoje %}
+                            <span style="background:#22a75e;color:#fff;font-family:oswald,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:30px;">Acontece hoje</span>
+                        {% endif %}
+                    </div>
+
+                    <h1 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:56px;line-height:66px;color:#fff;margin:0 0 20px;">{{ evento.EVENT_TITLE }}</h1>
+
+                    <p style="font-size:16px;color:rgba(255,255,255,0.85);margin:0;">
+                        <i class="icon-calendar-o" style="color:#ffaa17;margin-right:10px;"></i>
+                        {{ dias_semana_extenso[evento.EVENT_DATE.weekday()] }}, {{ '%02d'|format(evento.EVENT_DATE.day) }} de {{ meses_extenso[evento.EVENT_DATE.month] }} de {{ evento.EVENT_DATE.year }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ============================================================
+       CONTEÚDO — descrição + card lateral com informações
+    ============================================================ #}
+    <section style="background:linear-gradient(180deg,#f9fcff 0%,#ffffff 100%);padding:80px 0;">
+        <div class="container">
+            <div class="row">
+
+                {# Coluna principal — descrição #}
+                <div class="col-lg-8 col-md-12" style="margin-bottom:30px;">
+                    {# Coluna principal — descrição #}
+                <div class="col-lg-8 col-md-12" style="margin-bottom:30px;">
+
+                    {% if evento.EVENT_BANNER %}
+                        <div style="border-radius:16px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,64,128,.45);margin-bottom:35px;">
+                            <img src="{{ url_for('static', filename='uploads/eventos/' ~ evento.EVENT_BANNER) }}" alt="{{ evento.EVENT_TITLE }}" style="width:100%;height:auto;display:block;" />
+                        </div>
+                    {% endif %}
+
+                    {% if evento.EVENT_DESCRIPTION %}
+                        <div class="evento-descricao" style="font-size:16px;line-height:32px;color:#4a5566;">
+                            {{ evento.EVENT_DESCRIPTION|safe }}
+                        </div>
+                    {% else %}
+                        <p style="font-size:16px;line-height:32px;color:#9aa3b0;font-style:italic;">Sem descrição adicional para este evento.</p>
+                    {% endif %}
+
+                </div>
+
+                    {% if evento.EVENT_DESCRIPTION %}
+                        <div class="evento-descricao" style="font-size:16px;line-height:32px;color:#4a5566;">
+                            {{ evento.EVENT_DESCRIPTION|safe }}
+                        </div>
+                    {% else %}
+                        <p style="font-size:16px;line-height:32px;color:#9aa3b0;font-style:italic;">Sem descrição adicional para este evento.</p>
+                    {% endif %}
+
+                </div>
+
+                {# Coluna lateral — card com informações rápidas #}
+                <div class="col-lg-4 col-md-12">
+                    <div style="position:sticky;top:100px;background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:30px;box-shadow:0 30px 55px -35px rgba(0,64,128,.35);">
+
+                        <span style="display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:20px;">Informações do evento</span>
+
+                        {# Data em destaque #}
+                        <div style="display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid #f2f6fa;margin-bottom:20px;">
+                            <div style="flex:0 0 auto;text-align:center;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);color:#fff;border-radius:12px;padding:10px 16px;min-width:70px;">
+                                <span style="display:block;font-family:oswald,sans-serif;font-size:28px;font-weight:600;line-height:1;">{{ '%02d'|format(evento.EVENT_DATE.day) }}</span>
+                                <span style="display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">{{ meses_curto[evento.EVENT_DATE.month] }}</span>
+                            </div>
+                            <div>
+                                <span style="display:block;font-size:12px;color:#9aa3b0;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Data</span>
+                                <strong style="font-size:14px;color:#1b2032;">{{ dias_semana_extenso[evento.EVENT_DATE.weekday()] }}</strong>
+                            </div>
+                        </div>
+
+                        {# Horário #}
+                        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+                            <div style="flex:0 0 42px;height:42px;background:rgba(255,170,23,0.12);color:#ffaa17;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="icon-clock-o" style="font-size:18px;"></i>
+                            </div>
+                            <div>
+                                <span style="display:block;font-size:12px;color:#9aa3b0;letter-spacing:1px;text-transform:uppercase;">Horário</span>
+                                <strong style="font-size:14px;color:#1b2032;">{% if evento.EVENT_TIME %}{{ evento.EVENT_TIME.strftime('%Hh%M') }}{% else %}A confirmar{% endif %}</strong>
+                            </div>
+                        </div>
+
+                        {# Local #}
+                        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px;">
+                            <div style="flex:0 0 42px;height:42px;background:rgba(14,92,166,0.12);color:#0e5ca6;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="icon-map-marker" style="font-size:18px;"></i>
+                            </div>
+                            <div>
+                                <span style="display:block;font-size:12px;color:#9aa3b0;letter-spacing:1px;text-transform:uppercase;">Local</span>
+                                <strong style="font-size:14px;color:#1b2032;">{{ evento.EVENT_LOCATION or 'A confirmar' }}</strong>
+                            </div>
+                        </div>
+
+                        {# Inscrição #}
+                        {% if evento.EVENT_REGISTRATION_REQUIRED %}
+                            <div style="background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.25);border-radius:12px;padding:14px 16px;margin-top:20px;">
+                                <p style="margin:0;font-size:13.5px;line-height:22px;color:#c97a00;">
+                                    <i class="fa fa-info-circle" style="margin-right:8px;"></i>Este evento requer <strong>inscrição prévia</strong>. Entre em contato com a equipe pastoral.
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        <a href="{{ url_for('public.contato') }}" style="display:block;text-align:center;width:100%;background:#ffaa17;border:2px solid #ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:14px;letter-spacing:1px;padding:12px;border-radius:30px;margin-top:22px;box-shadow:0 12px 30px -12px rgba(255,170,23,.65);transition:0.3s;text-decoration:none;" onmouseover="this.style.background='#1b2032';this.style.borderColor='#1b2032';" onmouseout="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';">
+                            Falar com a equipe <i class="fa fa-long-arrow-right" style="margin-left:8px;"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {# ============================================================
+       OUTROS EVENTOS
+    ============================================================ #}
+    {% if outros_eventos %}
+    <section style="background:#f6fafd;padding:80px 0;">
+        <div class="container">
+
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:28px;margin-bottom:45px;">
+                <h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:42px;color:#1b2032;margin:0;">Continue explorando</h2>
+                <span style="flex:1;min-width:40px;height:1px;background:#dde5ee;"></span>
+                <a href="{{ url_for('public.agenda') }}" style="font-size:14px;letter-spacing:1px;color:#9aa3b0;transition:0.3s;text-decoration:none;" onmouseover="this.style.color='#ffaa17';" onmouseout="this.style.color='#9aa3b0';">
+                    Ver toda a agenda <i class="fa fa-long-arrow-right" style="margin-left:6px;"></i>
+                </a>
+            </div>
+
+            <div class="row">
+                {% for outro in outros_eventos %}
+                <div class="col-lg-4 col-md-6 col-sm-12" style="margin-bottom:20px;">
+                    <a href="{{ url_for('public.evento', evento_id=outro.EVENT_ID) }}" style="display:block;background:#fff;border:1px solid #eef3f8;border-radius:14px;overflow:hidden;box-shadow:0 20px 40px -28px rgba(0,64,128,.3);transition:.3s;text-decoration:none;" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='rgba(255,170,23,0.45)';" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='#eef3f8';">
+                        <div style="height:160px;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);overflow:hidden;">
+                            {% if outro.EVENT_BANNER %}
+                                <img src="{{ url_for('static', filename='uploads/eventos/' + outro.EVENT_BANNER) }}" alt="{{ outro.EVENT_TITLE }}" style="width:100%;height:100%;object-fit:cover;" />
+                            {% endif %}
+                        </div>
+                        <div style="padding:22px 24px;">
+                            <p style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#ffaa17;margin-bottom:8px;">{{ '%02d'|format(outro.EVENT_DATE.day) }} {{ meses_curto[outro.EVENT_DATE.month] }} {{ outro.EVENT_DATE.year }}</p>
+                            <h4 style="margin:0;font-size:18px;font-weight:600;color:#1b2032;line-height:26px;">{{ outro.EVENT_TITLE }}</h4>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+    {% endif %}
+
+    {# ============================================================
+       FOOTER — igual ao resto do site
+    ============================================================ #}
+    <div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }}); background-size:cover;">
+        <div class="container">
+            <div class="row footer_bg">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="footer_logo">
+                        <img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+                        <p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+                    </div>
+                    <div class="social_profile">
+                        <ul>
+                            {% for rede in redes_sociais_publicas %}
+                                <li><a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}"><i class="fa {{ rede.SOCIAL_ICON }}"></i></a></li>
+                            {% else %}
+                                <li><a href="#"><i class="fa fa-share-alt"></i></a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single_footer">
+                        <h4>Experimente</h4>
+                        <ul>
+                            <li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+                            <li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+                            <li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single_footer">
+                        <h4>Comunidade</h4>
+                        <ul>
+                            <li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+                            <li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+                            <li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="newsletter-form">
+                        <h4>Inscreva-se para receber mais conteúdos</h4>
+                        <form class="validate">
+                            <div class="input-group input-group-lg newsletter">
+                                <input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+                                <button type="submit" class="subs_btn">Inscrever-se</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="footer_copyright"><p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+</body>
+</html>

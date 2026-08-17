@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar encontro — Agenda semanal</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;text-decoration:none;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.flash{padding:14px 18px;border-radius:12px;margin-bottom:14px;font-size:14px;display:flex;align-items:center;gap:10px;}
+		.flash_success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.flash_danger{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.form_erro{display:block;color:#c81f45;font-size:12.5px;margin-top:6px;}
+		.form_erro i{margin-right:5px;}
+
+		.f_ficha_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:20px;padding:30px 36px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.f_ficha_head.principal{background:linear-gradient(135deg,#ff8f00 0%,#c26e00 100%);}
+		.f_ficha_head:before{content:"";position:absolute;top:-120px;right:-70px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.14) 0%,rgba(255,255,255,0) 70%);}
+		.f_ficha_c{position:relative;z-index:2;display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+		.f_ficha_bola{width:86px;height:86px;border-radius:24px;background:rgba(255,255,255,0.18);border:3px solid rgba(255,255,255,0.28);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+		.f_ficha_bola strong{font-family:oswald,sans-serif;font-size:28px;line-height:1;}
+		.f_ficha_bola small{font-family:oswald,sans-serif;font-size:10px;letter-spacing:2px;margin-top:3px;opacity:.85;}
+		.f_ficha_info{flex:1;min-width:250px;}
+		.f_ficha_info .tag{display:inline-block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.85);margin-bottom:8px;}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;line-height:36px;color:#fff;margin:0 0 12px;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;}
+
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="time"],.f_campo textarea{width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;}
+		.f_campo textarea{height:auto;padding:14px 16px;min-height:100px;resize:vertical;line-height:22px;}
+		.f_campo input:focus,.f_campo textarea:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+
+		.f_dias{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+		@media (max-width:640px){.f_dias{grid-template-columns:repeat(4,1fr);}}
+		.f_dia{position:relative;background:#f7fafd;border:2px solid #e8eef5;border-radius:12px;padding:16px 8px;text-align:center;cursor:pointer;transition:.3s;user-select:none;}
+		.f_dia:hover{border-color:#ffaa17;background:#fff;transform:translateY(-2px);}
+		.f_dia .sig{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;transition:.3s;}
+		.f_dia .num{display:block;font-family:oswald,sans-serif;font-size:22px;font-weight:600;color:#1b2032;line-height:1;margin-top:6px;transition:.3s;}
+		.f_dia.sel{background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);border-color:#ffaa17;box-shadow:0 15px 30px -12px rgba(255,170,23,.6);}
+		.f_dia.sel .sig,.f_dia.sel .num{color:#fff;}
+		.f_dia.sel::after{content:"\f00c";font-family:FontAwesome;position:absolute;top:6px;right:8px;color:rgba(255,255,255,0.9);font-size:11px;}
+
+		.f_hora_wrap{display:flex;align-items:stretch;gap:12px;flex-wrap:wrap;}
+		.f_hora_wrap input[type="time"]{flex:0 0 auto;width:140px;}
+		.f_hora_sug{flex:1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+		.f_hora_sug span{font-family:oswald,sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9aa3b0;margin-right:4px;}
+		.f_hora_sug button{padding:7px 12px;font-size:12.5px;background:#f7fafd;border:1px solid #eef3f8;border-radius:20px;cursor:pointer;color:#747474;transition:.3s;font-family:inherit;}
+		.f_hora_sug button:hover{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:#ffaa17;margin-right:7px;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 12px;font-size:13px;color:#747474;line-height:22px;}
+
+		.f_conflitos{margin-top:14px;padding:12px 14px;border:1px dashed rgba(200,31,69,0.3);background:rgba(200,31,69,0.05);border-radius:10px;font-size:12.5px;color:#c81f45;display:none;}
+		.f_conflitos.on{display:block;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions button[type="submit"]{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group"><span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link ativo"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_agenda') }}">Agenda semanal</a> / <strong>Editar</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		{% with mensagens = get_flashed_messages(with_categories=true) %}
+			{% if mensagens %}
+				{% for categoria, mensagem in mensagens %}
+					<div class="flash flash_{{ 'success' if categoria == 'success' else 'danger' }}">
+						<i class="fa fa-{{ 'check-circle' if categoria == 'success' else 'exclamation-circle' }}"></i>
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<div class="f_ficha_head {{ 'principal' if agenda.SCHEDULE_DAY == 'Domingo' else '' }}">
+			<div class="f_ficha_c">
+				<div class="f_ficha_bola">
+					<strong>{{ agenda.SCHEDULE_TIME.strftime('%H:%M') if agenda.SCHEDULE_TIME else '--:--' }}</strong>
+					<small>{{ dias_info[agenda.SCHEDULE_DAY].abrev if agenda.SCHEDULE_DAY in dias_info else '' }}</small>
+				</div>
+				<div class="f_ficha_info">
+					<span class="tag">Encontro semanal</span>
+					<h1>{{ agenda.SCHEDULE_TITLE }}</h1>
+					<div class="metas">
+						<span>
+							<i class="fa fa-circle" style="font-size:8px;color:{{ '#22a75e' if agenda.SCHEDULE_ACTIVE else '#c97a00' }};"></i>
+							{{ 'Ativo' if agenda.SCHEDULE_ACTIVE else 'Pausado' }}
+						</span>
+						<span><i class="fa fa-calendar-o"></i>{{ agenda.SCHEDULE_DAY }}</span>
+						{% if agenda.SCHEDULE_LOCATION %}
+							<span><i class="fa fa-map-marker"></i>{{ agenda.SCHEDULE_LOCATION }}</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<form id="agendaForm" action="{{ url_for('administrador.atualizar_agenda', agenda_id=agenda.SCHEDULE_ID) }}" method="POST">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<div>
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="titulo">Nome do encontro</label>
+							<input type="text" id="titulo" name="titulo"
+								value="{{ formulario.titulo.data or agenda.SCHEDULE_TITLE }}" required />
+							{% if formulario.titulo.errors %}
+								{% for erro in formulario.titulo.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+						</div>
+
+						<div class="f_campo">
+							<label for="local">Local</label>
+							<input type="text" id="local" name="local"
+								value="{{ formulario.local.data or agenda.SCHEDULE_LOCATION or '' }}" />
+						</div>
+
+						<div class="f_campo">
+							<label for="descricao">Descrição</label>
+							<textarea id="descricao" name="descricao">{{ formulario.descricao.data or agenda.SCHEDULE_DESCRIPTION or '' }}</textarea>
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Quando acontece</h3>
+							<div class="f_icone"><i class="fa fa-calendar-o"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label>Dia da semana</label>
+							{% set dia_atual = formulario.dia.data or agenda.SCHEDULE_DAY %}
+							<div class="f_dias" id="dias_wrap">
+								{% for d in dias_lista %}
+									<div class="f_dia {{ 'sel' if dia_atual == d.nome else '' }}"
+									     data-dia="{{ d.nome }}" data-sig="{{ d.abrev }}">
+										<span class="sig">{{ d.abrev }}</span>
+										<span class="num">{{ '%02d'|format(loop.index) }}</span>
+									</div>
+								{% endfor %}
+							</div>
+							<input type="hidden" id="dia_input" name="dia" value="{{ dia_atual }}" />
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Trocar o dia move o encontro para a nova posição na grid.</small>
+						</div>
+
+						<div class="f_campo">
+							<label for="hora">Horário</label>
+							<div class="f_hora_wrap">
+								<input type="time" id="hora" name="hora"
+									value="{{ formulario.hora.data.strftime('%H:%M') if formulario.hora.data else agenda.SCHEDULE_TIME.strftime('%H:%M') }}" required />
+								<div class="f_hora_sug">
+									<span>Sugestões:</span>
+									{% for s in ['06:00','09:00','15:00','18:00','19:30','20:00'] %}
+										<button type="button" data-hora="{{ s }}">{{ s }}</button>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="f_conflitos" id="conflitos">
+								<i class="fa fa-exclamation-triangle"></i>
+								<strong>Conflito:</strong> <span id="conflito_msg"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Status</h3>
+							<div class="f_icone"><i class="fa fa-toggle-on"></i></div>
+						</div>
+						<label class="f_toggle">
+							<input type="checkbox" name="activate" value="y"
+								{% if formulario.activate.data if formulario.activate.data is not none else agenda.SCHEDULE_ACTIVE %}checked{% endif %} />
+							<div class="info">
+								<label>Encontro ativo</label>
+								<small>Desmarcado, some da home e do calendário sem apagar do sistema.</small>
+							</div>
+						</label>
+					</div>
+
+					<div class="f_meta_box">
+						<h4>Informações do encontro</h4>
+						<dl>
+							<dt>ID no banco</dt>
+							<dd>#{{ '%04d'|format(agenda.SCHEDULE_ID) }}</dd>
+
+							<dt>Cadastrado em</dt>
+							<dd><i class="fa fa-calendar-o"></i>{{ agenda.SCHEDULE_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+
+							{% if agenda.SCHEDULE_UPDATED_AT %}
+								<dt>Última atualização</dt>
+								<dd><i class="fa fa-refresh"></i>{{ agenda.SCHEDULE_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+							{% endif %}
+
+							{% if agenda.administrador %}
+								<dt>Cadastrado por</dt>
+								<dd><i class="fa fa-user"></i>{{ agenda.administrador.ADMIN_NAME }}</dd>
+							{% endif %}
+						</dl>
+					</div>
+
+					<div class="f_perigo">
+						<h4><i class="fa fa-exclamation-triangle"></i> Zona de perigo</h4>
+						<p>Excluir remove o encontro permanentemente. Se quer só tirar da home, desmarque a opção "Encontro ativo".</p>
+						<a href="{{ url_for('administrador.excluir_agenda', agenda_id=agenda.SCHEDULE_ID) }}"
+						   class="adm_btn adm_btn_danger" style="width:100%;justify-content:center;"
+						   onclick="return confirm('Excluir &quot;{{ agenda.SCHEDULE_TITLE|e }}&quot; definitivamente?');">
+							<i class="fa fa-trash"></i>Excluir permanentemente
+						</a>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					{% if agenda.SCHEDULE_UPDATED_AT %}
+						Última alteração em {{ agenda.SCHEDULE_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% else %}
+						Cadastrado em {{ agenda.SCHEDULE_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% endif %}
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit"><i class="fa fa-check"></i>Atualizar encontro</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var EXISTENTES = {{ existentes|tojson }};
+
+	var dias      = document.querySelectorAll('.f_dia');
+	var diaInput  = document.getElementById('dia_input');
+	var hora      = document.getElementById('hora');
+	var conflitos = document.getElementById('conflitos');
+	var conflMsg  = document.getElementById('conflito_msg');
+
+	dias.forEach(function (d) {
+		d.addEventListener('click', function () {
+			dias.forEach(function (x) { x.classList.remove('sel'); });
+			this.classList.add('sel');
+			diaInput.value = this.dataset.dia;
+			verificarConflito();
+		});
+	});
+
+	document.querySelectorAll('.f_hora_sug button').forEach(function (b) {
+		b.addEventListener('click', function () {
+			hora.value = this.dataset.hora;
+			verificarConflito();
+		});
+	});
+
+	hora.addEventListener('input', verificarConflito);
+
+	function verificarConflito() {
+		var d = diaInput.value;
+		var h = hora.value;
+		if (!d || !h) { conflitos.classList.remove('on'); return; }
+
+		var c = EXISTENTES.find(function (e) { return e.dia === d && e.hora === h; });
+		if (c) {
+			conflMsg.innerHTML = 'Já existe "<strong>' + c.titulo + '</strong>" agendado na ' + d + ' às ' + h + '.';
+			conflitos.classList.add('on');
+		} else {
+			conflitos.classList.remove('on');
+		}
+	}
+
+	document.getElementById('agendaForm').addEventListener('submit', function (e) {
+		if (!diaInput.value) { e.preventDefault(); alert('Escolha o dia da semana.'); return; }
+		if (!hora.value) { e.preventDefault(); alert('Informe o horário.'); hora.focus(); return; }
+	});
+
+	verificarConflito();
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

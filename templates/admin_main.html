@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Painel Editor — Igreja de Cristo</title>
+	
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:absolute;bottom:0;left:0;right:0;padding:20px 30px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+		.adm_btn_ghost{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2);}
+		.adm_btn_ghost:hover{background:rgba(255,255,255,0.16);color:#fff;border-color:#fff;}
+
+		/* ===== BOAS-VINDAS ===== */
+		.adm_welcome{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:20px;padding:50px 55px;color:#fff;position:relative;overflow:hidden;margin-bottom:34px;}
+		.adm_welcome:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.22) 0%,rgba(255,170,23,0) 70%);}
+		.adm_welcome:after{content:"";position:absolute;bottom:-160px;left:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0) 70%);}
+		.adm_welcome_c{position:relative;z-index:2;max-width:640px;}
+		.adm_welcome_tag{display:inline-block;font-family:oswald,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;}
+		.adm_welcome h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:42px;line-height:54px;margin:0 0 16px;color:#fff;}
+		.adm_welcome p{font-size:16px;line-height:28px;color:rgba(255,255,255,0.78);margin-bottom:28px;}
+
+		/* ===== ESTATÍSTICAS ===== */
+		.ed_stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:44px;}
+		.ed_stat{background:#fff;border:1px solid #eef3f8;border-radius:14px;padding:22px 24px;display:flex;align-items:center;gap:14px;transition:.3s;}
+		.ed_stat:hover{transform:translateY(-3px);box-shadow:0 20px 40px -25px rgba(0,64,128,.3);}
+		.ed_stat_icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+		.ed_stat h3{font-family:oswald,sans-serif;font-size:26px;font-weight:600;color:#1b2032;margin:0;line-height:1;}
+		.ed_stat small{display:block;font-size:11.5px;color:#9aa3b0;letter-spacing:.5px;margin-top:4px;}
+
+		/* ===== GRUPOS DE RECURSOS ===== */
+		.ed_secao{margin-bottom:40px;}
+		.ed_secao_head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;}
+		.ed_secao_head h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:26px;color:#1b2032;margin:0;}
+		.ed_secao_head small{font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;}
+		.ed_secao_head span.linha{flex:1;height:1px;background:#e8eef5;}
+
+		.ed_grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;}
+
+		.ed_card{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:28px 30px;transition:.4s ease;overflow:hidden;color:inherit;min-height:220px;}
+		.ed_card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--cor,#ffaa17);transform:scaleX(0);transform-origin:left;transition:.4s ease;}
+		.ed_card:hover{transform:translateY(-6px);box-shadow:0 30px 55px -25px rgba(0,64,128,.35);border-color:transparent;color:inherit;}
+		.ed_card:hover:before{transform:scaleX(1);}
+		.ed_card:hover .ed_card_icon{transform:scale(1.08);}
+		.ed_card:hover .ed_card_arrow{transform:translateX(6px);color:var(--cor,#ffaa17);}
+
+		.ed_card_icon{width:56px;height:56px;border-radius:14px;background:var(--fundo,rgba(255,170,23,0.12));color:var(--cor,#ff8f00);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px;transition:.35s ease;}
+		.ed_card h4{margin:0 0 8px;font-size:18px;font-weight:600;color:#1b2032;letter-spacing:.2px;}
+		.ed_card p{margin:0;font-size:13.5px;color:#747474;line-height:22px;flex:1;}
+
+		.ed_card_foot{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid #f2f6fa;}
+		.ed_card_count{display:flex;align-items:baseline;gap:6px;}
+		.ed_card_count strong{font-family:oswald,sans-serif;font-size:20px;font-weight:600;color:#1b2032;line-height:1;}
+		.ed_card_count span{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9aa3b0;}
+		.ed_card_arrow{width:34px;height:34px;border-radius:50%;background:#f7fafd;color:#c3cdd9;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.35s ease;}
+
+		/* ===== RESPONSIVO ===== */
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_welcome{padding:34px 30px;}
+			.adm_welcome h1{font-size:30px;line-height:40px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+
+		.adm_side{
+			flex:0 0 270px;
+			background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);
+			color:#fff;
+			padding:34px 0 0;
+			position:sticky;
+			top:0;
+			height:100vh;
+			overflow-y:auto;
+			display:flex;
+			flex-direction:column;
+		}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+
+		.adm_user{
+			position:sticky;
+			bottom:0;
+			margin-top:auto;
+			padding:18px 24px;
+			background:rgba(9,14,26,0.95);
+			backdrop-filter:blur(8px);
+			-webkit-backdrop-filter:blur(8px);
+			border-top:1px solid rgba(255,255,255,0.1);
+			display:flex;
+			align-items:center;
+			gap:12px;
+			z-index:2;
+		}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ============ SIDEBAR ============ -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand">
+			<span>Painel Editor</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link ativo"><i class="fa fa-home"></i>Início</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Conteúdo</span>
+			<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+			<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+			<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Comunidade</span>
+			<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+			<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+			<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Instituição</span>
+			<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+			<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+			<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+		</div>
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ iniciais_administrador }}</div>
+			<div class="adm_user_info">
+				<span>{{ administrador.ADMIN_NAME }}</span>
+				<small>{{ administrador.ADMIN_ROLE|capitalize }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<!-- ============ CONTEÚDO ============ -->
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <strong>Início</strong></span>
+			</div>
+			<div style="display:flex;gap:10px;align-items:center;">
+				<a href="#" class="adm_btn adm_btn_outline"><i class="fa fa-eye"></i>Ver site</a>
+				<a href="{{ url_for('administrador.cadastrar_estudo') }}" class="adm_btn adm_btn_primary"><i class="fa fa-plus"></i>Nova pregação</a>
+			</div>
+		</div>
+
+		<!-- BOAS-VINDAS -->
+		<div class="adm_welcome">
+			<div class="adm_welcome_c">
+				<span class="adm_welcome_tag">Bem-vinda de volta</span>
+				<h1>Olá, {{ primeiro_nome }}. O que vamos publicar hoje?</h1>
+				<p>Aqui você cuida de tudo que aparece no site: pregações, vídeos, eventos, devocionais e mais. Escolha por onde começar ou volte a algo que estava editando.</p>
+				<div style="display:flex;gap:12px;flex-wrap:wrap;">
+					<a href="{{ url_for('administrador.cadastrar_estudo') }}" class="adm_btn adm_btn_primary"><i class="fa fa-book"></i>Publicar pregação</a>
+					<a href="{{ url_for('administrador.adicionar_evento') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-calendar-plus-o"></i>Criar evento</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- ESTATÍSTICAS ATÉ AQUI -->
+		<div class="ed_stats">
+			<div class="ed_stat">
+				<div class="ed_stat_icon" style="background:rgba(255,170,23,0.14);color:#ff8f00;"><i class="fa fa-book"></i></div>
+				<div><h3>{{ pregacoes_publicadas }}</h3><small>Pregações publicadas</small></div>
+			</div>
+			<div class="ed_stat">
+				<div class="ed_stat_icon" style="background:rgba(14,92,166,0.13);color:#0e5ca6;"><i class="fa fa-play-circle"></i></div>
+				<div><h3>{{ videos_acervo }}</h3><small>Vídeos no acervo</small></div>
+			</div>
+			<div class="ed_stat">
+				<div class="ed_stat_icon" style="background:rgba(200,31,69,0.12);color:#c81f45;"><i class="fa fa-heart"></i></div>
+				<div><h3>{{ pedidos_oracao }}</h3><small>{{ pedidos_oracao_titulo }}</small></div>
+			</div>
+			<div class="ed_stat">
+				<div class="ed_stat_icon" style="background:rgba(34,167,94,0.13);color:#22a75e;"><i class="fa fa-calendar-check-o"></i></div>
+				<div><h3>{{ eventos_proximos }}</h3><small>Eventos próximos</small></div>
+			</div>
+		</div>
+
+		<!-- ============ CONTEÚDO ============ -->
+		<div class="ed_secao">
+			<div class="ed_secao_head">
+				<h2>Conteúdo</h2>
+				<small>Mensagens, vídeos e devocional</small>
+				<span class="linha"></span>
+			</div>
+			<div class="ed_grid">
+
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="ed_card" style="--cor:#ff8f00;--fundo:rgba(255,170,23,0.13);">
+					<div class="ed_card_icon"><i class="fa fa-book"></i></div>
+					<h4>Pregações</h4>
+					<p>Cadastre e organize os estudos bíblicos publicados no site. Adicione título, referência, banner e conteúdo pré-formatado.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ pregacoes_publicadas }}</strong><span>publicadas</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="ed_card" style="--cor:#0e5ca6;--fundo:rgba(14,92,166,0.12);">
+					<div class="ed_card_icon"><i class="fa fa-play-circle"></i></div>
+					<h4>Vídeos</h4>
+					<p>Publique pregações e testemunhos em vídeo direto do canal do YouTube. Thumbnail e duração são preenchidos automaticamente.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ videos_acervo }}</strong><span>vídeos</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="ed_card" style="--cor:#8e58dc;--fundo:rgba(142,88,220,0.12);">
+					<div class="ed_card_icon"><i class="fa fa-sun-o"></i></div>
+					<h4>Devocional</h4>
+					<p>Programe o devocional que aparece na home da semana. Data, título, versículo base e o link para a leitura completa.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ devocionais_agendados }}</strong><span>agendados</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+			</div>
+		</div>
+
+		<!-- ============ COMUNIDADE ============ -->
+		<div class="ed_secao">
+			<div class="ed_secao_head">
+				<h2>Comunidade</h2>
+				<small>Calendário, encontros e cuidado</small>
+				<span class="linha"></span>
+			</div>
+			<div class="ed_grid">
+
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="ed_card" style="--cor:#22a75e;--fundo:rgba(34,167,94,0.13);">
+					<div class="ed_card_icon"><i class="fa fa-calendar"></i></div>
+					<h4>Eventos</h4>
+					<p>Crie eventos pontuais com data, horário, local e cartaz. Marque como destaque para aparecerem na home.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ eventos_proximos }}</strong><span>próximos</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{url_for('administrador.exibir_agenda')}}" class="ed_card" style="--cor:#0e5ca6;--fundo:rgba(14,92,166,0.12);">
+					<div class="ed_card_icon"><i class="fa fa-clock-o"></i></div>
+					<h4>Agenda semanal</h4>
+					<p>Configure os cultos e encontros regulares — dia da semana, horário e local. Aparecem na home e na página de calendário.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ encontros_fixos }}</strong><span>encontros fixos</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="ed_card" style="--cor:#c81f45;--fundo:rgba(200,31,69,0.1);">
+					<div class="ed_card_icon"><i class="fa fa-heart"></i></div>
+					<h4>Pedidos de oração</h4>
+					<p>Acompanhe os pedidos enviados pelo site. Marque como orado, encaminhe para a liderança e responda quando autorizado.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ pedidos_oracao }}</strong><span>{{ pedidos_oracao_contexto }}</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+			</div>
+		</div>
+
+		<!-- ============ INSTITUIÇÃO ============ -->
+		<div class="ed_secao">
+			<div class="ed_secao_head">
+				<h2>Instituição</h2>
+				<small>Identidade, ministérios e presença</small>
+				<span class="linha"></span>
+			</div>
+			<div class="ed_grid">
+
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="ed_card" style="--cor:#0cbce3;--fundo:rgba(12,188,227,0.13);">
+					<div class="ed_card_icon"><i class="fa fa-users"></i></div>
+					<h4>Departamentos</h4>
+					<p>Cadastre os ministérios, com nome, descrição, líder responsável e formas de contato. Cada um vira uma página no site.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ departamentos_ativos }}</strong><span>ativos</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="ed_card" style="--cor:#ff8f00;--fundo:rgba(255,170,23,0.13);">
+					<div class="ed_card_icon"><i class="fa fa-history"></i></div>
+					<h4>História da igreja</h4>
+					<p>Escreva a história da comunidade em capítulos — cada trecho com título, período, texto e uma foto ilustrativa.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ capitulos_historia }}</strong><span>capítulos</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="ed_card" style="--cor:#8e58dc;--fundo:rgba(142,88,220,0.12);">
+					<div class="ed_card_icon"><i class="fa fa-share-alt"></i></div>
+					<h4>Redes sociais</h4>
+					<p>Gerencie os links das redes que aparecem no rodapé do site: Instagram, Facebook, YouTube, WhatsApp e outras.</p>
+					<div class="ed_card_foot">
+						<div class="ed_card_count"><strong>{{ redes_sociais_ativas }}</strong><span>vinculadas</span></div>
+						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
+					</div>
+				</a>
+
+			</div>
+		</div>
+
+	</main>
+</div>
+
+<script>
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+</script>
+
+</body>
+</html>

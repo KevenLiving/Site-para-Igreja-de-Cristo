@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Conectar rede social — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		.flash{padding:14px 18px;border-radius:12px;margin-bottom:14px;font-size:14px;display:flex;align-items:center;gap:10px;}
+		.flash_success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.flash_danger{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.form_erro{display:block;color:#c81f45;font-size:12.5px;margin-top:6px;}
+		.form_erro i{margin-right:5px;}
+
+		.wz_steps{display:flex;align-items:center;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
+		.wz_step{display:flex;align-items:center;gap:10px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;font-weight:500;}
+		.wz_step .num{width:30px;height:30px;border-radius:50%;background:#f0f3f7;color:#9aa3b0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;transition:.3s;}
+		.wz_step.on{color:#1b2032;}
+		.wz_step.on .num{background:#ffaa17;color:#fff;box-shadow:0 6px 15px -5px rgba(255,170,23,.5);}
+		.wz_step.feito .num{background:#22a75e;color:#fff;}
+		.wz_step.feito .num::before{content:"\f00c";font-family:FontAwesome;}
+		.wz_step.feito .num span{display:none;}
+		.wz_conector{flex:1;max-width:80px;height:2px;background:#f0f3f7;border-radius:2px;transition:.3s;}
+		.wz_conector.feito{background:#22a75e;}
+
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:30px 32px;margin-bottom:22px;transition:.3s;}
+		.f_card.desabilitado{opacity:.5;pointer-events:none;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;display:flex;align-items:center;gap:12px;}
+		.f_card_head h3 .badge_num{width:28px;height:28px;border-radius:50%;background:rgba(255,170,23,0.15);color:#ff8f00;display:inline-flex;align-items:center;justify-content:center;font-family:oswald,sans-serif;font-size:13px;font-weight:600;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.p_grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+		.p_btn{position:relative;background:#f7fafd;border:2px solid #eef3f8;border-radius:14px;padding:22px 12px 16px;text-align:center;cursor:pointer;transition:.3s;font-family:inherit;overflow:hidden;}
+		.p_btn:hover:not(.tomada){border-color:var(--marca,#ffaa17);transform:translateY(-3px);box-shadow:0 15px 30px -18px var(--sombra,rgba(255,170,23,.4));background:#fff;}
+		.p_btn.sel{border-color:var(--marca);background:#fff;box-shadow:0 20px 40px -18px var(--sombra);transform:translateY(-3px);}
+		.p_btn.sel::before{content:"\f00c";font-family:FontAwesome;position:absolute;top:8px;right:10px;color:var(--marca);font-size:14px;}
+		.p_btn.tomada{opacity:.45;cursor:not-allowed;background:#f0f3f7;}
+		.p_btn.tomada::after{content:"Já conectado";position:absolute;top:6px;right:8px;background:#22a75e;color:#fff;font-family:oswald,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:10px;}
+		.p_btn .icone{width:52px;height:52px;border-radius:14px;background:var(--marca,#c3cdd9);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px;box-shadow:0 8px 15px -6px var(--sombra,rgba(0,0,0,.15));transition:.3s;}
+		.p_btn.tomada .icone{background:#c3cdd9;box-shadow:none;}
+		.p_btn strong{display:block;font-size:13px;color:#1b2032;font-weight:600;letter-spacing:.2px;}
+		.p_btn small{display:block;font-size:10.5px;color:#9aa3b0;margin-top:2px;font-style:italic;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="url"],.f_campo input[type="number"]{width:100%;height:52px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;}
+		.f_campo input:focus{border-color:var(--sel-cor,#ffaa17);background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;line-height:20px;}
+		.f_ajuda i{color:var(--sel-cor,#0e5ca6);margin-right:5px;}
+		.f_ajuda code{background:#f7fafd;padding:2px 8px;border-radius:5px;font-family:'Courier New',monospace;font-size:12px;color:var(--sel-cor,#0e5ca6);border:1px solid #eef3f8;}
+
+		.f_url_wrap{position:relative;}
+		.f_url_wrap .prefixo{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--sel-cor,#9aa3b0);font-size:16px;pointer-events:none;}
+		.f_url_wrap input{padding-left:44px !important;}
+
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:var(--sel-cor,#ffaa17);}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:var(--sel-cor,#ffaa17);cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		.prev_wrap{position:sticky;top:24px;}
+		.prev_topo{background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);border-radius:16px;padding:26px 28px;margin-bottom:18px;position:relative;overflow:hidden;}
+		.prev_topo:before{content:"";position:absolute;top:-70px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.14) 0%,rgba(255,170,23,0) 70%);}
+		.prev_topo h4{position:relative;z-index:2;margin:0 0 18px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;}
+		.prev_novo{position:relative;z-index:2;text-align:center;margin-bottom:20px;}
+		.prev_novo .grande{width:96px;height:96px;border-radius:24px;background:var(--sel-cor,rgba(255,255,255,0.12));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 25px 45px -12px var(--sel-sombra,rgba(0,0,0,.4));transition:.4s cubic-bezier(0.34,1.56,0.64,1);border:3px solid rgba(255,255,255,0.1);}
+		.prev_novo.sem .grande{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);box-shadow:none;font-size:36px;}
+		.prev_novo .nome{display:block;font-family:Georgia,serif;font-style:italic;font-size:20px;color:#fff;margin-top:14px;}
+		.prev_novo .nome_vazio{color:rgba(255,255,255,0.4);font-style:italic;font-size:15px;}
+		.prev_novo .url_prev{display:block;font-size:11px;color:rgba(255,255,255,0.55);margin-top:6px;font-family:'Courier New',monospace;word-break:break-all;padding:0 10px;line-height:16px;}
+
+		.prev_footer{position:relative;z-index:2;padding:16px 20px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;}
+		.prev_footer small{display:block;font-family:Georgia,serif;font-style:italic;font-size:11.5px;color:rgba(255,255,255,0.5);margin-bottom:10px;}
+		.prev_icons{display:flex;gap:8px;flex-wrap:wrap;}
+		.prev_icons .ic{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);display:inline-flex;align-items:center;justify-content:center;font-size:13px;transition:.3s;}
+		.prev_icons .ic.novo{background:var(--sel-cor,#ffaa17);color:#fff;transform:scale(1.15);box-shadow:0 6px 15px -3px var(--sel-sombra,rgba(255,170,23,.5));animation:pulseSocial 2s ease-in-out infinite;}
+		@keyframes pulseSocial{0%,100%{transform:scale(1.15);}50%{transform:scale(1.25);}}
+
+		.prev_dica{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.15);border-radius:12px;padding:14px 16px;font-size:12.5px;color:#5f6b7a;line-height:19px;display:flex;gap:10px;align-items:flex-start;}
+		.prev_dica i{color:#0e5ca6;font-size:15px;flex-shrink:0;margin-top:1px;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions .salvar{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid var(--sel-cor,#ffaa17);background:var(--sel-cor,#ffaa17);color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px var(--sel-sombra,rgba(255,170,23,.6));}
+		.f_actions .salvar:hover{filter:brightness(0.9);}
+		.f_actions .salvar:disabled{background:#c3cdd9;border-color:#c3cdd9;color:#fff;cursor:not-allowed;box-shadow:none;opacity:.7;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group"><span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link ativo"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_redes_sociais') }}">Redes sociais</a> / <strong>Nova conexão</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Conectar rede social</h1>
+			<p>Escolha uma plataforma disponível e informe o link do perfil oficial da igreja.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for categoria, mensagem in messages %}
+					<div class="flash flash_{{ 'success' if categoria == 'success' else 'danger' }}">
+						<i class="fa fa-{{ 'check-circle' if categoria == 'success' else 'exclamation-circle' }}"></i>
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<div class="wz_steps">
+			<div class="wz_step" id="wz1"><div class="num"><span>1</span></div><span>Plataforma</span></div>
+			<div class="wz_conector" id="wz_conec"></div>
+			<div class="wz_step" id="wz2"><div class="num"><span>2</span></div><span>URL e opções</span></div>
+		</div>
+
+		<form id="redeForm" action="{{ url_for('administrador.adicionar_rede_social') }}" method="POST">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<div>
+					<!-- 1. ESCOLHER PLATAFORMA -->
+					<div class="f_card" id="card_plat">
+						<div class="f_card_head">
+							<h3><span class="badge_num">1</span>Escolha a plataforma</h3>
+							<div class="f_icone"><i class="fa fa-th"></i></div>
+						</div>
+
+						<div class="p_grid">
+							{% for slug, meta in plataformas.items() %}
+								{% set tomada = slug in slugs_tomados %}
+								<button type="button"
+								        class="p_btn {{ 'tomada' if tomada else '' }} {{ 'sel' if slug == plataforma_preselecionada else '' }}"
+								        data-plat="{{ slug }}"
+								        data-nome="{{ meta.nome }}"
+								        data-icone="{{ meta.icone }}"
+								        data-cor="{{ meta.cor }}"
+								        data-sombra="{{ meta.sombra }}"
+								        data-exemplo="{{ meta.ex }}"
+								        {% if tomada %}disabled title="Já conectado — edite a conexão existente"{% endif %}
+								        style="--marca:{{ meta.cor }};--sombra:{{ meta.sombra }};">
+									<div class="icone" {% if meta.get('gradiente') %}style="background:{{ meta.gradiente }};"{% endif %}>
+										<i class="{{ meta.icone }}"></i>
+									</div>
+									<strong>{{ meta.nome }}</strong>
+									<small>{{ meta.sub }}</small>
+								</button>
+							{% endfor %}
+						</div>
+
+						{% if formulario.plataforma.errors %}
+							{% for erro in formulario.plataforma.errors %}
+								<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						{% endif %}
+
+						<div style="margin-top:16px;padding:12px 16px;background:#f9fcff;border:1px solid rgba(14,92,166,0.12);border-radius:10px;font-size:12.5px;color:#5f6b7a;display:flex;align-items:center;gap:10px;">
+							<i class="fa fa-info-circle" style="color:#0e5ca6;font-size:14px;"></i>
+							<span>Plataformas marcadas como <strong style="color:#22a75e;">"Já conectado"</strong> não podem ser cadastradas novamente. Para trocar a URL, edite a conexão existente.</span>
+						</div>
+					</div>
+
+					<!-- 2. URL E OPÇÕES -->
+					<div class="f_card {{ '' if plataforma_preselecionada else 'desabilitado' }}" id="card_url">
+						<div class="f_card_head">
+							<h3><span class="badge_num">2</span>URL e opções</h3>
+							<div class="f_icone"><i class="fa fa-link"></i></div>
+						</div>
+
+						<input type="hidden" name="plataforma" id="plat_input" value="{{ plataforma_preselecionada or formulario.plataforma.data or '' }}" />
+
+						<div class="f_campo">
+							<label for="url">Link do perfil</label>
+							<div class="f_url_wrap">
+								<i class="fa fa-globe prefixo" id="url_icon"></i>
+								<input type="url" id="url" name="url"
+									value="{{ formulario.url.data or '' }}"
+									placeholder="Escolha uma plataforma primeiro"
+									{% if not plataforma_preselecionada %}disabled{% endif %} />
+							</div>
+							{% if formulario.url.errors %}
+								{% for erro in formulario.url.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+							<small class="f_ajuda" id="url_dica"><i class="fa fa-info-circle"></i>Depois de escolher a plataforma, você verá o formato esperado do link.</small>
+						</div>
+
+						<div class="f_campo">
+							<label for="ordem">Ordem no rodapé</label>
+							<input type="number" id="ordem" name="ordem"
+								value="{{ formulario.ordem.data or proxima_ordem }}" min="0"
+								{% if not plataforma_preselecionada %}disabled{% endif %} />
+							{% if formulario.ordem.errors %}
+								{% for erro in formulario.ordem.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+							<small class="f_ajuda"><i class="fa fa-sort"></i>Números menores aparecem primeiro. Padrão: última posição.</small>
+						</div>
+
+						<label class="f_toggle">
+							<input type="checkbox" name="ativo" id="ativo" value="y" {% if formulario.ativo.data or formulario.ativo.data is none %}checked{% endif %}
+								{% if not plataforma_preselecionada %}disabled{% endif %} />
+							<div class="info">
+								<label>Ativar imediatamente</label>
+								<small>Marcado, o ícone aparece no rodapé assim que salvo.</small>
+							</div>
+						</label>
+					</div>
+				</div>
+
+				<div>
+					<div class="prev_wrap">
+						<div class="prev_topo">
+							<h4><i class="fa fa-eye" style="margin-right:6px;"></i>Prévia da conexão</h4>
+							<div class="prev_novo {{ '' if plataforma_preselecionada else 'sem' }}" id="prev_novo">
+								<div class="grande" id="prev_grande">
+									{% if plataforma_preselecionada %}
+										<i class="{{ plataformas[plataforma_preselecionada].icone }}"></i>
+									{% else %}
+										<i class="fa fa-hand-o-up"></i>
+									{% endif %}
+								</div>
+								<span class="nome {{ '' if plataforma_preselecionada else 'nome_vazio' }}" id="prev_nome">
+									{{ plataformas[plataforma_preselecionada].nome if plataforma_preselecionada else 'Nenhuma plataforma escolhida' }}
+								</span>
+								<span class="url_prev" id="prev_url" style="{% if not formulario.url.data %}display:none;{% endif %}">{{ formulario.url.data or '' }}</span>
+							</div>
+
+							<div class="prev_footer">
+								<small>No rodapé do site</small>
+								<div class="prev_icons" id="prev_icons">
+									{% for rede in redes_ativas %}
+										{% set m = plataformas.get(rede.SOCIAL_PLATFORM, {}) %}
+										<span class="ic" title="{{ m.get('nome', rede.SOCIAL_PLATFORM) }}"
+										      style="background:{{ m.get('cor_bg','rgba(255,255,255,0.12)') }};color:{{ m.get('cor_ic','#fff') }};">
+											<i class="{{ rede.SOCIAL_ICON or m.get('icone','fa fa-globe') }}"></i>
+										</span>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+
+						<div class="prev_dica">
+							<i class="fa fa-lightbulb-o"></i>
+							<div>Use sempre o link do <strong>perfil oficial da igreja</strong> — não links de posts individuais ou promoções.</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					A rede aparece no rodapé de todas as páginas assim que salva.
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit" class="salvar" id="btn_salvar" {% if not plataforma_preselecionada %}disabled{% endif %}>
+						<i class="fa fa-check"></i>Conectar rede
+					</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var PLATAFORMAS = {{ plataformas|tojson }};
+	var preSel = {{ (plataforma_preselecionada or '')|tojson }};
+
+	var cardUrl   = document.getElementById('card_url');
+	var urlInput  = document.getElementById('url');
+	var urlIcon   = document.getElementById('url_icon');
+	var urlDica   = document.getElementById('url_dica');
+	var platIn    = document.getElementById('plat_input');
+	var ordemIn   = document.getElementById('ordem');
+	var ativoIn   = document.getElementById('ativo');
+	var btnSalvar = document.getElementById('btn_salvar');
+	var prevNovo   = document.getElementById('prev_novo');
+	var prevGrande = document.getElementById('prev_grande');
+	var prevNome   = document.getElementById('prev_nome');
+	var prevUrl    = document.getElementById('prev_url');
+	var prevIcons  = document.getElementById('prev_icons');
+	var wz1 = document.getElementById('wz1');
+	var wz2 = document.getElementById('wz2');
+	var wzC = document.getElementById('wz_conec');
+
+	var platSel = preSel || null;
+
+	function ativarEtapa2(slug) {
+		var p = PLATAFORMAS[slug];
+		if (!p) return;
+		platSel = slug;
+
+		cardUrl.classList.remove('desabilitado');
+		urlInput.disabled = false;
+		ordemIn.disabled = false;
+		ativoIn.disabled = false;
+		btnSalvar.disabled = false;
+
+		document.documentElement.style.setProperty('--sel-cor', p.cor);
+		document.documentElement.style.setProperty('--sel-sombra', p.sombra);
+
+		platIn.value = slug;
+		urlInput.placeholder = p.ex;
+		urlIcon.className = p.icone + ' prefixo';
+		urlDica.innerHTML = '<i class="fa fa-info-circle"></i>Exemplo: <code>' + p.ex + '</code>';
+
+		wz1.classList.add('feito'); wz1.classList.remove('on');
+		wz2.classList.add('on');
+		wzC.classList.add('feito');
+
+		prevNovo.classList.remove('sem');
+		prevGrande.innerHTML = '<i class="' + p.icone + '"></i>';
+		prevGrande.style.background = p.gradiente || ('linear-gradient(135deg,' + p.cor + ' 0%,' + escurecer(p.cor,25) + ' 100%)');
+		prevGrande.style.boxShadow = '0 25px 45px -12px ' + p.sombra;
+		prevNome.className = 'nome';
+		prevNome.textContent = p.nome;
+
+		var existente = prevIcons.querySelector('.novo');
+		if (existente) existente.remove();
+		var novoIc = document.createElement('span');
+		novoIc.className = 'ic novo';
+		novoIc.title = p.nome;
+		novoIc.innerHTML = '<i class="' + p.icone + '"></i>';
+		prevIcons.appendChild(novoIc);
+
+		if (!urlInput.value) urlInput.focus();
+	}
+
+	document.querySelectorAll('.p_btn').forEach(function (b) {
+		b.addEventListener('click', function () {
+			if (this.classList.contains('tomada')) return;
+			document.querySelectorAll('.p_btn').forEach(function (x) { x.classList.remove('sel'); });
+			this.classList.add('sel');
+			ativarEtapa2(this.dataset.plat);
+		});
+	});
+
+	urlInput.addEventListener('input', function () {
+		var v = this.value.trim();
+		if (v) { prevUrl.style.display = 'block'; prevUrl.textContent = v; }
+		else { prevUrl.style.display = 'none'; }
+	});
+
+	document.getElementById('redeForm').addEventListener('submit', function (e) {
+		if (!platSel) {
+			e.preventDefault();
+			alert('Escolha uma plataforma antes de salvar.');
+			return;
+		}
+		if (!urlInput.value.trim()) {
+			e.preventDefault();
+			alert('Informe o link do perfil.');
+			urlInput.focus();
+		}
+	});
+
+	function escurecer(hex, pct) {
+		var num = parseInt(hex.replace('#',''), 16);
+		var r = Math.max(0, (num >> 16) - pct);
+		var g = Math.max(0, ((num >> 8) & 0xff) - pct);
+		var b = Math.max(0, (num & 0xff) - pct);
+		return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6,'0');
+	}
+
+	/* Inicialização: se veio pré-selecionada via querystring, ativa a etapa 2 */
+	if (preSel && PLATAFORMAS[preSel]) {
+		wz1.classList.add('on'); /* garante highlight */
+		ativarEtapa2(preSel);
+	} else {
+		wz1.classList.add('on');
+	}
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

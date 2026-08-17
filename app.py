@@ -25,6 +25,8 @@ from datetime import timedelta
 import secrets
 # Para importar as variáveis de ambiente
 from dotenv import load_dotenv
+# Biblioteca para enviar mensagens via Email
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
@@ -65,17 +67,30 @@ if IS_PRODUCTION:
             strict_transport_security_max_age=31536000,  # 1 ano de proteção contado em segundos
             strict_transport_security_include_subdomains=True, # Proteje subdominios além da rota principal 
             content_security_policy={ # Aqui define a regra de quais recursos podem ser carregados 
-                'default-src': "'self'", # Somente aceita recursos do proprio servidor
+                'default-src': [ # Somente aceita recursos do proprio servidor ou do google
+                    "'self'",
+                    "https://www.google.com"
+                    ], 
                 'script-src': [ # Só scripts internos, não aceita scripts soltos pela internet, evitando ataques XSS, com excessão do editor de texto para estudos e pregações.
                     "'self'",
                     "https://cdn.jsdelivr.net"
                     ],  
-                'style-src':["'self'", # Aceita CSS inline porque não oferece perigo
-                             "'unsafe-inline'",
-                             "https://cdn.jsdelivr.net"
-                             ],
-                'img-src': "'self' data: https://i.ytimg.com", # Aceita imagens próprias (do próprio servidor) e em formato Base64(diretamente no html precisar carregá-las) e as que venham da base de thumbnail do youtube
-                'font-src': "'self'", # Fontes de letras somente vindas do meu servidor
+                'style-src': [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net",
+                    "https://fonts.googleapis.com"
+                ],
+                'img-src': [
+                    "'self'",
+                    "data:",
+                    "https://i.ytimg.com",
+                    "https://img.youtube.com"
+                ],
+                'font-src': [
+                    "'self'",
+                    "https://fonts.gstatic.com"
+                ], # Fontes de letras somente vindas do meu servidor
                 'connect-src': "'self'", # Controla de onde o site por abrir conexões dinâmicas (somente do proprio servidor). Isso permite controle sobre quem meu servidor está se relacionando. Posso liberar acesso a servidores externos específicos e de confiança.
                 'object-src': "'none'", # Proibe plugins externos comuns que as individuos maliciosos utilizam para acessar o sistema.
                 'base-uri': "'self'",  # Redirecionamentos apenas para o próprio servidor
@@ -86,22 +101,43 @@ if IS_PRODUCTION:
 
 else:
     # CONFIGURAÇÃO PARA DESENVOLVIMENTO (flexível)
-    Talisman(app,
-        force_https=False,  # Não força HTTPS no localhost
-        strict_transport_security=False,  # Desabilita o redirecionamento para HTTPS caso tente por outra via
-        content_security_policy={
-            'default-src': "'self'", # Continua aceitando recursos somente do proprio servidor
-            'script-src': ["'self'", # Permite scripts externos em inline(código js direto no html) e eval(), que transforma textos em códigos java script que auxilia na detecção de erros no sistema
-                           "'unsafe-inline'",
-                           "https://cdn.jsdelivr.net"
-                           ],  
-            'style-src': ["'self'", # Permenece igual ao de produção, permitindo css direto no html
-                          "'unsafe-inline'",
-                          "https://cdn.jsdelivr.net"
-                         ], 
-            'img-src': "'self' data: https://i.ytimg.com", # Permanece igual, permitindo imagens carregadas, e também aquelas já processadas direto no html
-        }
-    )
+    Talisman(
+            app,
+            force_https=False,
+            strict_transport_security=False,
+
+            content_security_policy={
+                'default-src': [
+                    "'self'",
+                    "https://www.google.com"
+                ],
+
+                'script-src': [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net"
+                ],
+
+                'style-src': [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net",
+                    "https://fonts.googleapis.com"
+                ],
+
+                'img-src': [
+                    "'self'",
+                    "data:",
+                    "https://i.ytimg.com",
+                    "https://img.youtube.com"
+                ],
+
+                'font-src': [
+                    "'self'",
+                    "https://fonts.gstatic.com"
+                ]
+            }
+        )
 
 @app.after_request
 def after_request(response):
@@ -131,13 +167,19 @@ limiter.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# Configurando email
+app.config['MAIL_SERVER']   = 'smtp.gmail.com'
+app.config['MAIL_PORT']     = 587
+app.config['MAIL_USE_TLS']  = True
+app.config['MAIL_USERNAME'] = 'l.kevenmedeiros.c@gmail.com'          # e-mail remetente
+app.config['MAIL_PASSWORD'] = 'koad lmgo ppxj phbd'     # senha de a
+app.config['MAIL_DEFAULT_SENDER'] = ('Igreja de Cristo', 'l.kevenmedeiros.c@gmail.com')
+mail = Mail(app)
+
 @login_manager.user_loader
 def load_user(user_id):
     return AdministradorLog.get_by_id(user_id)
 
-@app.route('/')
-def main():
-    return "Seu banco foi criado com sucesso!"
 
 # Registradando Blueprints
 app.register_blueprint(administrador_bp)

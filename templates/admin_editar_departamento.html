@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar {{ departamento.DEPARTMENT_NAME }} — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;text-decoration:none;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+		.adm_btn_warn{background:transparent;color:#c97a00;border-color:rgba(255,143,0,.35);}
+		.adm_btn_warn:hover{background:#ff8f00;color:#fff;border-color:#ff8f00;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.alert-info{background:rgba(14,92,166,0.08);border:1px solid rgba(14,92,166,0.25);color:#0e5ca6;}
+
+		/* ===== CABEÇALHO DA FICHA ===== */
+		.f_ficha_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:18px;padding:32px 36px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.f_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.f_ficha_head_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:24px;}
+		.f_ficha_blob{width:100px;height:100px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.25);box-shadow:0 15px 30px -8px rgba(0,0,0,.35);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+		.f_ficha_blob img{width:100%;height:100%;object-fit:cover;display:block;}
+		.f_ficha_blob .sem{color:rgba(255,255,255,0.5);font-size:32px;}
+		.f_ficha_info{flex:1;min-width:250px;}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:30px;line-height:38px;color:#fff;margin:0 0 8px;}
+		.f_ficha_info .lider{margin:0 0 12px;color:rgba(255,255,255,0.85);font-size:14.5px;}
+		.f_ficha_info .lider i{margin-right:8px;color:#ffaa17;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;}
+		.f_ficha_info .metas .destaque{background:rgba(255,170,23,0.25);border-color:rgba(255,170,23,0.5);color:#ffcc70;}
+		.f_ficha_info .metas .inativo{background:rgba(200,31,69,0.25);border-color:rgba(200,31,69,0.5);color:#ffb4c1;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo > label .opc{font-family:'Poppins',sans-serif;font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:#9aa3b0;margin-left:6px;}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="tel"],.f_campo input[type="number"],.f_campo select,.f_campo textarea{
+			width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:12px 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="tel"],.f_campo input[type="number"],.f_campo select{height:48px;padding:0 16px;}
+		.f_campo textarea{min-height:110px;resize:vertical;line-height:22px;}
+		.f_campo input:focus,.f_campo select:focus,.f_campo textarea:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		.f_dupla{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+		@media (max-width:640px){.f_dupla{grid-template-columns:1fr;}}
+
+		/* ===== UPLOAD DE FOTO ===== */
+		.f_foto_wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap;background:#f7fafd;border:1px solid #e8eef5;border-radius:14px;padding:22px;transition:.3s;}
+		.f_foto_wrap.trocada{border-color:#22a75e;background:#fff;}
+		.f_blob_up{position:relative;width:110px;height:110px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);flex-shrink:0;box-shadow:0 12px 25px -8px rgba(0,64,128,.35);display:flex;align-items:center;justify-content:center;}
+		.f_blob_up img{width:100%;height:100%;object-fit:cover;display:block;}
+		.f_blob_up .sem{color:rgba(255,255,255,0.6);font-size:34px;}
+		.f_blob_up .over{position:absolute;inset:0;background:rgba(27,32,50,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transition:.3s;}
+		.f_blob_up:hover .over{opacity:1;}
+		.f_blob_up .selo{position:absolute;top:8px;right:8px;background:#22a75e;color:#fff;font-size:10px;padding:3px 8px;border-radius:20px;font-family:oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;font-weight:500;display:none;z-index:3;}
+		.f_foto_wrap.trocada .f_blob_up .selo{display:block;}
+		.f_foto_info{flex:1;min-width:200px;}
+		.f_foto_info strong{display:block;font-size:14px;color:#1b2032;margin-bottom:4px;}
+		.f_foto_info p{margin:0 0 12px;font-size:12.5px;color:#9aa3b0;line-height:18px;}
+		.f_foto_wrap.trocada .f_foto_info p{color:#22a75e;}
+		.f_foto_btns{display:flex;gap:8px;flex-wrap:wrap;}
+		.f_foto_btns label{position:relative;padding:9px 18px;font-size:12.5px;font-weight:500;letter-spacing:.5px;border-radius:22px;cursor:pointer;transition:.3s;border:2px solid;font-family:inherit;display:inline-flex;align-items:center;gap:7px;}
+		.f_foto_btns .esc{background:#0e5ca6;border-color:#0e5ca6;color:#fff;overflow:hidden;}
+		.f_foto_btns .esc:hover{background:#0a3d70;border-color:#0a3d70;}
+		.f_foto_btns .esc input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== PREVIEW ===== */
+		.prev_wrap{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.15);border-radius:16px;padding:20px;}
+		.prev_wrap h4{margin:0 0 14px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#0e5ca6;}
+		.prev_card{background:#fff;border:1px solid #eef3f8;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px -20px rgba(0,64,128,.3);}
+		.prev_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);padding:24px 22px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+		.prev_head:before{content:"";position:absolute;top:-60px;right:-30px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0) 70%);}
+		.prev_blob{width:66px;height:66px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.15);position:relative;z-index:2;display:flex;align-items:center;justify-content:center;}
+		.prev_blob img{width:100%;height:100%;object-fit:cover;display:block;}
+		.prev_blob .sem{color:rgba(255,255,255,0.5);font-size:22px;}
+		.prev_head_info{flex:1;min-width:0;position:relative;z-index:2;}
+		.prev_head_info h5{margin:0 0 3px;font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:17px;color:#fff;line-height:22px;}
+		.prev_head_info small{display:block;font-size:11.5px;color:rgba(255,255,255,0.85);}
+		.prev_head_info small i{color:#ffaa17;margin-right:5px;}
+		.prev_head_info small.vazio{color:rgba(255,255,255,0.5);font-style:italic;}
+		.prev_body{padding:16px 20px;}
+		.prev_body p{margin:0 0 12px;font-size:12.5px;line-height:19px;color:#5f6b7a;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;}
+		.prev_body p.vazio{color:#c3cdd9;font-style:italic;}
+		.prev_body .ct{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:1px solid #f2f6fa;}
+		.prev_body .ct .item{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#747474;}
+		.prev_body .ct .item i{width:12px;color:#0e5ca6;font-size:11px;}
+		.prev_body .ct .sem_ct{font-size:11px;color:#c3cdd9;font-style:italic;text-align:center;padding:2px 0;}
+
+		/* ===== METADADOS ===== */
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:#ffaa17;margin-right:7px;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 12px;font-size:13px;color:#747474;line-height:22px;}
+		.f_perigo .divider{margin:14px 0;border-top:1px dashed rgba(200,31,69,0.2);}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions button[type="submit"]{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+{# URL da foto do líder — reaproveito em vários lugares #}
+{% set foto_url = url_for('static', filename='uploads/departamentos/' + departamento.DEPARTMENT_LEADER_PHOTO) if departamento.DEPARTMENT_LEADER_PHOTO else '' %}
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link ativo"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_departamentos') }}">Departamentos</a> / <strong>Editar</strong></span>
+			</div>
+			<div style="display:flex;gap:10px;">
+				<a href="{{ url_for('public.ministerio', ministerio_id=departamento.DEPARTMENT_ID) }}" target="_blank" class="adm_btn adm_btn_outline"><i class="fa fa-eye"></i>Ver no site</a>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+			</div>
+		</div>
+
+		{# Mensagens flash de sucesso/erro vindas do backend #}
+		{% with mensagens = get_flashed_messages(with_categories=true) %}
+			{% for categoria, mensagem in mensagens %}
+				<div class="alert alert-{{ categoria if categoria in ['success','danger','error','info'] else 'info' }}">{{ mensagem }}</div>
+			{% endfor %}
+		{% endwith %}
+
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="f_ficha_head">
+			<div class="f_ficha_head_c">
+				<div class="f_ficha_blob">
+					{% if departamento.DEPARTMENT_LEADER_PHOTO %}
+						<img src="{{ foto_url }}" alt="{{ departamento.DEPARTMENT_LEADER_NAME or departamento.DEPARTMENT_NAME }}" />
+					{% else %}
+						<i class="fa fa-users sem"></i>
+					{% endif %}
+				</div>
+				<div class="f_ficha_info">
+					<h1>{{ departamento.DEPARTMENT_NAME }}</h1>
+					<p class="lider">
+						<i class="fa fa-user"></i>{{ departamento.DEPARTMENT_LEADER_NAME or 'Sem liderança definida' }}
+					</p>
+					<div class="metas">
+						{% if departamento.DEPARTMENT_ACTIVE %}
+							<span><i class="fa fa-circle" style="font-size:8px;color:#22a75e;"></i>Ativo</span>
+						{% else %}
+							<span class="inativo"><i class="fa fa-circle" style="font-size:8px;"></i>Inativo</span>
+						{% endif %}
+						<span class="destaque"><i class="fa fa-sort"></i>Posição #{{ departamento.DEPARTMENT_ORDER or '—' }}</span>
+						{% if departamento.DEPARTMENT_CONTACT_EMAIL %}
+							<span><i class="fa fa-envelope-o"></i>{{ departamento.DEPARTMENT_CONTACT_EMAIL }}</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{# ============================================================
+		   FORMULÁRIO
+		   - action envia para a MESMA rota com departamento_id na query string
+		     (é como a rota lê o ID: request.args.get('departamento_id'))
+		   - enctype multipart obrigatório porque tem upload de foto
+		   - hidden_tag() gera o token CSRF que o WTForms exige
+		============================================================ #}
+		<form id="depForm" action="{{ url_for('administrador.editar_departamento', departamento_id=departamento.DEPARTMENT_ID) }}" method="POST" enctype="multipart/form-data">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<!-- IDENTIFICAÇÃO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="nome">Nome do departamento</label>
+							<input type="text" id="nome" name="nome" value="{{ departamento.DEPARTMENT_NAME or '' }}" autocomplete="off" required />
+						</div>
+
+						<div class="f_campo">
+							<label for="descricao">Descrição <span class="opc">(opcional)</span></label>
+							<textarea id="descricao" name="descricao">{{ departamento.DEPARTMENT_DESCRIPTION or '' }}</textarea>
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Aparece no card do site e na página interna do departamento.</small>
+						</div>
+					</div>
+
+					<!-- LIDERANÇA -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Liderança</h3>
+							<div class="f_icone"><i class="fa fa-user"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label>Foto do líder</label>
+							<div class="f_foto_wrap" id="foto_wrap">
+								<div class="f_blob_up" id="blob_prev">
+									{% if departamento.DEPARTMENT_LEADER_PHOTO %}
+										<img id="blob_img" src="{{ foto_url }}" alt="Foto atual" />
+									{% else %}
+										<i id="blob_sem" class="fa fa-user-plus sem"></i>
+										<img id="blob_img" src="" alt="" style="display:none;" />
+									{% endif %}
+									<div class="over"><i class="fa fa-camera"></i></div>
+									<span class="selo">Nova</span>
+								</div>
+								<div class="f_foto_info">
+									<strong>{{ 'Foto atual do líder' if departamento.DEPARTMENT_LEADER_PHOTO else 'Sem foto cadastrada' }}</strong>
+									<p>{{ 'Envie um novo arquivo para substituir. Deixe como está para manter a foto atual.' if departamento.DEPARTMENT_LEADER_PHOTO else 'Envie uma foto para representar a liderança.' }}</p>
+									<div class="f_foto_btns">
+										<label class="esc"><i class="fa fa-cloud-upload"></i>{{ 'Trocar foto' if departamento.DEPARTMENT_LEADER_PHOTO else 'Enviar foto' }}<input type="file" id="foto_input" name="lider_foto" accept="image/*" /></label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="f_campo">
+							<label for="lider_nome">Nome do líder <span class="opc">(opcional)</span></label>
+							<input type="text" id="lider_nome" name="lider_nome" value="{{ departamento.DEPARTMENT_LEADER_NAME or '' }}" autocomplete="off" />
+						</div>
+
+						<div class="f_campo">
+							<label for="lider_bio">Biografia curta <span class="opc">(opcional)</span></label>
+							<textarea id="lider_bio" name="lider_bio" style="min-height:90px;">{{ departamento.DEPARTMENT_LEADER_BIO or '' }}</textarea>
+						</div>
+					</div>
+
+					<!-- CONTATOS -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Contato</h3>
+							<div class="f_icone"><i class="fa fa-envelope-o"></i></div>
+						</div>
+
+						<div class="f_dupla">
+							<div class="f_campo">
+								<label for="contato_email">E-mail <span class="opc">(opcional)</span></label>
+								<input type="email" id="contato_email" name="contato_email" value="{{ departamento.DEPARTMENT_CONTACT_EMAIL or '' }}" />
+							</div>
+							<div class="f_campo">
+								<label for="contato_telefone">Telefone / WhatsApp <span class="opc">(opcional)</span></label>
+								<input type="tel" id="contato_telefone" name="contato_telefone" value="{{ departamento.DEPARTMENT_CONTACT_PHONE or '' }}" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<!-- PREVIEW -->
+					<div class="prev_wrap" style="margin-bottom:22px;">
+						<h4><i class="fa fa-eye"></i> Como está aparecendo</h4>
+						<div class="prev_card">
+							<div class="prev_head" id="prev_head">
+								<div class="prev_blob">
+									{% if departamento.DEPARTMENT_LEADER_PHOTO %}
+										<img id="prev_img" src="{{ foto_url }}" alt="" />
+									{% else %}
+										<i id="prev_sem" class="fa fa-user sem"></i>
+										<img id="prev_img" src="" alt="" style="display:none;" />
+									{% endif %}
+								</div>
+								<div class="prev_head_info">
+									<h5 id="prev_nome">{{ departamento.DEPARTMENT_NAME }}</h5>
+									{% if departamento.DEPARTMENT_LEADER_NAME %}
+										<small id="prev_lider"><i class="fa fa-user"></i>{{ departamento.DEPARTMENT_LEADER_NAME }}</small>
+									{% else %}
+										<small id="prev_lider" class="vazio"><i class="fa fa-user-o"></i>Sem liderança definida</small>
+									{% endif %}
+								</div>
+							</div>
+							<div class="prev_body">
+								{% if departamento.DEPARTMENT_DESCRIPTION %}
+									<p id="prev_desc">{{ departamento.DEPARTMENT_DESCRIPTION }}</p>
+								{% else %}
+									<p id="prev_desc" class="vazio">A descrição do departamento aparece aqui.</p>
+								{% endif %}
+								<div class="ct" id="prev_ct">
+									{% if departamento.DEPARTMENT_CONTACT_EMAIL %}
+										<div class="item"><i class="fa fa-envelope-o"></i>{{ departamento.DEPARTMENT_CONTACT_EMAIL }}</div>
+									{% endif %}
+									{% if departamento.DEPARTMENT_CONTACT_PHONE %}
+										<div class="item"><i class="fa fa-phone"></i>{{ departamento.DEPARTMENT_CONTACT_PHONE }}</div>
+									{% endif %}
+									{% if not departamento.DEPARTMENT_CONTACT_EMAIL and not departamento.DEPARTMENT_CONTACT_PHONE %}
+										<div class="sem_ct">Nenhum contato cadastrado</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- POSIÇÃO E STATUS -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Posição e status</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="ordem">Posição no site</label>
+							<input type="number" id="ordem" name="ordem" value="{{ departamento.DEPARTMENT_ORDER or 0 }}" min="0" />
+							<small class="f_ajuda"><i class="fa fa-sort"></i>Números menores aparecem primeiro. 0 fica no fim.</small>
+						</div>
+
+						<label class="f_toggle">
+							<input type="checkbox" name="ativo" value="y" {% if departamento.DEPARTMENT_ACTIVE %}checked{% endif %} />
+							<div class="info">
+								<label>Departamento ativo</label>
+								<small>Desmarcado, deixa de aparecer no site — sem apagar do sistema.</small>
+							</div>
+						</label>
+					</div>
+
+					<!-- METADADOS -->
+					<div class="f_meta_box">
+						<h4>Informações do departamento</h4>
+						<dl>
+							<dt>ID no banco</dt>
+							<dd>#{{ '%04d'|format(departamento.DEPARTMENT_ID) }}</dd>
+
+							<dt>Cadastrado em</dt>
+							<dd><i class="fa fa-calendar-o"></i>{{ departamento.DEPARTMENT_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+
+							{% if departamento.DEPARTMENT_UPDATED_AT %}
+								<dt>Última atualização</dt>
+								<dd><i class="fa fa-refresh"></i>{{ departamento.DEPARTMENT_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+							{% endif %}
+
+							{% if departamento.administrador %}
+								<dt>Cadastrado por</dt>
+								<dd><i class="fa fa-user"></i>{{ departamento.administrador.ADMIN_NAME }}</dd>
+							{% endif %}
+						</dl>
+					</div>
+
+
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					{% if departamento.DEPARTMENT_UPDATED_AT %}
+						Última alteração em {{ departamento.DEPARTMENT_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% else %}
+						Ainda não foi atualizado desde o cadastro
+					{% endif %}
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit"><i class="fa fa-check"></i>Atualizar departamento</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var nome    = document.getElementById('nome');
+	var desc    = document.getElementById('descricao');
+	var liderN  = document.getElementById('lider_nome');
+	var email   = document.getElementById('contato_email');
+	var tel     = document.getElementById('contato_telefone');
+	var foto    = document.getElementById('foto_input');
+	var fotoWrap= document.getElementById('foto_wrap');
+	var blobImg = document.getElementById('blob_img');
+	var blobSem = document.getElementById('blob_sem');
+
+	var pvNome  = document.getElementById('prev_nome');
+	var pvLider = document.getElementById('prev_lider');
+	var pvDesc  = document.getElementById('prev_desc');
+	var pvCt    = document.getElementById('prev_ct');
+	var pvImg   = document.getElementById('prev_img');
+	var pvSem   = document.getElementById('prev_sem');
+
+	function atualizarPrev() {
+		pvNome.textContent = nome.value.trim() || 'Nome do departamento';
+
+		if (liderN.value.trim()) {
+			pvLider.className = '';
+			pvLider.innerHTML = '<i class="fa fa-user"></i>' + liderN.value.trim();
+		} else {
+			pvLider.className = 'vazio';
+			pvLider.innerHTML = '<i class="fa fa-user-o"></i>Sem liderança definida';
+		}
+
+		if (desc.value.trim()) {
+			pvDesc.className = '';
+			pvDesc.textContent = desc.value.trim();
+		} else {
+			pvDesc.className = 'vazio';
+			pvDesc.textContent = 'A descrição do departamento aparece aqui.';
+		}
+
+		var contatoHtml = '';
+		if (email.value.trim()) contatoHtml += '<div class="item"><i class="fa fa-envelope-o"></i>' + email.value.trim() + '</div>';
+		if (tel.value.trim())   contatoHtml += '<div class="item"><i class="fa fa-phone"></i>' + tel.value.trim() + '</div>';
+		pvCt.innerHTML = contatoHtml || '<div class="sem_ct">Nenhum contato cadastrado</div>';
+	}
+
+	[nome, desc, liderN, email, tel].forEach(function (el) {
+		if (el) el.addEventListener('input', atualizarPrev);
+	});
+
+	/* ===== UPLOAD DE FOTO (só preview local) ===== */
+	foto.addEventListener('change', function () {
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				blobImg.src = e.target.result;
+				blobImg.style.display = 'block';
+				if (blobSem) blobSem.style.display = 'none';
+
+				pvImg.src = e.target.result;
+				pvImg.style.display = 'block';
+				if (pvSem) pvSem.style.display = 'none';
+
+				fotoWrap.classList.add('trocada');
+				fotoWrap.querySelector('.f_foto_info strong').textContent = 'Nova foto selecionada';
+				fotoWrap.querySelector('.f_foto_info p').textContent = 'Ao salvar, esta foto vai substituir a atual.';
+			};
+			reader.readAsDataURL(this.files[0]);
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

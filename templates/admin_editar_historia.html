@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Editar capítulo — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+	<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;text-decoration:none;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_danger{background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);}
+		.adm_btn_danger:hover{background:#c81f45;color:#fff;border-color:#c81f45;}
+
+		.flash{padding:14px 18px;border-radius:12px;margin-bottom:14px;font-size:14px;display:flex;align-items:center;gap:10px;}
+		.flash_success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.flash_danger{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.form_erro{display:block;color:#c81f45;font-size:12.5px;margin-top:6px;}
+		.form_erro i{margin-right:5px;}
+
+		/* ===== CABEÇALHO DA FICHA ===== */
+		.f_ficha_head{background:linear-gradient(135deg,#171d2e 0%,#0d2440 100%);border-radius:20px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;display:grid;grid-template-columns:220px 1fr;}
+		@media (max-width:900px){.f_ficha_head{grid-template-columns:1fr;}}
+		.f_ficha_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.f_ficha_foto{position:relative;min-height:200px;background:#0a3d70;overflow:hidden;}
+		.f_ficha_foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+		.f_ficha_foto .sem{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);gap:6px;}
+		.f_ficha_foto .sem i{font-size:38px;}
+		.f_ficha_foto .cap_num{position:absolute;top:16px;left:16px;background:rgba(11,15,26,0.85);color:#fff;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;padding:6px 14px;border-radius:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:2;}
+		.f_ficha_foto .cap_num i{color:#ffaa17;margin-right:5px;font-size:10px;}
+		.f_ficha_info{padding:32px 36px;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;}
+		.f_ficha_info .ano_bloco{display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap;}
+		.f_ficha_info .ano_bloco strong{font-family:oswald,sans-serif;font-size:44px;font-weight:600;color:#ffaa17;line-height:1;letter-spacing:-1px;}
+		.f_ficha_info .ano_bloco span{font-family:oswald,sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.75);}
+		.f_ficha_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;line-height:36px;color:#fff;margin:0 0 12px;}
+		.f_ficha_info .metas{display:flex;flex-wrap:wrap;gap:8px;}
+		.f_ficha_info .metas span{display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;}
+		.f_ficha_info .metas .destaque{background:rgba(255,170,23,0.22);border-color:rgba(255,170,23,0.5);color:#ffcc70;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="number"]{width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;}
+		.f_campo input:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+
+		.f_periodo{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;}
+		@media (max-width:640px){.f_periodo{grid-template-columns:1fr;}.f_periodo .sep{display:none;}}
+		.f_periodo .sep{color:#c3cdd9;font-size:20px;font-weight:600;padding-top:24px;text-align:center;}
+		.f_ano_bloco label{display:block;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-bottom:6px;}
+		.f_ano_bloco input{width:100%;height:56px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-family:oswald,sans-serif;font-size:22px;font-weight:600;color:#1b2032;outline:none;text-align:center;transition:.3s;}
+		.f_ano_bloco input:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ano_bloco input:disabled{background:#f0f3f7;color:#c3cdd9;cursor:not-allowed;}
+
+		.f_andamento{background:linear-gradient(135deg,#fff8ec 0%,#fdf2e2 100%);border:1px solid rgba(255,143,0,0.25);border-radius:12px;padding:14px 18px;margin-top:14px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:.3s;}
+		.f_andamento:hover{border-color:rgba(255,143,0,0.5);}
+		.f_andamento input[type="checkbox"]{width:18px;height:18px;accent-color:#ff8f00;cursor:pointer;margin:2px 0 0;flex-shrink:0;}
+		.f_andamento .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 3px;cursor:pointer;}
+		.f_andamento .info label i{color:#ff8f00;margin-right:6px;}
+		.f_andamento .info small{font-size:12px;color:#7a6a55;line-height:18px;display:block;}
+
+		/* ===== FOTO ATUAL + UPLOAD ===== */
+		.f_foto_atual{position:relative;border-radius:14px;overflow:hidden;background:#f7fafd;margin-bottom:14px;border:1px solid #eef3f8;min-height:180px;}
+		.f_foto_atual img{width:100%;height:180px;object-fit:cover;display:block;}
+		.f_foto_atual .sem{width:100%;height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#c3cdd9;gap:8px;}
+		.f_foto_atual .sem i{font-size:36px;}
+		.f_foto_atual .sem span{font-size:12px;font-style:italic;}
+		.f_foto_atual .badge{position:absolute;top:12px;left:12px;background:rgba(27,32,50,0.85);color:#fff;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+		.f_upload{position:relative;background:#f7fafd;border:2px dashed #d5dee8;border-radius:12px;padding:22px 20px;text-align:center;transition:.3s;cursor:pointer;}
+		.f_upload:hover{border-color:#ffaa17;background:#fff;}
+		.f_upload i{font-size:26px;color:#c3cdd9;margin-bottom:8px;display:block;transition:.3s;}
+		.f_upload:hover i{color:#ffaa17;}
+		.f_upload strong{display:block;color:#1b2032;font-weight:600;font-size:13.5px;margin-bottom:2px;}
+		.f_upload small{display:block;font-size:11.5px;color:#9aa3b0;}
+		.f_upload input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+		.f_upload.trocada{border-style:solid;border-color:#22a75e;background:#fff;}
+		.f_upload.trocada i{color:#22a75e;}
+
+		/* ===== EDITOR QUILL ===== */
+		.ql-toolbar.ql-snow{background:#f9fcff !important;border:1px solid #e8eef5 !important;border-bottom:0 !important;border-radius:10px 10px 0 0 !important;padding:10px 14px !important;}
+		.ql-snow .ql-stroke{stroke:#4a5566 !important;}
+		.ql-snow .ql-fill{fill:#4a5566 !important;}
+		.ql-snow.ql-toolbar button:hover,.ql-snow.ql-toolbar button.ql-active{color:#ffaa17 !important;}
+		.ql-snow.ql-toolbar button:hover .ql-stroke,.ql-snow.ql-toolbar button.ql-active .ql-stroke{stroke:#ffaa17 !important;}
+		#editor-conteudo{background:#fff;border:1px solid #e8eef5 !important;border-top:0 !important;border-radius:0 0 10px 10px !important;}
+		#editor-conteudo .ql-editor{min-height:260px;padding:20px 22px !important;font-size:15px;line-height:26px;color:#1b2032;font-family:'Poppins',sans-serif;}
+		#editor-conteudo .ql-editor h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:16px 0 8px;}
+		#editor-conteudo .ql-editor strong{color:#1b2032;font-weight:600;}
+		#editor-conteudo .ql-editor em{color:#0e5ca6;}
+
+		/* ===== METADADOS ===== */
+		.f_meta_box{background:#fff;border:1px solid #eef3f8;border-radius:18px;padding:22px 26px;margin-bottom:22px;}
+		.f_meta_box h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9aa3b0;margin:0 0 14px;}
+		.f_meta_box dl{margin:0;}
+		.f_meta_box dt{font-size:11.5px;color:#9aa3b0;margin-top:12px;letter-spacing:.5px;}
+		.f_meta_box dt:first-child{margin-top:0;}
+		.f_meta_box dd{margin:2px 0 0;font-size:14px;color:#1b2032;font-weight:500;}
+		.f_meta_box dd i{color:#ffaa17;margin-right:7px;}
+
+		.f_perigo{background:#fff;border:1px solid rgba(200,31,69,0.2);border-radius:18px;padding:22px 26px;}
+		.f_perigo h4{font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c81f45;margin:0 0 8px;}
+		.f_perigo p{margin:0 0 12px;font-size:13px;color:#747474;line-height:22px;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions button[type="submit"]{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+{% set em_andamento = etapa.HISTORY_YEAR_END is none %}
+{% set duracao = (etapa.HISTORY_YEAR_END - etapa.HISTORY_YEAR_START) if etapa.HISTORY_YEAR_END else (ano_atual - etapa.HISTORY_YEAR_START) %}
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link ativo"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_historia') }}">História</a> / <strong>Editar</strong></span>
+			</div>
+			<div style="display:flex;gap:10px;">
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+			</div>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for categoria, mensagem in messages %}
+					<div class="flash flash_{{ 'success' if categoria == 'success' else 'danger' }}">
+						<i class="fa fa-{{ 'check-circle' if categoria == 'success' else 'exclamation-circle' }}"></i>
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- CABEÇALHO DA FICHA -->
+		<div class="f_ficha_head">
+			<div class="f_ficha_foto">
+				{% if etapa.HISTORY_IMAGE %}
+					<img src="{{ url_for('static', filename='uploads/historia/' ~ etapa.HISTORY_IMAGE) }}" alt="{{ etapa.HISTORY_TITLE }}" />
+				{% else %}
+					<div class="sem"><i class="fa fa-picture-o"></i><span>Sem foto</span></div>
+				{% endif %}
+				<span class="cap_num"><i class="fa fa-bookmark"></i>Capítulo {{ '%02d'|format(etapa.HISTORY_ORDER or 0) }}</span>
+			</div>
+			<div class="f_ficha_info">
+				<div class="ano_bloco">
+					<strong>{{ etapa.HISTORY_YEAR_START }}</strong>
+					<span>
+						{% if em_andamento %}Até hoje · {{ duracao }} {{ 'ano' if duracao == 1 else 'anos' }} de história
+						{% else %}Até {{ etapa.HISTORY_YEAR_END }} · {{ duracao }} {{ 'ano' if duracao == 1 else 'anos' }} de história{% endif %}
+					</span>
+				</div>
+				<h1>{{ etapa.HISTORY_TITLE }}</h1>
+				<div class="metas">
+					<span>
+						<i class="fa fa-circle" style="font-size:8px;color:{{ '#22a75e' if em_andamento else '#ffaa17' }};"></i>
+						{{ 'Em andamento' if em_andamento else 'Encerrado' }}
+					</span>
+					<span class="destaque"><i class="fa fa-sort"></i>Posição #{{ etapa.HISTORY_ORDER or 0 }}</span>
+					{% if etapa.HISTORY_IMAGE %}
+						<span><i class="fa fa-picture-o"></i>Com foto</span>
+					{% else %}
+						<span><i class="fa fa-image"></i>Sem foto</span>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<form id="capForm" action="{{ url_for('administrador.editar_historia', historia_id=etapa.HISTORY_ID) }}" method="POST" enctype="multipart/form-data">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<!-- IDENTIFICAÇÃO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-bookmark"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="titulo">Título do capítulo</label>
+							<input type="text" id="titulo" name="titulo"
+								value="{{ formulario.titulo.data or etapa.HISTORY_TITLE }}" autocomplete="off" required />
+							{% if formulario.titulo.errors %}
+								{% for erro in formulario.titulo.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+						</div>
+
+						<div class="f_campo">
+							<label>Período</label>
+							<div class="f_periodo">
+								<div class="f_ano_bloco">
+									<label>Ano de início</label>
+									<input type="number" id="ano_inicio" name="ano_inicio"
+										min="1900" max="{{ ano_atual }}"
+										value="{{ formulario.ano_inicio.data or etapa.HISTORY_YEAR_START }}" required />
+									{% if formulario.ano_inicio.errors %}
+										{% for erro in formulario.ano_inicio.errors %}
+											<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+										{% endfor %}
+									{% endif %}
+								</div>
+								<div class="sep">—</div>
+								<div class="f_ano_bloco">
+									<label>{% if em_andamento %}Até hoje{% else %}Ano final{% endif %}</label>
+									<input type="number" id="ano_fim" name="ano_fim"
+										min="1900" max="{{ ano_atual }}"
+										value="{{ formulario.ano_fim.data or (etapa.HISTORY_YEAR_END or '') }}"
+										{% if em_andamento %}disabled{% endif %} />
+									{% if formulario.ano_fim.errors %}
+										{% for erro in formulario.ano_fim.errors %}
+											<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+							<label class="f_andamento" for="andamento">
+								<input type="checkbox" id="andamento" name="andamento" value="1" {% if em_andamento %}checked{% endif %} />
+								<div class="info">
+									<label><i class="fa fa-play-circle"></i>Este capítulo ainda está em andamento</label>
+									<small>Marque se for o capítulo atual da igreja. O ano final é ignorado e aparece "Hoje" no site.</small>
+								</div>
+							</label>
+						</div>
+					</div>
+
+					<!-- CONTEÚDO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Conteúdo</h3>
+							<div class="f_icone"><i class="fa fa-file-text-o"></i></div>
+						</div>
+						<div id="editor-conteudo"></div>
+						<input type="hidden" id="conteudo_input" name="conteudo" value="{{ formulario.conteudo.data or etapa.HISTORY_CONTENT or '' }}">
+						{% if formulario.conteudo.errors %}
+							{% for erro in formulario.conteudo.errors %}
+								<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						{% endif %}
+						<small class="f_ajuda"><i class="fa fa-info-circle"></i>Use "H2" para subtítulos, negrito e itálico para dar peso ao texto.</small>
+					</div>
+
+					<!-- FOTO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Foto do capítulo</h3>
+							<div class="f_icone"><i class="fa fa-image"></i></div>
+						</div>
+
+						<div class="f_foto_atual" id="foto_atual">
+							{% if etapa.HISTORY_IMAGE %}
+								<img id="foto_atual_img" src="{{ url_for('static', filename='uploads/historia/' ~ etapa.HISTORY_IMAGE) }}" alt="Foto atual" />
+							{% else %}
+								<img id="foto_atual_img" src="" alt="" style="display:none;" />
+								<div class="sem" id="foto_atual_sem"><i class="fa fa-picture-o"></i><span>Nenhuma foto cadastrada</span></div>
+							{% endif %}
+							<span class="badge" id="foto_badge">{% if etapa.HISTORY_IMAGE %}Foto atual{% else %}Sem foto{% endif %}</span>
+						</div>
+
+						<div class="f_upload" id="foto_up">
+							<i class="fa fa-cloud-upload"></i>
+							<strong id="foto_txt">{% if etapa.HISTORY_IMAGE %}Trocar foto{% else %}Adicionar foto{% endif %}</strong>
+							<small>{% if etapa.HISTORY_IMAGE %}Envie um novo arquivo para substituir a atual{% else %}Envie uma imagem para este capítulo{% endif %}</small>
+							<input type="file" id="foto_input" name="imagem" accept="image/*" />
+						</div>
+						{% if formulario.imagem.errors %}
+							{% for erro in formulario.imagem.errors %}
+								<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						{% endif %}
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<!-- PUBLICAÇÃO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Publicação</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="ordem">Posição na timeline</label>
+							<input type="number" id="ordem" name="ordem"
+								value="{{ formulario.ordem.data if formulario.ordem.data is not none else etapa.HISTORY_ORDER }}" min="0" />
+							{% if formulario.ordem.errors %}
+								{% for erro in formulario.ordem.errors %}
+									<small class="form_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							{% endif %}
+							<small class="f_ajuda"><i class="fa fa-sort"></i>Números menores aparecem primeiro na página Sobre.</small>
+						</div>
+					</div>
+
+					<!-- METADADOS -->
+					<div class="f_meta_box">
+						<h4>Informações do capítulo</h4>
+						<dl>
+							<dt>ID no banco</dt>
+							<dd>#{{ '%04d'|format(etapa.HISTORY_ID) }}</dd>
+
+							<dt>Cadastrado em</dt>
+							<dd><i class="fa fa-calendar-o"></i>{{ etapa.HISTORY_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+
+							{% if etapa.HISTORY_UPDATED_AT %}
+								<dt>Última atualização</dt>
+								<dd><i class="fa fa-refresh"></i>{{ etapa.HISTORY_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}</dd>
+							{% endif %}
+
+							{% if etapa.administrador %}
+								<dt>Cadastrado por</dt>
+								<dd><i class="fa fa-user"></i>{{ etapa.administrador.ADMIN_NAME }}</dd>
+							{% endif %}
+
+							<dt>Duração do capítulo</dt>
+							<dd><i class="fa fa-hourglass-half"></i>{{ duracao }} {{ 'ano' if duracao == 1 else 'anos' }}{% if em_andamento %} · em andamento{% endif %}</dd>
+						</dl>
+					</div>
+
+					<!-- ZONA DE PERIGO -->
+					<div class="f_perigo">
+						<h4><i class="fa fa-exclamation-triangle"></i> Zona de perigo</h4>
+						<p>Excluir remove permanentemente o capítulo e a foto associada. Não pode ser desfeito.</p>
+						<a href="{{ url_for('administrador.excluir_historia', historia_id=etapa.HISTORY_ID) }}"
+						   class="adm_btn adm_btn_danger" style="width:100%;justify-content:center;"
+						   onclick="return confirm('Excluir este capítulo definitivamente?');">
+							<i class="fa fa-trash"></i>Excluir permanentemente
+						</a>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					{% if etapa.HISTORY_UPDATED_AT %}
+						Última alteração em {{ etapa.HISTORY_UPDATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% else %}
+						Cadastrado em {{ etapa.HISTORY_CREATED_AT.strftime('%d/%m/%Y às %H:%M') }}
+					{% endif %}
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit"><i class="fa fa-check"></i>Atualizar capítulo</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+(function () {
+	const quill = new Quill('#editor-conteudo', {
+		theme: 'snow',
+		placeholder: 'Conte esse capítulo da história...',
+		modules: { toolbar: [[{ 'header': 2 }], ['bold','italic']] }
+	});
+
+	/* Pré-carrega o conteúdo do banco (ou o que voltou do form em caso de erro) */
+	var conteudoInicial = document.getElementById('conteudo_input').value;
+	if (conteudoInicial) quill.root.innerHTML = conteudoInicial;
+
+	var anoIni  = document.getElementById('ano_inicio');
+	var anoFim  = document.getElementById('ano_fim');
+	var andam   = document.getElementById('andamento');
+	var fotoIn  = document.getElementById('foto_input');
+	var fotoUp  = document.getElementById('foto_up');
+	var fotoTxt = document.getElementById('foto_txt');
+	var fotoAt  = document.getElementById('foto_atual_img');
+	var fotoAtSem = document.getElementById('foto_atual_sem');
+	var fotoBg  = document.getElementById('foto_badge');
+
+	andam.addEventListener('change', function () {
+		if (this.checked) {
+			anoFim.dataset.original = anoFim.value;
+			anoFim.value = '';
+			anoFim.disabled = true;
+			anoFim.parentElement.querySelector('label').textContent = 'Até hoje';
+		} else {
+			anoFim.disabled = false;
+			if (anoFim.dataset.original) anoFim.value = anoFim.dataset.original;
+			anoFim.parentElement.querySelector('label').textContent = 'Ano final';
+		}
+	});
+
+	fotoIn.addEventListener('change', function () {
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				fotoAt.src = e.target.result;
+				fotoAt.style.display = 'block';
+				if (fotoAtSem) fotoAtSem.style.display = 'none';
+				fotoBg.textContent = 'Nova foto selecionada';
+				fotoBg.style.background = '#22a75e';
+				fotoUp.classList.add('trocada');
+				fotoTxt.textContent = 'Foto trocada · escolher outra';
+			};
+			reader.readAsDataURL(this.files[0]);
+		}
+	});
+
+	document.getElementById('capForm').addEventListener('submit', function (e) {
+		if (quill.getText().trim().length === 0) {
+			e.preventDefault();
+			alert('O conteúdo do capítulo não pode ficar vazio.');
+			return;
+		}
+		if (andam.checked) {
+			anoFim.disabled = false;
+			anoFim.value = '';
+		}
+		document.getElementById('conteudo_input').value = quill.root.innerHTML;
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>
