@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Monoline - Design Agency HTML Template">
+		<meta name="keywords" content="agency, business, corporate, creative, html5, modern, multipurpose, One Page, parallax, startup ">
+		<title>Pregações em vídeo — Igreja de Cristo</title>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+		<!-- Google Fonts -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+		<!-- Font Awesome / Themify -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+
+		<!-- Owl Carousel -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.carousel.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.theme.css') }}">
+
+		<!-- Fonts CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+		<!-- Animate -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+
+		<!-- Magnific Popup -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/magnific-popup.css') }}">
+
+		<!-- Style -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<style>
+		/* ===== BARRA DE FILTROS ===== */
+		.vid_busca{width:100%;height:56px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:0 20px 0 52px;font-size:15px;color:#fff;outline:none;transition:.3s;}
+		.vid_busca::placeholder{color:rgba(255,255,255,0.4);}
+		.vid_busca:focus{border-color:#ffaa17;background:rgba(255,255,255,0.09);box-shadow:0 0 0 4px rgba(255,170,23,.12);}
+		.vid_select{width:100%;height:56px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:0 18px;font-size:14px;color:#fff;outline:none;cursor:pointer;transition:.3s;}
+		.vid_select:focus{border-color:#ffaa17;background:rgba(255,255,255,0.09);}
+		.vid_select option{background:#1b2032;color:#fff;}
+
+		/* ===== CARDS ===== */
+		.video_card{display:block;background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;transition:.4s ease;height:100%;}
+		.video_card:hover{transform:translateY(-10px);background:rgba(255,255,255,0.08);border-color:rgba(255,170,23,0.45);}
+		.video_card:hover .vid_thumb{transform:scale(1.07);}
+		.video_card:hover .vid_play{background:#ffaa17;color:#fff;}
+		.video_card:hover .vid_titulo{color:#ffaa17;}
+		.vid_thumb{transition:.6s ease;}
+		.vid_play,.vid_titulo{transition:.35s ease;}
+
+		/* ===== PAGINAÇÃO ===== */
+		.vid_pag a,.vid_pag span{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:46px;padding:0 16px;margin:0 4px 8px;border-radius:12px;font-family:oswald,sans-serif;font-size:15px;letter-spacing:1px;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);transition:.3s;}
+		.vid_pag a:hover{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+		.vid_pag .ativo{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+		.vid_pag .desabilitado{opacity:.35;pointer-events:none;}
+		.vid_pag .reticencias{background:transparent;border:0;min-width:24px;}
+		</style>
+
+	</head>
+
+    <body data-spy="scroll" data-offset="80">
+
+		{# Meses em pt-BR para exibição da data no card #}
+		{% set meses_curto = {
+			1: 'jan', 2: 'fev', 3: 'mar', 4: 'abr',
+			5: 'mai', 6: 'jun', 7: 'jul', 8: 'ago',
+			9: 'set', 10: 'out', 11: 'nov', 12: 'dez'
+		} %}
+
+		{# Thumbs fixas usadas como fallback quando o vídeo não tiver
+		   VIDEO_THUMBNAIL preenchida (raro — o yt_dlp preenche
+		   automaticamente ao cadastrar, mas garante o layout) #}
+		{% set thumbs_fixas = [
+			'assets/img/blog/1.jpg',
+			'assets/img/blog/2.jpg',
+			'assets/img/blog/3.jpg',
+			'assets/img/portfolio/2.jpg',
+			'assets/img/portfolio/4.jpg',
+			'assets/img/portfolio/5.jpg'
+		] %}
+
+		<!-- START PRELOADER -->
+		<div class="preloader">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>
+		<!-- END PRELOADER -->
+
+		 <!-- START NAVBAR -->
+		<div class="site-mobile-menu site-navbar-target">
+		  <div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+			  <span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		  </div>
+		  <div class="site-mobile-menu-body"></div>
+		</div>
+
+		<header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+		  <div class="container">
+			<div class="row align-items-center">
+			  <div class="col-6 col-xl-2">
+				<h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+			  </div>
+			  <div class="col-12 col-md-10 d-none d-xl-block">
+				<nav class="site-navigation position-relative text-right" role="navigation">
+				  <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+					<li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+				  	<li class="has-children">
+					  <a href="#" class="nav-link">Conteudo</a>
+					  <ul class="dropdown">
+						<li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+						<li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+					  </ul>
+					</li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Ministérios</a>
+					  <ul class="dropdown">
+						{% for ministerio in ministerios %}
+							<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="nav-link">{{ ministerio.DEPARTMENT_NAME }}</a></li>
+						{% else %}
+							<li><a href="#" class="nav-link">Em breve</a></li>
+						{% endfor %}
+					  </ul>
+					</li>
+					<li>
+					  <a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a>
+					</li>
+			         <li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+				  </ul>
+				</nav>
+			  </div>
+			   <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+			   <a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+			   </div>
+			</div>
+		  </div>
+		</header>
+	   <!-- END NAVBAR-->
+
+		<!-- ===================== CABEÇALHO ===================== -->
+		<section style="background:#171d2e;padding:170px 0 60px;position:relative;overflow:hidden;">
+			<div style="position:absolute;top:-140px;right:-90px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.16) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+			<div style="position:absolute;bottom:-160px;left:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.35) 0%,rgba(14,92,166,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+				<div class="row justify-content-center text-center">
+					<div class="col-lg-9">
+						<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:18px;">
+							<i class="fa fa-youtube-play" style="margin-right:10px;font-size:16px;vertical-align:-1px;"></i>Canal no YouTube
+						</span>
+						<h1 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:56px;line-height:70px;color:#fff;margin:0 0 20px;">Pregações em vídeo</h1>
+						<p style="font-size:17px;line-height:32px;color:rgba(255,255,255,0.65);max-width:680px;margin:0 auto;">Assista às mensagens mais recentes, busque por título ou pregador e revisite os momentos que marcaram a nossa comunidade.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ===================== FILTROS + LISTAGEM ===================== -->
+		<section style="background:#171d2e;padding:20px 0 100px;position:relative;">
+			<div class="container">
+
+				{# Listas únicas para popular os selects (só o que existe no banco) #}
+				{% set categorias_existentes = videos|map(attribute='VIDEO_CATEGORY')|reject('none')|unique|list %}
+				{% set pregadores_existentes = videos|map(attribute='VIDEO_PREACHER')|reject('none')|unique|list %}
+
+				<!-- BARRA DE FILTROS -->
+				<form id="form_vfiltros" method="get" action="" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:28px 30px;margin-bottom:40px;">
+					<div class="row">
+
+						<div class="col-lg-4 col-md-12" style="margin-bottom:14px;">
+							<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Buscar</label>
+							<div style="position:relative;">
+								<i class="icon-search" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:16px;"></i>
+								<input type="text" id="vid_q" name="q" value="" class="vid_busca" placeholder="Título, pregador ou tema..." autocomplete="off" />
+							</div>
+						</div>
+
+						<div class="col-lg-3 col-md-4 col-sm-12" style="margin-bottom:14px;">
+							<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Categoria</label>
+							<select id="vid_categoria" name="categoria" class="vid_select">
+								<option value="">Todas</option>
+								{% for cat in categorias_existentes %}
+									<option value="{{ cat|lower }}">{{ cat }}</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<div class="col-lg-2 col-md-4 col-sm-12" style="margin-bottom:14px;">
+							<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Pregador</label>
+							<select id="vid_pregador" name="pregador" class="vid_select">
+								<option value="">Todos</option>
+								{% for pregador in pregadores_existentes %}
+									<option value="{{ pregador|lower }}">{{ pregador|replace('_', ' ')|title }}</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<div class="col-lg-2 col-md-4 col-sm-12" style="margin-bottom:14px;">
+							<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Ordenar</label>
+							<select id="vid_ordem" name="ordem" class="vid_select">
+								<option value="recentes">Mais recentes</option>
+								<option value="antigos">Mais antigos</option>
+								<option value="vistos">Mais vistos</option>
+								<option value="az">Título (A–Z)</option>
+							</select>
+						</div>
+
+						<div class="col-lg-1 col-md-12 col-sm-12" style="margin-bottom:14px;">
+							<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">&nbsp;</label>
+							<button type="button" id="vid_limpar" title="Limpar filtros" style="width:100%;height:56px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.7);cursor:pointer;transition:.3s;" onmouseover="this.style.background='#ffaa17';this.style.color='#fff';this.style.borderColor='#ffaa17';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.7)';this.style.borderColor='rgba(255,255,255,0.1)';">
+								<i class="icon-refresh"></i>
+							</button>
+						</div>
+
+					</div>
+
+					<div style="display:flex;align-items:center;flex-wrap:wrap;gap:24px;border-top:1px solid rgba(255,255,255,0.08);margin-top:8px;padding-top:18px;">
+						<label for="vid_destaque" style="display:flex;align-items:center;cursor:pointer;margin:0;">
+							<input type="checkbox" id="vid_destaque" name="destaque" value="1" style="width:16px;height:16px;margin-right:10px;accent-color:#ffaa17;cursor:pointer;" />
+							<span style="font-size:14px;color:rgba(255,255,255,0.7);">Somente destaques</span>
+						</label>
+						<span style="flex:1;"></span>
+						<span id="vid_contador" style="font-family:oswald,sans-serif;font-size:14px;letter-spacing:1px;color:rgba(255,255,255,0.5);">{{ videos|length }} {% if videos|length == 1 %}vídeo encontrado{% else %}vídeos encontrados{% endif %}</span>
+					</div>
+				</form>
+
+				{# ============================================================
+				   GRADE DE VÍDEOS — vem do banco (`videos`)
+				   VIDEO_THUMBNAIL é URL absoluta do YouTube, usada direto.
+				============================================================ #}
+				<div class="row" id="vid_grid">
+
+					{% for video in videos %}
+						{% set thumb_fixa = thumbs_fixas[loop.index0 % thumbs_fixas|length] %}
+						<div class="col-lg-4 col-md-6 col-sm-12 video_item" style="margin-bottom:30px;"
+							data-titulo="{{ video.VIDEO_TITLE|lower }}"
+							data-categoria="{{ (video.VIDEO_CATEGORY or '')|lower }}"
+							data-pregador="{{ (video.VIDEO_PREACHER or '')|lower }}"
+							data-tags="{{ video.VIDEO_TITLE|lower }} {{ (video.VIDEO_PREACHER or '')|lower }} {{ (video.VIDEO_CATEGORY or '')|lower }}"
+							data-destaque="{{ '1' if video.VIDEO_FEATURED else '0' }}"
+							data-views="{{ video.VIDEO_VIEWS or 0 }}"
+							data-data="{{ video.VIDEO_CREATED_AT.strftime('%Y-%m-%dT%H:%M:%S') }}"
+
+							<a href="{{ url_for('public.ver_video', video_id=video.VIDEO_ID) }}" target="_blank" rel="noopener noreferrer" class="video_card">
+								<div style="position:relative;height:200px;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);">
+									<img class="vid_thumb" src="{{ video.VIDEO_THUMBNAIL or url_for('static', filename=thumb_fixa) }}" alt="{{ video.VIDEO_TITLE }}" style="width:100%;height:100%;object-fit:cover;opacity:0.85;" />
+									<span class="vid_play" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;line-height:64px;text-align:center;background:#fff;color:#1b2032;border-radius:50%;font-size:18px;padding-left:5px;box-shadow:0 12px 30px -8px rgba(0,0,0,.6);">
+										<i class="fa fa-play"></i>
+									</span>
+									{% if video.VIDEO_FEATURED %}
+										<span style="position:absolute;top:16px;left:16px;background:#ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:30px;">Destaque</span>
+									{% endif %}
+									<span style="position:absolute;bottom:14px;right:14px;background:rgba(11,15,26,0.88);color:#fff;font-family:oswald,sans-serif;font-size:12px;letter-spacing:1px;padding:5px 12px;border-radius:6px;">{{ video.get_duration_formatted() }}</span>
+								</div>
+
+								<div style="padding:24px 26px 26px;">
+									{% if video.VIDEO_CATEGORY %}
+										<span style="display:inline-block;background:rgba(14,92,166,0.3);border:1px solid rgba(125,184,238,0.35);color:#7db8ee;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:30px;margin-bottom:14px;">{{ video.VIDEO_CATEGORY }}</span>
+									{% endif %}
+
+									<h4 class="vid_titulo" style="margin:0 0 10px;font-size:20px;font-weight:600;line-height:29px;color:#fff;height:58px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ video.VIDEO_TITLE }}</h4>
+
+									<p style="font-size:13.5px;color:rgba(255,255,255,0.5);margin-bottom:0;height:22px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ video.VIDEO_PREACHER or 'Igreja de Cristo' }}</p>
+
+									<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.08);margin-top:14px;padding-top:14px;font-size:12.5px;color:rgba(255,255,255,0.45);">
+										<span><i class="icon-calendar-o" style="margin-right:7px;color:#ffaa17;"></i>{{ '%02d'|format(video.VIDEO_CREATED_AT.day) }} {{ meses_curto[video.VIDEO_CREATED_AT.month] }} {{ video.VIDEO_CREATED_AT.year }}</span>
+										<span><i class="icon-eye" style="margin-right:7px;color:#ffaa17;"></i>{{ '{:,}'.format(video.VIDEO_VIEWS or 0).replace(',', '.') }}</span>
+									</div>
+								</div>
+							</a>
+						</div>
+					{% endfor %}
+
+				</div><!-- END GRID -->
+
+				<!-- ESTADO VAZIO -->
+				<div id="vid_vazio" style="display:{% if videos|length == 0 %}block{% else %}none{% endif %};text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:70px 30px;">
+					<div style="width:90px;height:90px;margin:0 auto 24px;background:rgba(255,255,255,0.05);border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;display:flex;align-items:center;justify-content:center;">
+						<i class="icon-search" style="font-size:32px;color:rgba(255,255,255,0.3);"></i>
+					</div>
+					<h4 style="font-size:22px;font-weight:600;color:#fff;margin-bottom:10px;">
+						{% if videos|length == 0 %}Nenhum vídeo publicado ainda{% else %}Nenhum vídeo encontrado{% endif %}
+					</h4>
+					<p style="font-size:15px;line-height:28px;color:rgba(255,255,255,0.5);max-width:420px;margin:0 auto 26px;">
+						{% if videos|length == 0 %}
+							Assim que a equipe pastoral publicar um vídeo, ele vai aparecer aqui.
+						{% else %}
+							Tente outra palavra, mude a categoria ou o pregador — ou limpe os filtros para ver todos os vídeos.
+						{% endif %}
+					</p>
+					{% if videos|length > 0 %}
+						<button type="button" id="vid_limpar2" style="background:transparent;border:2px solid #ffaa17;color:#ffaa17;font-size:14px;letter-spacing:1px;padding:11px 32px;border-radius:30px;cursor:pointer;transition:.3s;" onmouseover="this.style.background='#ffaa17';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#ffaa17';">Limpar filtros</button>
+					{% endif %}
+				</div>
+
+				{# ============================================================
+				   PAGINAÇÃO
+				   O filtro é client-side, então enquanto não houver paginação
+				   real no servidor, exibo só o contador honesto.
+				============================================================ #}
+				{% if videos|length > 0 %}
+					<div class="vid_pag text-center" style="margin-top:50px;">
+						<p style="font-family:oswald,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:18px;">
+							{{ videos|length }} {% if videos|length == 1 %}vídeo publicado{% else %}vídeos publicados{% endif %}
+						</p>
+					</div>
+				{% endif %}
+
+			</div><!--- END CONTAINER -->
+		</section>
+
+		{# ============================================================
+		FOOTER
+		============================================================ #}
+		<div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }});  background-size:cover;">
+			<div class="container">
+				<div class="row footer_bg">
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="footer_logo">
+							<img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+							<p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+						</div>
+						<div class="social_profile">
+							<ul>
+								{% for rede in redes_sociais_publicas %}
+									<li>
+										<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}">
+											<i class="fa {{ rede.SOCIAL_ICON }}"></i>
+										</a>
+									</li>
+								{% else %}
+									<li><a href="#"><i class="fa fa-share-alt" title="Redes sociais"></i></a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Experimente</h4>
+							<ul>
+								<li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+								<li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+								<li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Comunidade</h4>
+							<ul>
+								{% for ministerio in ministerios[:1] %}
+									<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}">Ministérios</a></li>
+								{% else %}
+									<li><a href="#">Ministérios</a></li>
+								{% endfor %}
+								<li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+								<li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+								<li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="newsletter-form">
+							<h4>Inscreva-se para receber mais conteúdos</h4>
+							<form id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+								<div class="input-group input-group-lg newsletter">
+									<input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+									<button type="submit" class="subs_btn">Inscrever-se</button>
+								</div>
+								<div id="mce-responses">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="footer_copyright">
+							<p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/modernizr-2.8.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.mixitup.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.appear.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.inview.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.stellar.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scrolltopcontrol.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+
+			<script>
+		(function () {
+			var campoBusca    = document.getElementById('vid_q');
+			var campoCat      = document.getElementById('vid_categoria');
+			var campoPregador = document.getElementById('vid_pregador');
+			var campoOrdem    = document.getElementById('vid_ordem');
+			var campoDest     = document.getElementById('vid_destaque');
+			var grid          = document.getElementById('vid_grid');
+			var vazio         = document.getElementById('vid_vazio');
+			var contador      = document.getElementById('vid_contador');
+			var itens         = Array.prototype.slice.call(document.querySelectorAll('.video_item'));
+			var btnLimpar2    = document.getElementById('vid_limpar2');
+
+			var BUSCAR_NO_SERVIDOR = false;
+			var temporizador;
+
+			function semAcento(txt) {
+				return (txt || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+			}
+
+			function filtrar() {
+				var termo    = semAcento(campoBusca.value.trim());
+				var cat      = campoCat.value;
+				var pregador = campoPregador.value;
+				var dest     = campoDest.checked;
+				var achados  = 0;
+
+				itens.forEach(function (item) {
+					var texto = semAcento(
+						item.dataset.titulo + ' ' + item.dataset.pregador + ' ' +
+						item.dataset.categoria + ' ' + item.dataset.tags
+					);
+					var passa = (!termo    || texto.indexOf(termo) !== -1) &&
+								(!cat      || semAcento(item.dataset.categoria) === semAcento(cat)) &&
+								(!pregador || semAcento(item.dataset.pregador) === semAcento(pregador)) &&
+								(!dest     || item.dataset.destaque === '1');
+
+					item.style.display = passa ? '' : 'none';
+					if (passa) { achados++; }
+				});
+
+				if (itens.length === 0) { vazio.style.display = 'block'; }
+				else { vazio.style.display = achados ? 'none' : 'block'; }
+
+				contador.textContent = achados === 1 ? '1 vídeo encontrado' : achados + ' vídeos encontrados';
+			}
+
+			function ordenar() {
+				var criterio = campoOrdem.value;
+				itens.sort(function (a, b) {
+					var r;
+					if (criterio === 'vistos')       { r = (+b.dataset.views) - (+a.dataset.views); }
+					else if (criterio === 'az')      { r = a.dataset.titulo.localeCompare(b.dataset.titulo); }
+					else if (criterio === 'antigos') { r = a.dataset.data.localeCompare(b.dataset.data); }
+					else                             { r = b.dataset.data.localeCompare(a.dataset.data); }
+					// Desempate por ID (mais novo primeiro por padrão)
+					if (r === 0) { r = (+b.dataset.id) - (+a.dataset.id); }
+					return r;
+				});
+				itens.forEach(function (item) { grid.appendChild(item); });
+			}
+
+			function aoDigitar() {
+				filtrar();
+				if (BUSCAR_NO_SERVIDOR) {
+					clearTimeout(temporizador);
+					temporizador = setTimeout(function () {
+						document.getElementById('form_vfiltros').submit();
+					}, 600);
+				}
+			}
+
+			if (campoBusca) { campoBusca.addEventListener('input', aoDigitar); }
+			[campoCat, campoPregador, campoDest].forEach(function (c) {
+				if (c) {
+					c.addEventListener('change', function () {
+						BUSCAR_NO_SERVIDOR ? document.getElementById('form_vfiltros').submit() : filtrar();
+					});
+				}
+			});
+			if (campoOrdem) {
+				campoOrdem.addEventListener('change', function () {
+					BUSCAR_NO_SERVIDOR ? document.getElementById('form_vfiltros').submit() : (ordenar(), filtrar());
+				});
+			}
+
+			function limpar() {
+				campoBusca.value = '';
+				campoCat.value = '';
+				campoPregador.value = '';
+				campoOrdem.value = 'recentes';
+				campoDest.checked = false;
+				if (BUSCAR_NO_SERVIDOR) { window.location.href = window.location.pathname; }
+				else { ordenar(); filtrar(); }
+			}
+			document.getElementById('vid_limpar').addEventListener('click', limpar);
+			if (btnLimpar2) { btnLimpar2.addEventListener('click', limpar); }
+
+			if (itens.length > 0) { filtrar(); }
+		})();
+		</script>
+    </body>
+</html>

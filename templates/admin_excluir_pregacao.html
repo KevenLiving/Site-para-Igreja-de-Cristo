@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Excluir pregação — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;display:flex;flex-direction:column;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#c81f45;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_danger{background:#c81f45;color:#fff;border-color:#c81f45;box-shadow:0 12px 30px -12px rgba(200,31,69,.6);}
+		.adm_btn_danger:hover{background:#a01737;border-color:#a01737;color:#fff;}
+		.adm_btn_danger:disabled{background:#e8b5c1;border-color:#e8b5c1;cursor:not-allowed;box-shadow:none;}
+
+		/* ===== ALERTAS ===== */
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error,.alert-message{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.alert-warning{background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.3);color:#c97a00;}
+
+		/* ===== WRAPPER CENTRAL ===== */
+		.d_wrap{max-width:640px;margin:0 auto;width:100%;}
+
+		/* ===== CARD DE CONFIRMAÇÃO ===== */
+		.d_card{background:#fff;border:1px solid #eef3f8;border-radius:20px;box-shadow:0 30px 60px -35px rgba(0,64,128,.35);overflow:hidden;}
+
+		.d_card_head{background:linear-gradient(135deg,#c81f45 0%,#8b1330 100%);color:#fff;padding:36px 40px 30px;text-align:center;position:relative;overflow:hidden;}
+		.d_card_head:before{content:"";position:absolute;top:-140px;right:-90px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0) 70%);}
+		.d_card_head .d_icon{position:relative;z-index:2;width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:32px;color:#fff;}
+		.d_card_head h1{position:relative;z-index:2;font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;margin:0 0 6px;color:#fff;}
+		.d_card_head p{position:relative;z-index:2;margin:0;font-size:14px;color:rgba(255,255,255,0.85);}
+
+		.d_card_body{padding:32px 40px;}
+
+		/* ===== PRÉVIA DO ESTUDO ===== */
+		.d_previa{display:flex;align-items:center;gap:16px;padding:16px;background:#f7fafd;border:1px solid #eef3f8;border-radius:14px;margin-bottom:24px;}
+		.d_previa_thumb{width:72px;height:72px;border-radius:10px;overflow:hidden;background:#e8eef5;flex-shrink:0;}
+		.d_previa_thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+		.d_previa_info{flex:1;min-width:0;}
+		.d_previa_info strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:17px;color:#1b2032;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.d_previa_info small{display:block;font-size:12.5px;color:#9aa3b0;}
+		.d_previa_info small i{color:#ffaa17;margin-right:5px;}
+
+		/* ===== AVISO DE PERIGO ===== */
+		.d_aviso{background:rgba(200,31,69,0.05);border:1px solid rgba(200,31,69,0.2);border-radius:12px;padding:16px 18px;margin-bottom:26px;display:flex;gap:12px;align-items:flex-start;}
+		.d_aviso i{color:#c81f45;font-size:16px;margin-top:2px;flex-shrink:0;}
+		.d_aviso div{flex:1;}
+		.d_aviso strong{display:block;color:#c81f45;font-size:13.5px;font-weight:600;margin-bottom:3px;}
+		.d_aviso p{margin:0;font-size:13px;color:#747474;line-height:20px;}
+
+		/* ===== CAMPO SENHA ===== */
+		.f_campo{margin-bottom:22px;}
+		.f_campo label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo_input{position:relative;}
+		.f_campo input[type="password"],.f_campo input[type="text"]{
+			width:100%;height:50px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 48px 0 44px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input:focus{border-color:#c81f45;background:#fff;box-shadow:0 0 0 3px rgba(200,31,69,.1);}
+		.f_campo_input .f_lock{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#c3cdd9;font-size:15px;pointer-events:none;}
+		.f_campo input:focus + .f_lock,
+		.f_campo_input:focus-within .f_lock{color:#c81f45;}
+		.f_toggle_pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:#9aa3b0;cursor:pointer;padding:6px;font-size:14px;transition:.2s;}
+		.f_toggle_pw:hover{color:#1b2032;}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		span[style*="color: red"],.error-msg{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+
+		/* ===== BARRA DE AÇÕES ===== */
+		.d_actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;padding-top:8px;border-top:1px solid #f2f6fa;margin-top:4px;padding-top:22px;}
+		.d_actions button[type="submit"]{
+			display:inline-flex;align-items:center;gap:10px;padding:12px 28px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #c81f45;
+			background:#c81f45;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(200,31,69,.6);
+		}
+		.d_actions button[type="submit"]:hover{background:#a01737;border-color:#a01737;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+			.d_card_body{padding:26px 24px;}
+			.d_card_head{padding:30px 24px 26px;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ================== SIDEBAR ================== -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand">
+			<span>Painel Editor</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link ativo"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ current_user.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info"><span>{{ current_user.ADMIN_NAME }}</span><small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small></div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<!-- ================== MAIN ================== -->
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb">
+					<a href="{{ url_for('administrador.index') }}">Painel</a> /
+					<a href="{{ url_for('administrador.exibir_pregacoes') }}">Pregações</a> /
+					<strong>Excluir</strong>
+				</span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_btn adm_btn_ghost">
+				<i class="fa fa-long-arrow-left"></i>Voltar
+			</a>
+		</div>
+
+		<div class="d_wrap">
+
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">{{ message }}</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+
+			<div class="d_card">
+
+				<div class="d_card_head">
+					<div class="d_icon"><i class="fa fa-exclamation-triangle"></i></div>
+					<h1>Excluir pregação</h1>
+					<p>Esta ação é permanente e não pode ser desfeita.</p>
+				</div>
+
+				<div class="d_card_body">
+
+					<!-- Prévia do estudo -->
+					<div class="d_previa">
+						<div class="d_previa_thumb">
+							{% if estudo_selected.STUDY_BANNER %}
+								<img src="{{ url_for('static', filename='uploads/estudos/' ~ estudo_selected.STUDY_BANNER) }}" alt="{{ estudo_selected.STUDY_TITLE }}">
+							{% else %}
+								<img src="{{ url_for('static', filename='assets/img/blog/1.jpg') }}" alt="{{ estudo_selected.STUDY_TITLE }}">
+							{% endif %}
+						</div>
+						<div class="d_previa_info">
+							<strong>{{ estudo_selected.STUDY_TITLE }}</strong>
+							<small><i class="fa fa-book"></i>{{ estudo_selected.STUDY_BIBLICAL_REFERENCE or 'Sem referência bíblica' }}</small>
+							<small style="margin-top:3px;"><i class="fa fa-hashtag"></i>ID #{{ estudo_selected.STUDY_ID }}</small>
+						</div>
+					</div>
+
+					<!-- Aviso -->
+					<div class="d_aviso">
+						<i class="fa fa-info-circle"></i>
+						<div>
+							<strong>O que será removido</strong>
+							<p>O conteúdo do estudo, seu banner de capa e todos os registros associados serão apagados definitivamente do banco de dados.</p>
+						</div>
+					</div>
+
+					<form action="{{ url_for('administrador.excluir_estudo', estudo_id=id) }}" method="POST" id="formExcluir">
+						{{ formulario.hidden_tag() }}
+
+						<div class="f_campo">
+							<label for="password">Confirme sua senha para prosseguir</label>
+							<div class="f_campo_input">
+								{{ formulario.password(id="password", placeholder="Digite sua senha de administrador") }}
+								<i class="fa fa-lock f_lock"></i>
+								<button type="button" class="f_toggle_pw" id="togglePw" title="Mostrar senha">
+									<i class="fa fa-eye" id="togglePwIcon"></i>
+								</button>
+							</div>
+							<small class="f_ajuda">Por segurança, precisamos confirmar que é você antes de excluir.</small>
+							{% for error in formulario.password.errors %}
+								<span class="error-msg">{{ error }}</span>
+							{% endfor %}
+						</div>
+
+						<div class="d_actions">
+							<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+							<button type="submit" id="btnExcluir">
+								<i class="fa fa-trash"></i>Excluir permanentemente
+							</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+
+		</div>
+
+	</main>
+</div>
+
+<script>
+	// Mostrar / esconder senha
+	const inputPw    = document.getElementById('password');
+	const togglePw   = document.getElementById('togglePw');
+	const toggleIcon = document.getElementById('togglePwIcon');
+
+	togglePw.addEventListener('click', function(){
+		if (inputPw.type === 'password') {
+			inputPw.type = 'text';
+			toggleIcon.classList.remove('fa-eye');
+			toggleIcon.classList.add('fa-eye-slash');
+			togglePw.title = 'Ocultar senha';
+		} else {
+			inputPw.type = 'password';
+			toggleIcon.classList.remove('fa-eye-slash');
+			toggleIcon.classList.add('fa-eye');
+			togglePw.title = 'Mostrar senha';
+		}
+	});
+
+	// Confirmação extra antes de enviar
+	document.getElementById('formExcluir').addEventListener('submit', function(e){
+		const ok = confirm('Tem certeza que deseja excluir esta pregação? Esta ação não pode ser desfeita.');
+		if (!ok) e.preventDefault();
+	});
+
+	// Menu mobile
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+</script>
+
+</body>
+</html>

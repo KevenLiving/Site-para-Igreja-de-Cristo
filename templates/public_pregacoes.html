@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Monoline - Design Agency HTML Template">
+		<meta name="keywords" content="agency, business, corporate, creative, html5, modern, multipurpose, One Page, parallax, startup ">
+		<title>Pregações | Igreja de Cristo</title>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+		<!-- Google Fonts -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+		<!-- Font Awesome / Themify -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+
+		<!-- Owl Carousel -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.carousel.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.theme.css') }}">
+
+		<!-- Fonts CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+		<!-- Animate -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+
+		<!-- Magnific Popup -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/magnific-popup.css') }}">
+
+		<!-- Style -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<style>
+		/* ===== BARRA DE FILTROS ===== */
+		.est_busca{width:100%;height:56px;background:#f7fafd;border:1px solid #e8eef5;border-radius:12px;padding:0 20px 0 52px;font-size:15px;color:#1b2032;outline:none;transition:.3s;}
+		.est_busca:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 4px rgba(255,170,23,.12);}
+		.est_select{width:100%;height:56px;background:#f7fafd;border:1px solid #e8eef5;border-radius:12px;padding:0 18px;font-size:14px;color:#1b2032;outline:none;cursor:pointer;transition:.3s;}
+		.est_select:focus{border-color:#ffaa17;background:#fff;}
+
+		/* ===== CARDS ===== */
+		.estudo_card{display:block;background:#fff;border:1px solid #f0f4f8;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px -28px rgba(0,64,128,.35);transition:.4s ease;height:100%;}
+		.estudo_card:hover{transform:translateY(-10px);border-color:rgba(255,170,23,.45);box-shadow:0 38px 60px -28px rgba(0,64,128,.45);}
+		.estudo_card:hover .est_thumb{transform:scale(1.07);}
+		.estudo_card:hover .est_titulo{color:#ffaa17;}
+		.est_titulo{transition:.3s;}
+		.est_thumb{transition:.6s ease;}
+
+		/* ===== PAGINAÇÃO ===== */
+		.est_pag a,.est_pag span{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:46px;padding:0 16px;margin:0 4px 8px;border-radius:12px;font-family:oswald,sans-serif;font-size:15px;letter-spacing:1px;color:#1b2032;background:#fff;border:1px solid #eef3f8;transition:.3s;}
+		.est_pag a:hover{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+		.est_pag .ativo{background:#1b2032;border-color:#1b2032;color:#fff;}
+		.est_pag .desabilitado{opacity:.4;pointer-events:none;}
+		.est_pag .reticencias{background:transparent;border:0;min-width:24px;}
+		</style>
+
+	</head>
+
+    <body data-spy="scroll" data-offset="80">
+
+		{# Meses em pt-BR para exibir a data do card #}
+		{% set meses_curto = {
+			1: 'jan', 2: 'fev', 3: 'mar', 4: 'abr',
+			5: 'mai', 6: 'jun', 7: 'jul', 8: 'ago',
+			9: 'set', 10: 'out', 11: 'nov', 12: 'dez'
+		} %}
+
+		{# Imagens fixas usadas como fallback quando o estudo não tem STUDY_BANNER #}
+		{% set imagens_estudos_fixas = [
+			'assets/img/blog/1.jpg',
+			'assets/img/blog/2.jpg',
+			'assets/img/blog/3.jpg',
+			'assets/img/portfolio/2.jpg',
+			'assets/img/portfolio/4.jpg',
+			'assets/img/portfolio/5.jpg'
+		] %}
+
+		<!-- START PRELOADER -->
+		<div class="preloader">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>
+		<!-- END PRELOADER -->
+
+		  <!-- START NAVBAR -->
+		<div class="site-mobile-menu site-navbar-target">
+		  <div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+			  <span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		  </div>
+		  <div class="site-mobile-menu-body"></div>
+		</div>
+
+		<header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+		  <div class="container">
+			<div class="row align-items-center">
+			  <div class="col-6 col-xl-2">
+				<h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+			  </div>
+			  <div class="col-12 col-md-10 d-none d-xl-block">
+				<nav class="site-navigation position-relative text-right" role="navigation">
+				  <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+					<li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+				  	<li class="has-children">
+					  <a href="#" class="nav-link">Conteudo</a>
+					  <ul class="dropdown">
+						<li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+						<li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+					  </ul>
+					</li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Ministérios</a>
+					  <ul class="dropdown">
+						{% for ministerio in ministerios %}
+							<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="nav-link">{{ ministerio.DEPARTMENT_NAME }}</a></li>
+						{% else %}
+							<li><a href="#" class="nav-link">Em breve</a></li>
+						{% endfor %}
+					  </ul>
+					</li>
+					<li>
+					  <a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a>
+					</li>
+			         <li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+				  </ul>
+				</nav>
+			  </div>
+			   <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+			   <a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+			   </div>
+			</div>
+		  </div>
+		</header>
+	   <!-- END NAVBAR-->
+
+	   <!-- START SECTION TOP -->
+		<section class="section-top" style="background-image: url({{ url_for('static', filename='assets/img/bg/section-top.png') }});background-size:cover; background-position: center center;">
+			<div class="container" style="height: 50px;">
+				<div class="row">
+				  <div class="col-lg-12 col-sm-12 col-xs-12 text-center">
+
+				  </div>
+				</div>
+			</div>
+		</section>
+		<!-- END SECTION TOP -->
+
+	   <!-- ===================== CABEÇALHO DA PÁGINA ===================== -->
+<section style="background:linear-gradient(180deg,#ffffff 0%,#f9fcff 100%);padding:110px 0 60px;position:relative;overflow:hidden;">
+	<div style="position:absolute;top:-140px;right:-120px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.12) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+	<div class="container" style="position:relative;z-index:2;">
+		<div class="row justify-content-center text-center">
+			<div class="col-lg-9">
+				<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:18px;">Palavra</span>
+				<h1 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:56px;line-height:70px;color:#1b2032;margin:0 0 20px;">Estudos e Pregações</h1>
+				<p style="font-size:17px;line-height:32px;color:#747474;max-width:680px;margin:0 auto;">Busque por tema, texto bíblico ou palavra-chave e encontre a mensagem que você precisa ouvir hoje.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ===================== FILTROS + LISTAGEM ===================== -->
+<section style="background:#f9fcff;padding:0 0 100px;">
+	<div class="container">
+
+		<!-- BARRA DE FILTROS -->
+		<form id="form_filtros" method="get" action="" style="background:#fff;border:1px solid rgba(14,92,166,0.07);border-radius:18px;box-shadow:0 30px 55px -35px rgba(0,64,128,.35);padding:28px 30px;margin-bottom:40px;">
+			<div class="row">
+
+				<div class="col-lg-5 col-md-12" style="margin-bottom:14px;">
+					<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;">Buscar</label>
+					<div style="position:relative;">
+						<i class="icon-search" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:#9aa3b0;font-size:16px;"></i>
+						<input type="text" id="est_q" name="q" value="" class="est_busca" placeholder="Título, versículo, tema ou palavra do texto..." autocomplete="off" />
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-sm-12" style="margin-bottom:14px;">
+					<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;">Tema</label>
+					<select id="est_tema" name="tema" class="est_select">
+						<option value="">Todos os temas</option>
+						{% set temas_existentes = estudos|map(attribute='STUDY_THEME')|reject('none')|unique|list %}
+						{% for tema in temas_existentes %}
+							<option value="{{ tema|lower }}">{{ tema|replace('_', ' ')|title }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-sm-12" style="margin-bottom:14px;">
+					<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;">Ordenar por</label>
+					<select id="est_ordem" name="ordem" class="est_select">
+						<option value="recentes">Mais recentes</option>
+						<option value="antigos">Mais antigos</option>
+						<option value="vistos">Mais lidos</option>
+						<option value="az">Título (A–Z)</option>
+					</select>
+				</div>
+
+				<div class="col-lg-1 col-md-4 col-sm-12" style="margin-bottom:14px;">
+					<label style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;">&nbsp;</label>
+					<button type="button" id="est_limpar" title="Limpar filtros" style="width:100%;height:56px;background:#f7fafd;border:1px solid #e8eef5;border-radius:12px;color:#747474;cursor:pointer;transition:.3s;" onmouseover="this.style.background='#1b2032';this.style.color='#fff';this.style.borderColor='#1b2032';" onmouseout="this.style.background='#f7fafd';this.style.color='#747474';this.style.borderColor='#e8eef5';">
+						<i class="icon-refresh"></i>
+					</button>
+				</div>
+
+			</div>
+
+			<div style="display:flex;align-items:center;flex-wrap:wrap;gap:24px;border-top:1px solid #f2f6fa;margin-top:8px;padding-top:18px;">
+				<label for="est_destaque" style="display:flex;align-items:center;cursor:pointer;margin:0;">
+					<input type="checkbox" id="est_destaque" name="destaque" value="1" style="width:16px;height:16px;margin-right:10px;accent-color:#ffaa17;cursor:pointer;" />
+					<span style="font-size:14px;color:#747474;">Somente destaques</span>
+				</label>
+				<span style="flex:1;"></span>
+				<span id="est_contador" style="font-family:oswald,sans-serif;font-size:14px;letter-spacing:1px;color:#9aa3b0;">{{ estudos|length }} {% if estudos|length == 1 %}estudo encontrado{% else %}estudos encontrados{% endif %}</span>
+			</div>
+		</form>
+
+		{# ============================================================
+		   GRADE DE ESTUDOS — vem do banco (variável `estudos`)
+		   Imagem fixa por posição serve de fallback para quem não
+		   tem STUDY_BANNER, mantendo o layout populado.
+		============================================================ #}
+		<div class="row" id="est_grid">
+
+			{% for estudo in estudos %}
+				{% set imagem_fixa = imagens_estudos_fixas[loop.index0 % imagens_estudos_fixas|length] %}
+				<div class="col-lg-4 col-md-6 col-sm-12 estudo_item" style="margin-bottom:30px;"
+					data-titulo="{{ estudo.STUDY_TITLE|lower }}"
+					data-tema="{{ (estudo.STUDY_THEME or '')|lower }}"
+					data-referencia="{{ (estudo.STUDY_BIBLICAL_REFERENCE or '')|lower }}"
+					data-conteudo="{{ estudo.STUDY_CONTENT|striptags|lower }}"
+					data-destaque="{{ '1' if estudo.STUDY_FEATURED else '0' }}"
+					data-views="{{ estudo.STUDY_VIEWS or 0 }}"
+					data-id="{{ estudo.STUDY_ID }}"
+					data-data="{{ estudo.STUDY_CREATED_AT.strftime('%Y-%m-%dT%H:%M:%S') }}">
+
+					<a href="{{ url_for('public.estudo', estudo_id=estudo.STUDY_ID) }}" class="estudo_card">
+						<div style="position:relative;height:200px;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);">
+							{% if estudo.STUDY_BANNER %}
+								<img class="est_thumb" src="{{ url_for('static', filename='uploads/estudos/' + estudo.STUDY_BANNER) }}" alt="{{ estudo.STUDY_TITLE }}" style="width:100%;height:100%;object-fit:cover;" />
+							{% else %}
+								<img class="est_thumb" src="{{ url_for('static', filename=imagem_fixa) }}" alt="{{ estudo.STUDY_TITLE }}" style="width:100%;height:100%;object-fit:cover;" />
+							{% endif %}
+
+							{% if estudo.STUDY_FEATURED %}
+								<span style="position:absolute;top:16px;left:16px;background:#ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:30px;">Destaque</span>
+							{% endif %}
+
+							{% if estudo.STUDY_THEME %}
+								<span style="position:absolute;top:16px;right:16px;background:rgba(27,32,50,0.88);color:#fff;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:30px;">{{ estudo.STUDY_THEME }}</span>
+							{% endif %}
+						</div>
+
+						<div style="padding:24px 26px 26px;">
+							{% if estudo.STUDY_BIBLICAL_REFERENCE %}
+								<p style="font-size:13px;color:#0e5ca6;font-weight:500;margin-bottom:10px;"><i class="icon-book" style="margin-right:8px;"></i>{{ estudo.STUDY_BIBLICAL_REFERENCE }}</p>
+							{% endif %}
+
+							<h4 class="est_titulo" style="margin:0 0 12px;font-size:20px;font-weight:600;line-height:29px;color:#1b2032;height:58px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ estudo.STUDY_TITLE }}</h4>
+
+							{# Prévia do conteúdo: tira HTML para não exibir tags do editor #}
+							<p style="font-size:14px;line-height:25px;color:#747474;height:75px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">{{ estudo.STUDY_CONTENT|striptags|truncate(180, True, '...') }}</p>
+
+							<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f2f6fa;margin-top:16px;padding-top:14px;font-size:12.5px;color:#9aa3b0;">
+								<span><i class="icon-calendar-o" style="margin-right:7px;color:#ffaa17;"></i>{{ '%02d'|format(estudo.STUDY_CREATED_AT.day) }} {{ meses_curto[estudo.STUDY_CREATED_AT.month] }} {{ estudo.STUDY_CREATED_AT.year }}</span>
+								<span><i class="icon-eye" style="margin-right:7px;color:#ffaa17;"></i>{{ '{:,}'.format(estudo.STUDY_VIEWS or 0).replace(',', '.') }}</span>
+							</div>
+						</div>
+					</a>
+				</div>
+			{% endfor %}
+
+		</div><!-- END GRID -->
+
+		<!-- ESTADO VAZIO — mostrado pelo JS quando o filtro não acha nada;
+			ou já visível de cara se não houver nenhum estudo publicado. -->
+		<div id="est_vazio" style="display:{% if estudos|length == 0 %}block{% else %}none{% endif %};text-align:center;background:#fff;border:1px solid #f0f4f8;border-radius:18px;padding:70px 30px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);">
+			<div style="width:90px;height:90px;margin:0 auto 24px;background:linear-gradient(135deg,#f7fafd 0%,#eef4fa 100%);border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;display:flex;align-items:center;justify-content:center;">
+				<i class="icon-search" style="font-size:32px;color:#c3cdd9;"></i>
+			</div>
+			<h4 style="font-size:22px;font-weight:600;color:#1b2032;margin-bottom:10px;">
+				{% if estudos|length == 0 %}Nenhum estudo publicado ainda{% else %}Nenhum estudo encontrado{% endif %}
+			</h4>
+			<p style="font-size:15px;line-height:28px;color:#9aa3b0;max-width:420px;margin:0 auto 26px;">
+				{% if estudos|length == 0 %}
+					Assim que a equipe pastoral publicar um estudo, ele vai aparecer aqui.
+				{% else %}
+					Tente outra palavra, mude o tema selecionado ou limpe os filtros para ver todos os estudos.
+				{% endif %}
+			</p>
+			{% if estudos|length > 0 %}
+				<button type="button" id="est_limpar2" style="background:transparent;border:2px solid #0e5ca6;color:#0e5ca6;font-size:14px;letter-spacing:1px;padding:11px 32px;border-radius:30px;cursor:pointer;transition:.3s;" onmouseover="this.style.background='#0e5ca6';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#0e5ca6';">Limpar filtros</button>
+			{% endif %}
+		</div>
+
+		{# ============================================================
+		   PAGINAÇÃO
+		   O filtro é client-side (JS filtra o que já está na página),
+		   então mostrar 8 páginas fixas seria mentira. Enquanto não há
+		   paginação real no servidor, exibo apenas o total honesto.
+		============================================================ #}
+		{% if estudos|length > 0 %}
+			<div class="est_pag text-center" style="margin-top:50px;">
+				<p style="font-family:oswald,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-top:18px;">
+					{{ estudos|length }} {% if estudos|length == 1 %}estudo publicado{% else %}estudos publicados{% endif %}
+				</p>
+			</div>
+		{% endif %}
+
+	</div><!--- END CONTAINER -->
+</section>
+
+		{# ============================================================
+		FOOTER
+		============================================================ #}
+		<div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }});  background-size:cover;">
+			<div class="container">
+				<div class="row footer_bg">
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="footer_logo">
+							<img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+							<p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+						</div>
+						<div class="social_profile">
+							<ul>
+								{% for rede in redes_sociais_publicas %}
+									<li>
+										<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}">
+											<i class="fa {{ rede.SOCIAL_ICON }}"></i>
+										</a>
+									</li>
+								{% else %}
+									<li><a href="#"><i class="fa fa-share-alt" title="Redes sociais"></i></a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Experimente</h4>
+							<ul>
+								<li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+								<li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+								<li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Comunidade</h4>
+							<ul>
+								{% for ministerio in ministerios[:1] %}
+									<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}">Ministérios</a></li>
+								{% else %}
+									<li><a href="#">Ministérios</a></li>
+								{% endfor %}
+								<li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+								<li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+								<li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="newsletter-form">
+							<h4>Inscreva-se para receber mais conteúdos</h4>
+							<form id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+								<div class="input-group input-group-lg newsletter">
+									<input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+									<button type="submit" class="subs_btn">Inscrever-se</button>
+								</div>
+								<div id="mce-responses">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="footer_copyright">
+							<p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/modernizr-2.8.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.mixitup.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.appear.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.inview.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.stellar.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scrolltopcontrol.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+
+			<script>
+				(function () {
+					var campoBusca = document.getElementById('est_q');
+					var campoTema  = document.getElementById('est_tema');
+					var campoOrdem = document.getElementById('est_ordem');
+					var campoDest  = document.getElementById('est_destaque');
+					var grid       = document.getElementById('est_grid');
+					var vazio      = document.getElementById('est_vazio');
+					var contador   = document.getElementById('est_contador');
+					var itens      = Array.prototype.slice.call(document.querySelectorAll('.estudo_item'));
+					var btnLimpar2 = document.getElementById('est_limpar2');
+
+					var BUSCAR_NO_SERVIDOR = false;
+					var temporizador;
+
+					function semAcento(txt) {
+						return (txt || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+					}
+
+					function filtrar() {
+						var termo = semAcento(campoBusca.value.trim());
+						var tema  = campoTema.value;
+						var dest  = campoDest.checked;
+						var achados = 0;
+
+						itens.forEach(function (item) {
+							var texto = semAcento(
+								item.dataset.titulo + ' ' + item.dataset.referencia + ' ' +
+								item.dataset.tema + ' ' + item.dataset.conteudo
+							);
+							var passa = (!termo || texto.indexOf(termo) !== -1) &&
+										(!tema  || semAcento(item.dataset.tema) === semAcento(tema)) &&
+										(!dest  || item.dataset.destaque === '1');
+
+							item.style.display = passa ? '' : 'none';
+							if (passa) { achados++; }
+						});
+
+						if (vazio) { vazio.style.display = (achados || itens.length === 0) ? (itens.length === 0 ? 'block' : 'none') : 'block'; }
+						if (itens.length === 0) { vazio.style.display = 'block'; }
+						else { vazio.style.display = achados ? 'none' : 'block'; }
+
+						contador.textContent = achados === 1 ? '1 estudo encontrado' : achados + ' estudos encontrados';
+					}
+
+					function ordenar() {
+						var criterio = campoOrdem.value;
+						itens.sort(function (a, b) {
+							var r;
+							if (criterio === 'vistos')       { r = (+b.dataset.views) - (+a.dataset.views); }
+							else if (criterio === 'az')      { r = a.dataset.titulo.localeCompare(b.dataset.titulo); }
+							else if (criterio === 'antigos') { r = a.dataset.data.localeCompare(b.dataset.data); }
+							else                             { r = b.dataset.data.localeCompare(a.dataset.data); }
+							if (r === 0) { r = (+b.dataset.id) - (+a.dataset.id); }
+							return r;
+						});
+						itens.forEach(function (item) { grid.appendChild(item); });
+					}
+
+					function aoDigitar() {
+						filtrar();
+						if (BUSCAR_NO_SERVIDOR) {
+							clearTimeout(temporizador);
+							temporizador = setTimeout(function () {
+								document.getElementById('form_filtros').submit();
+							}, 600);
+						}
+					}
+
+					if (campoBusca) { campoBusca.addEventListener('input', aoDigitar); }
+					if (campoTema)  { campoTema.addEventListener('change', function () { BUSCAR_NO_SERVIDOR ? document.getElementById('form_filtros').submit() : filtrar(); }); }
+					if (campoDest)  { campoDest.addEventListener('change', function () { BUSCAR_NO_SERVIDOR ? document.getElementById('form_filtros').submit() : filtrar(); }); }
+					if (campoOrdem) { campoOrdem.addEventListener('change', function () { BUSCAR_NO_SERVIDOR ? document.getElementById('form_filtros').submit() : (ordenar(), filtrar()); }); }
+
+					function limpar() {
+						campoBusca.value = '';
+						campoTema.value = '';
+						campoOrdem.value = 'recentes';
+						campoDest.checked = false;
+						if (BUSCAR_NO_SERVIDOR) { window.location.href = window.location.pathname; }
+						else { ordenar(); filtrar(); }
+					}
+					document.getElementById('est_limpar').addEventListener('click', limpar);
+					if (btnLimpar2) { btnLimpar2.addEventListener('click', limpar); }
+
+					if (itens.length > 0) { filtrar(); }
+				})();
+			</script>
+    </body>
+</html>

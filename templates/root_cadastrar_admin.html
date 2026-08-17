@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Novo administrador — Painel Root</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+    
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ROOT ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="password"],.f_campo select{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input:focus,.f_campo select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		span[style*="color: red"]{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+		.f_dupla{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+		@media (max-width:640px){.f_dupla{grid-template-columns:1fr;}}
+
+		/* Campo de senha com botão de mostrar */
+		.f_pass_wrap{position:relative;}
+		.f_pass_wrap input{padding-right:46px !important;}
+		.f_pass_wrap .ver{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#9aa3b0;cursor:pointer;padding:6px;font-size:13px;transition:.2s;}
+		.f_pass_wrap .ver:hover{color:#ffaa17;}
+
+		/* Força da senha */
+		.f_forca{margin-top:10px;}
+		.f_forca_bar{display:flex;gap:4px;margin-bottom:6px;}
+		.f_forca_bar span{flex:1;height:4px;background:#eef3f8;border-radius:2px;transition:background .3s;}
+		.f_forca.f1 .f_forca_bar span:nth-child(-n+1){background:#c81f45;}
+		.f_forca.f2 .f_forca_bar span:nth-child(-n+2){background:#ff8f00;}
+		.f_forca.f3 .f_forca_bar span:nth-child(-n+3){background:#ffaa17;}
+		.f_forca.f4 .f_forca_bar span:nth-child(-n+4){background:#22a75e;}
+		.f_forca_txt{font-size:12px;color:#9aa3b0;display:flex;justify-content:space-between;}
+		.f_forca_txt strong{color:#9aa3b0;font-weight:600;text-transform:uppercase;letter-spacing:1px;font-size:10.5px;font-family:oswald,sans-serif;}
+		.f_forca.f1 .f_forca_txt strong{color:#c81f45;}
+		.f_forca.f2 .f_forca_txt strong{color:#c97a00;}
+		.f_forca.f3 .f_forca_txt strong{color:#ff8f00;}
+		.f_forca.f4 .f_forca_txt strong{color:#22a75e;}
+
+		/* Confirmação de senha (match/no-match) */
+		.f_match{display:none;margin-top:8px;font-size:12px;padding:6px 10px;border-radius:6px;align-items:center;gap:6px;}
+		.f_match.on{display:inline-flex;}
+		.f_match.ok{background:rgba(34,167,94,0.1);color:#22a75e;}
+		.f_match.no{background:rgba(200,31,69,0.1);color:#c81f45;}
+
+		/* ===== SELETOR DE PAPEL ===== */
+		.f_papel{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+		@media (max-width:520px){.f_papel{grid-template-columns:1fr;}}
+		.f_papel_opt{position:relative;background:#f7fafd;border:2px solid #e8eef5;border-radius:14px;padding:20px 22px;cursor:pointer;transition:.3s;}
+		.f_papel_opt input{position:absolute;opacity:0;pointer-events:none;}
+		.f_papel_opt:hover{border-color:var(--cor);background:#fff;transform:translateY(-2px);box-shadow:0 15px 30px -18px var(--sombra);}
+		.f_papel_opt.sel{border-color:var(--cor);background:#fff;box-shadow:0 20px 40px -18px var(--sombra);}
+		.f_papel_opt.sel::before{content:"\f00c";font-family:FontAwesome;position:absolute;top:12px;right:14px;color:var(--cor);font-size:14px;}
+		.f_papel_opt .ic{width:44px;height:44px;border-radius:12px;background:var(--fundo);color:var(--cor);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
+		.f_papel_opt strong{display:block;font-size:15px;color:#1b2032;font-weight:600;margin-bottom:4px;}
+		.f_papel_opt small{display:block;font-size:12px;color:#747474;line-height:18px;}
+		.f_papel_editor{--cor:#0e5ca6;--fundo:rgba(14,92,166,0.12);--sombra:rgba(14,92,166,.35);}
+		.f_papel_root{--cor:#ff8f00;--fundo:rgba(255,170,23,0.15);--sombra:rgba(255,143,0,.35);}
+
+		/* Toggle */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== PREVIEW LATERAL ===== */
+		.prev_wrap{position:sticky;top:24px;}
+		.prev_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:18px;padding:28px 30px;color:#fff;position:relative;overflow:hidden;margin-bottom:18px;text-align:center;}
+		.prev_head:before{content:"";position:absolute;top:-80px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.prev_head .lbl{position:relative;z-index:2;display:block;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;}
+		.prev_av{position:relative;z-index:2;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-family:oswald,sans-serif;font-size:30px;font-weight:600;border:3px solid rgba(255,255,255,0.2);box-shadow:0 15px 35px -8px rgba(0,0,0,.3);margin-bottom:16px;transition:.35s;}
+		.prev_av.vazio{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);}
+		.prev_nome{position:relative;z-index:2;display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;margin-bottom:4px;}
+		.prev_nome.vazio{color:rgba(255,255,255,0.5);font-size:16px;}
+		.prev_email{position:relative;z-index:2;display:block;font-size:12.5px;color:rgba(255,255,255,0.65);font-family:'Courier New',monospace;word-break:break-all;padding:0 10px;}
+		.prev_email.vazio{color:rgba(255,255,255,0.35);font-style:italic;font-family:inherit;}
+		.prev_papel{position:relative;z-index:2;margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px;background:rgba(14,92,166,0.3);border:1px solid rgba(125,184,238,0.4);color:#7db8ee;}
+		.prev_papel.root{background:rgba(255,170,23,0.25);border-color:rgba(255,170,23,0.5);color:#ffcc70;}
+
+		.prev_dica{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.15);border-radius:12px;padding:14px 16px;font-size:12.5px;color:#5f6b7a;line-height:19px;display:flex;gap:10px;align-items:flex-start;}
+		.prev_dica i{color:#0e5ca6;font-size:15px;flex-shrink:0;margin-top:1px;}
+		.prev_dica strong{color:#1b2032;font-weight:600;}
+
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions input[type="submit"],.f_actions button[type="submit"]{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ============ SIDEBAR ============ -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand">
+			<span>Painel Root</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Gestão</span>
+			<a href="{{ url_for('administrador.listar_admins') }}" class="adm_link"><i class="fa fa-users"></i>Administradores</a>
+			<a href="{{url_for('administrador.registro_acessos')}}" class="adm_link"><i class="fa fa-history"></i>Registro de acessos</a>
+		</div>
+
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ administrador.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info">
+				<span>{{administrador.ADMIN_NAME}}</span>
+				<small>Root</small>
+			</div>
+			<a href="{{url_for('auth.deslogar_do_sistema')}}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.listar_admins') }}">Administradores</a> / <strong>Novo</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.listar_admins') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Novo administrador</h1>
+			<p>Cadastre uma pessoa para acessar o painel administrativo do sistema.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<form id="admForm" action="{{ url_for('administrador.cadastrar_adm') }}" method="POST">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<!-- DADOS DE IDENTIFICAÇÃO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Dados de identificação</h3>
+							<div class="f_icone"><i class="fa fa-user"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.nome.label }}
+							{{ formulario.nome(id="nome", placeholder="Ex.: Ana Silva", autocomplete="off") }}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Nome completo, como aparecerá no painel e nos registros.</small>
+							{% for error in formulario.nome.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.email.label }}
+							{{ formulario.email(id="email", placeholder="email@igrejadecristo.org", autocomplete="off") }}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Usado para login e recuperação de acesso. Precisa ser único no sistema.</small>
+							{% for error in formulario.email.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+						</div>
+					</div>
+
+					<!-- SENHA -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Senha de acesso</h3>
+							<div class="f_icone"><i class="fa fa-key"></i></div>
+						</div>
+
+						<div class="f_dupla">
+							<div class="f_campo">
+								{{ formulario.password.label }}
+								<div class="f_pass_wrap">
+									{{ formulario.password(id="senha", placeholder="Mínimo 8 caracteres", autocomplete="new-password") }}
+									<button type="button" class="ver" data-alvo="senha"><i class="fa fa-eye"></i></button>
+								</div>
+								<div class="f_forca" id="forca">
+									<div class="f_forca_bar"><span></span><span></span><span></span><span></span></div>
+									<div class="f_forca_txt">
+										<span>Força da senha</span>
+										<strong id="forca_txt">—</strong>
+									</div>
+								</div>
+								{% for error in formulario.password.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							</div>
+
+							<div class="f_campo">
+								{{ formulario.password_confirm.label }}
+								<div class="f_pass_wrap">
+									{{ formulario.password_confirm(id="senha2", placeholder="Repita a senha", autocomplete="new-password") }}
+									<button type="button" class="ver" data-alvo="senha2"><i class="fa fa-eye"></i></button>
+								</div>
+								<span class="f_match" id="match_ok"><i class="fa fa-check-circle"></i>As senhas conferem</span>
+								<span class="f_match" id="match_no"><i class="fa fa-times-circle"></i>As senhas não são iguais</span>
+								{% for error in formulario.password_confirm.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							</div>
+						</div>
+					</div>
+
+
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+					<div class="prev_wrap">
+
+						<!-- PREVIEW DO CARD -->
+						<div class="prev_head">
+							<span class="lbl"><i class="fa fa-eye" style="margin-right:6px;"></i>Como vai aparecer</span>
+							<div class="prev_av vazio" id="prev_av">?</div>
+							<span class="prev_nome vazio" id="prev_nome">Nome completo</span>
+							<span class="prev_email vazio" id="prev_email">email@dominio.org</span>
+							<div>
+								<span class="prev_papel" id="prev_papel"><i class="fa fa-pencil-square-o"></i>Editor</span>
+							</div>
+						</div>
+
+						<!-- OPÇÕES -->
+						<div class="f_card" style="margin-bottom:18px;">
+							<div class="f_card_head">
+								<h3>Ativação</h3>
+								<div class="f_icone"><i class="fa fa-toggle-on"></i></div>
+							</div>
+
+							<div class="f_campo" style="margin-bottom:0;">
+								{{ formulario.ativo.label }}
+								{{ formulario.ativo(style="width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 16px;font-size:14px;color:#1b2032;outline:none;") }}
+								<small class="f_ajuda"><i class="fa fa-info-circle"></i>"Em atividade" permite login imediato. "Conta desativada" fica pendente.</small>
+								{% for error in formulario.ativo.errors %}<span style="color: red;">{{ error }}</span>{% endfor %}
+							</div>
+						</div>
+
+						<!-- DICA DE 2FA -->
+						<div class="prev_dica">
+							<i class="fa fa-shield"></i>
+							<div><strong>Autenticação em duas etapas</strong> será configurada pela pessoa no primeiro login — ela verá o QR Code do Google Authenticator automaticamente.</div>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					A pessoa receberá as credenciais e configurará o 2FA no primeiro acesso.
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.listar_admins') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					{{ formulario.submit(value="Cadastrar administrador") }}
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	/* ===== PREVIEW EM TEMPO REAL ===== */
+	var nome  = document.getElementById('nome');
+	var email = document.getElementById('email');
+	var pvAv  = document.getElementById('prev_av');
+	var pvNm  = document.getElementById('prev_nome');
+	var pvEm  = document.getElementById('prev_email');
+	var pvPp  = document.getElementById('prev_papel');
+
+	function iniciais(n) {
+		var partes = n.trim().split(/\s+/);
+		if (partes.length === 1) return partes[0].substring(0,2).toUpperCase();
+		return (partes[0][0] + partes[partes.length-1][0]).toUpperCase();
+	}
+
+	function atualizarPreview() {
+		var n = nome.value.trim();
+		var e = email.value.trim();
+
+		if (n) {
+			pvAv.textContent = iniciais(n);
+			pvAv.classList.remove('vazio');
+			pvNm.textContent = n;
+			pvNm.classList.remove('vazio');
+		} else {
+			pvAv.textContent = '?';
+			pvAv.classList.add('vazio');
+			pvNm.textContent = 'Nome completo';
+			pvNm.classList.add('vazio');
+		}
+
+		if (e) {
+			pvEm.textContent = e;
+			pvEm.classList.remove('vazio');
+		} else {
+			pvEm.textContent = 'email@dominio.org';
+			pvEm.classList.add('vazio');
+		}
+	}
+
+	nome.addEventListener('input', atualizarPreview);
+	email.addEventListener('input', atualizarPreview);
+
+	/* ===== SELETOR DE PAPEL ===== */
+	document.querySelectorAll('.f_papel_opt').forEach(function (opt) {
+		opt.addEventListener('click', function () {
+			document.querySelectorAll('.f_papel_opt').forEach(function (x) { x.classList.remove('sel'); });
+			this.classList.add('sel');
+			this.querySelector('input').checked = true;
+
+			var tipo = this.dataset.tipo;
+			if (tipo === 'root') {
+				pvPp.className = 'prev_papel root';
+				pvPp.innerHTML = '<i class="fa fa-shield"></i>Root';
+			} else {
+				pvPp.className = 'prev_papel';
+				pvPp.innerHTML = '<i class="fa fa-pencil-square-o"></i>Editor';
+			}
+		});
+	});
+
+	/* ===== MOSTRAR/OCULTAR SENHA ===== */
+	document.querySelectorAll('.f_pass_wrap .ver').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var inp = document.getElementById(this.dataset.alvo);
+			var mostrando = inp.type === 'text';
+			inp.type = mostrando ? 'password' : 'text';
+			this.querySelector('i').className = mostrando ? 'fa fa-eye' : 'fa fa-eye-slash';
+		});
+	});
+
+	/* ===== FORÇA DA SENHA ===== */
+	var senha = document.getElementById('senha');
+	var senha2 = document.getElementById('senha2');
+	var forca = document.getElementById('forca');
+	var forcaTxt = document.getElementById('forca_txt');
+	var matchOk = document.getElementById('match_ok');
+	var matchNo = document.getElementById('match_no');
+
+	var LABELS = ['—','Fraca','Razoável','Boa','Forte'];
+
+	function calcularForca(s) {
+		if (!s) return 0;
+		var n = 0;
+		if (s.length >= 8) n++;
+		if (s.length >= 12) n++;
+		if (/[A-Z]/.test(s) && /[a-z]/.test(s)) n++;
+		if (/[0-9]/.test(s) && /[^A-Za-z0-9]/.test(s)) n++;
+		return Math.min(n, 4);
+	}
+
+	function atualizarForca() {
+		var n = calcularForca(senha.value);
+		forca.className = 'f_forca f' + n;
+		forcaTxt.textContent = LABELS[n];
+		verificarMatch();
+	}
+
+	function verificarMatch() {
+		matchOk.classList.remove('on');
+		matchNo.classList.remove('on');
+		if (senha2.value) {
+			if (senha.value === senha2.value) matchOk.classList.add('on');
+			else matchNo.classList.add('on');
+		}
+	}
+
+	senha.addEventListener('input', atualizarForca);
+	senha2.addEventListener('input', verificarMatch);
+
+	/* ===== VALIDAÇÃO DO SUBMIT ===== */
+	document.getElementById('admForm').addEventListener('submit', function (e) {
+		if (senha.value !== senha2.value) {
+			e.preventDefault();
+			alert('As senhas não conferem.');
+			senha2.focus();
+			return;
+		}
+		if (senha.value.length < 8) {
+			e.preventDefault();
+			alert('A senha precisa ter pelo menos 8 caracteres.');
+			senha.focus();
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

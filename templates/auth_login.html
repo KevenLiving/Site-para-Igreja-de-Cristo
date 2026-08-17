@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Entrar no painel | Igreja de Cristo</title>
+
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<style>
+		*{box-sizing:border-box;}
+		body{margin:0;font-family:'Poppins',sans-serif;color:#4a5566;min-height:100vh;background:#0b0f1a;overflow-x:hidden;}
+		a{text-decoration:none;color:inherit;}
+
+		/* ===== FUNDO ANIMADO ===== */
+		.bg{position:fixed;inset:0;background:linear-gradient(135deg,#0b0f1a 0%,#141a2f 55%,#0d2440 100%);z-index:-2;}
+		.bg::before{content:"";position:absolute;top:-200px;right:-150px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);animation:float1 12s ease-in-out infinite;}
+		.bg::after{content:"";position:absolute;bottom:-250px;left:-100px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.42) 0%,rgba(14,92,166,0) 70%);animation:float2 15s ease-in-out infinite;}
+		@keyframes float1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-40px,30px) scale(1.05);}}
+		@keyframes float2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(40px,-30px) scale(1.08);}}
+
+		/* Cruz decorativa flutuante */
+		.cruz_deco{position:fixed;top:15%;left:8%;font-size:280px;color:rgba(255,255,255,0.02);font-family:Georgia,serif;line-height:1;z-index:-1;user-select:none;pointer-events:none;transform:rotate(-8deg);}
+		.cruz_deco::before{content:"†";}
+
+		/* ===== CONTAINER PRINCIPAL ===== */
+		.wrap{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;z-index:1;}
+		@media (max-width:960px){.wrap{grid-template-columns:1fr;padding:40px 20px;}}
+
+		/* ===== LADO ESQUERDO: MARCA + VERSÍCULO ===== */
+		.lado_marca{padding:60px 60px 60px 100px;color:#fff;position:relative;}
+		@media (max-width:960px){.lado_marca{padding:40px 30px 20px;text-align:center;}}
+
+		.marca_top{display:flex;align-items:center;gap:14px;margin-bottom:80px;}
+		@media (max-width:960px){.marca_top{justify-content:center;margin-bottom:40px;}}
+		.marca_logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 15px 30px -8px rgba(255,170,23,.5);}
+		.marca_logo i{font-family:Georgia,serif;font-style:italic;font-weight:700;}
+		.marca_txt span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:4px;}
+		.marca_txt strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;font-weight:400;line-height:26px;}
+
+		.saudacao{margin-bottom:44px;}
+		.saudacao .tag{display:inline-block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;padding:6px 14px;background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.3);border-radius:20px;}
+		.saudacao h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:46px;line-height:56px;color:#fff;margin:0 0 14px;}
+		@media (max-width:960px){.saudacao h1{font-size:32px;line-height:40px;}}
+		.saudacao p{margin:0;font-size:15.5px;line-height:26px;color:rgba(255,255,255,0.65);max-width:440px;}
+		@media (max-width:960px){.saudacao p{margin:0 auto;}}
+
+		/* Versículo em destaque */
+		.verso{max-width:440px;padding:24px 0 24px 24px;border-left:3px solid #ffaa17;position:relative;}
+		@media (max-width:960px){.verso{max-width:100%;text-align:left;margin:0 auto;}}
+		.verso .aspas{position:absolute;top:-8px;left:8px;font-family:Georgia,serif;font-size:80px;line-height:1;color:rgba(255,170,23,0.15);pointer-events:none;user-select:none;}
+		.verso p{margin:0 0 12px;font-family:Georgia,serif;font-style:italic;font-size:17px;line-height:28px;color:rgba(255,255,255,0.85);}
+		.verso cite{display:block;font-family:oswald,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;font-style:normal;font-weight:500;}
+
+		/* ===== LADO DIREITO: CARTÃO DE LOGIN ===== */
+		.lado_login{padding:60px 100px 60px 60px;display:flex;align-items:center;justify-content:center;}
+		@media (max-width:960px){.lado_login{padding:0 20px 40px;}}
+
+		.card_login{width:100%;max-width:440px;background:rgba(255,255,255,0.05);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:44px 42px;box-shadow:0 40px 80px -20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,0.1);position:relative;overflow:hidden;}
+		.card_login::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,170,23,0.6) 50%,transparent 100%);}
+
+		.card_head{text-align:center;margin-bottom:36px;}
+		.card_head .icone{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(255,170,23,0.2) 0%,rgba(255,143,0,0.1) 100%);border:1px solid rgba(255,170,23,0.3);color:#ffaa17;display:inline-flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px;box-shadow:0 15px 35px -12px rgba(255,170,23,.35);}
+		.card_head h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;color:#fff;margin:0 0 8px;}
+		.card_head p{margin:0;font-size:13.5px;color:rgba(255,255,255,0.55);letter-spacing:.3px;}
+
+		/* ===== FLASH MESSAGES ===== */
+		.flash_alerta{padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13.5px;display:flex;align-items:center;gap:10px;animation:slideDown .4s ease;}
+		@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+		.flash_alerta.alert-success{background:rgba(34,167,94,0.12);border:1px solid rgba(34,167,94,0.35);color:#4ade80;}
+		.flash_alerta.alert-danger,.flash_alerta.alert-error{background:rgba(200,31,69,0.12);border:1px solid rgba(200,31,69,0.35);color:#ff9aa8;}
+		.flash_alerta.alert-warning{background:rgba(255,170,23,0.12);border:1px solid rgba(255,170,23,0.35);color:#ffcc70;}
+		.flash_alerta.alert-info{background:rgba(14,92,166,0.15);border:1px solid rgba(14,92,166,0.4);color:#7db8ee;}
+		.flash_alerta i{flex-shrink:0;}
+
+		/* ===== CAMPOS ===== */
+		.f_campo{margin-bottom:18px;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-bottom:9px;}
+		.f_wrap_input{position:relative;}
+		.f_wrap_input > i.pref{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.35);font-size:16px;pointer-events:none;transition:color .3s;z-index:2;}
+
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="password"]{
+			width:100%;height:54px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);
+			border-radius:12px;padding:0 18px 0 50px;font-size:14.5px;color:#fff;outline:none;
+			font-family:inherit;transition:.3s;letter-spacing:.3px;
+		}
+		.f_campo input::placeholder{color:rgba(255,255,255,0.3);}
+		.f_campo input:focus{border-color:#ffaa17;background:rgba(0,0,0,0.35);box-shadow:0 0 0 3px rgba(255,170,23,.15);}
+		.f_campo input:focus + i.pref,.f_wrap_input:focus-within > i.pref{color:#ffaa17;}
+
+		.f_erro{display:block;color:#ff9aa8;font-size:12.5px;margin-top:6px;padding-left:4px;}
+		span[style*="color: red"]{color:#ff9aa8 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;padding-left:4px !important;}
+
+		/* Toggle senha */
+		.f_ver_senha{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:rgba(255,255,255,0.4);cursor:pointer;padding:6px;font-size:14px;transition:.2s;z-index:2;}
+		.f_ver_senha:hover{color:#ffaa17;}
+
+		/* Lembrar-me e esqueci */
+		.opcoes{display:flex;justify-content:space-between;align-items:center;margin:8px 0 26px;flex-wrap:wrap;gap:10px;}
+		.lembrar{display:flex;align-items:center;gap:8px;cursor:pointer;color:rgba(255,255,255,0.65);font-size:13px;}
+		.lembrar input{width:16px;height:16px;accent-color:#ffaa17;cursor:pointer;}
+		.esqueci{color:#ffaa17;font-size:13px;transition:.2s;}
+		.esqueci:hover{color:#ff8f00;text-decoration:underline;}
+
+		/* Botão principal */
+		.btn_entrar{width:100%;height:54px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);border:0;border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 20px 40px -12px rgba(255,170,23,.5);position:relative;overflow:hidden;}
+		.btn_entrar::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.25) 50%,transparent 100%);transition:.5s;}
+		.btn_entrar:hover{transform:translateY(-2px);box-shadow:0 25px 45px -12px rgba(255,170,23,.65);}
+		.btn_entrar:hover::before{left:100%;}
+		.btn_entrar i{font-size:13px;transition:transform .3s;}
+		.btn_entrar:hover i{transform:translateX(4px);}
+
+		/* Botão do formulário (fallback WTForms sem classe) */
+		input[type="submit"]{width:100%;height:54px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);border:0;border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:.3s;box-shadow:0 20px 40px -12px rgba(255,170,23,.5);}
+		input[type="submit"]:hover{transform:translateY(-2px);box-shadow:0 25px 45px -12px rgba(255,170,23,.65);}
+
+		/* Rodapé do cartão */
+		.card_foot{margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;font-size:12.5px;color:rgba(255,255,255,0.5);}
+		.card_foot p{margin:0 0 6px;}
+		.card_foot .seguro{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.4);font-size:11.5px;}
+		.card_foot .seguro i{color:#22a75e;}
+
+		/* Ícone da igreja no rodapé absoluto */
+		.rodape_site{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.4);font-size:11.5px;letter-spacing:.5px;display:flex;align-items:center;gap:10px;z-index:2;}
+		.rodape_site i{color:#ffaa17;}
+	</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="cruz_deco"></div>
+
+<div class="wrap">
+
+	<!-- ============ LADO ESQUERDO ============ -->
+	<div class="lado_marca">
+		<div class="marca_top">
+			<div class="marca_logo"><i>IC</i></div>
+			<div class="marca_txt">
+				<span>Painel administrativo</span>
+				<strong>Igreja de Cristo</strong>
+			</div>
+		</div>
+
+		<div class="saudacao">
+			<span class="tag"><i class="fa fa-key" style="margin-right:6px;"></i>Área restrita</span>
+			<h1>Bem-vindo de volta ao painel da comunidade</h1>
+			<p>Um espaço para cuidar do conteúdo que alcança pessoas todos os dias — pregações, eventos, pedidos de oração e a caminhada da nossa igreja.</p>
+		</div>
+
+		<div class="verso">
+			<span class="aspas">“</span>
+			<p>Tudo o que fizerem, façam de todo o coração, como para o Senhor, e não para os homens.</p>
+			<cite>Colossenses 3:23</cite>
+		</div>
+	</div>
+
+	<!-- ============ LADO DIREITO: CARTÃO DE LOGIN ============ -->
+	<div class="lado_login">
+		<div class="card_login">
+
+			<div class="card_head">
+				<div class="icone"><i class="fa fa-lock"></i></div>
+				<h2>Entrar no painel</h2>
+				<p>Use suas credenciais de administrador</p>
+			</div>
+
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+					<div class="flash_alerta alert-{{ category }}">
+						<i class="fa fa-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+						<span>{{ message }}</span>
+					</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+
+			<form id="loginForm" action="{{ url_for('auth.logar_no_sistema') }}" method="POST">
+				{{ formulario.hidden_tag() }}
+
+				<div class="f_campo">
+					{{ formulario.email.label }}
+					<div class="f_wrap_input">
+						<i class="fa fa-envelope-o pref"></i>
+						{{ formulario.email(placeholder="seuemail@igreja.org", autocomplete="username") }}
+					</div>
+					{% for error in formulario.email.errors %}
+						<span style="color: red;">{{ error }}</span>
+					{% endfor %}
+				</div>
+
+				<div class="f_campo">
+					{{ formulario.password.label }}
+					<div class="f_wrap_input">
+						<i class="fa fa-key pref"></i>
+						{{ formulario.password(placeholder="Sua senha", id="senha_input", autocomplete="current-password") }}
+						<button type="button" class="f_ver_senha" id="ver_senha" title="Mostrar senha"><i class="fa fa-eye"></i></button>
+					</div>
+					{% for error in formulario.password.errors %}
+						<span style="color: red;">{{ error }}</span>
+					{% endfor %}
+				</div>
+
+				<div class="opcoes">
+					<label class="lembrar">
+						<input type="checkbox" name="lembrar" />
+						<span>Manter conectado</span>
+					</label>
+					<a href="#" class="esqueci">Esqueci minha senha</a>
+				</div>
+
+				{{ formulario.submit(class="btn_entrar", value="Entrar no painel") }}
+
+			</form>
+
+			<div class="card_foot">
+				<p>Ao entrar, você concorda em manter sigilo sobre os dados que acessar.</p>
+				<span class="seguro"><i class="fa fa-shield"></i>Conexão protegida · Autenticação em duas etapas</span>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+<div class="rodape_site">
+	<i class="fa fa-heart"></i>
+	<span>Feito com cuidado para a Igreja de Cristo · {{ ano_atual or '2026' }}</span>
+</div>
+
+<script>
+(function () {
+	/* Toggle mostrar/ocultar senha */
+	var btnVer = document.getElementById('ver_senha');
+	var senha = document.getElementById('senha_input');
+	if (btnVer && senha) {
+		btnVer.addEventListener('click', function () {
+			var mostrando = senha.type === 'text';
+			senha.type = mostrando ? 'password' : 'text';
+			this.querySelector('i').className = mostrando ? 'fa fa-eye' : 'fa fa-eye-slash';
+			this.title = mostrando ? 'Mostrar senha' : 'Ocultar senha';
+		});
+	}
+
+	/* Foco automático no primeiro campo vazio */
+	setTimeout(function () {
+		var email = document.querySelector('input[type="email"]');
+		if (email && !email.value) email.focus();
+		else if (senha && !senha.value) senha.focus();
+	}, 300);
+
+	/* Animação suave ao aparecer flash messages */
+	document.querySelectorAll('.flash_alerta').forEach(function (a, i) {
+		a.style.animationDelay = (i * 0.1) + 's';
+	});
+})();
+</script>
+
+</body>
+</html>

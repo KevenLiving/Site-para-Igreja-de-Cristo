@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Redes sociais — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+
+		.flash{padding:14px 18px;border-radius:12px;margin-bottom:10px;font-size:14px;display:flex;align-items:center;gap:10px;}
+		.flash_success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.flash_danger{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.flash_info{background:rgba(14,92,166,0.08);border:1px solid rgba(14,92,166,0.25);color:#0e5ca6;}
+
+		.r_resumo{background:linear-gradient(135deg,#171d2e 0%,#0d2440 100%);border-radius:20px;padding:34px 40px;color:#fff;position:relative;overflow:hidden;margin-bottom:28px;}
+		.r_resumo:before{content:"";position:absolute;top:-120px;right:-70px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.r_resumo .c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:32px;}
+		.r_resumo .info{flex:1;min-width:280px;}
+		.r_resumo .tag{display:inline-block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:10px;}
+		.r_resumo h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:28px;line-height:38px;color:#fff;margin:0 0 10px;}
+		.r_resumo p{margin:0;color:rgba(255,255,255,0.7);font-size:14px;line-height:22px;}
+		.r_resumo .stats{display:flex;gap:22px;flex-wrap:wrap;}
+		.r_resumo .stats .st{text-align:center;padding:0 22px;border-left:1px solid rgba(255,255,255,0.12);}
+		.r_resumo .stats .st:first-child{border-left:0;padding-left:0;}
+		.r_resumo .stats .st strong{display:block;font-family:oswald,sans-serif;font-size:34px;font-weight:600;color:#ffaa17;line-height:1;}
+		.r_resumo .stats .st small{display:block;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-top:6px;font-weight:500;}
+
+		.r_grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:34px;}
+
+		.r_card{position:relative;background:#fff;border:1px solid #eef3f8;border-radius:16px;overflow:hidden;transition:.35s;box-shadow:0 15px 35px -25px rgba(0,64,128,.2);}
+		.r_card:hover{transform:translateY(-4px);box-shadow:0 30px 50px -25px rgba(0,64,128,.35);}
+		.r_card.conectado{border-color:var(--marca,#0e5ca6);box-shadow:0 20px 40px -25px var(--sombra,rgba(14,92,166,.4));}
+		.r_card.conectado:hover{box-shadow:0 35px 55px -22px var(--sombra,rgba(14,92,166,.55));}
+		.r_card.pausado{opacity:.7;}
+
+		.r_card .barra{position:absolute;top:0;left:0;right:0;height:4px;background:var(--marca,#e8eef5);transform:scaleX(.15);transform-origin:left;transition:.4s ease;}
+		.r_card.conectado .barra{transform:scaleX(1);}
+
+		.r_card_head{padding:22px 22px 16px;display:flex;align-items:center;gap:14px;}
+		.r_icone{width:56px;height:56px;border-radius:14px;background:var(--marca,#f0f3f7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 8px 18px -6px var(--sombra,rgba(0,64,128,.25));transition:.35s;}
+		.r_card:not(.conectado) .r_icone{background:#f0f3f7;color:#c3cdd9;box-shadow:none;}
+		.r_card:hover .r_icone{transform:scale(1.05) rotate(-3deg);}
+		.r_card_info{flex:1;min-width:0;}
+		.r_card_info h4{margin:0 0 3px;font-size:17px;font-weight:600;color:#1b2032;}
+		.r_card_info small{font-size:12px;color:#9aa3b0;font-style:italic;}
+		.r_card.conectado .r_card_info small{color:var(--marca);font-style:normal;font-weight:500;letter-spacing:.3px;}
+		.r_pos{position:absolute;top:14px;right:14px;background:#fff;border:1px solid #eef3f8;color:#9aa3b0;font-family:oswald,sans-serif;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:12px;letter-spacing:1px;display:none;}
+		.r_card.conectado .r_pos{display:block;}
+
+		.r_card_body{padding:0 22px 18px;}
+		.r_url{display:flex;align-items:center;gap:8px;background:#f7fafd;border:1px solid #eef3f8;border-radius:10px;padding:11px 14px;font-size:12.5px;color:#5f6b7a;font-family:'Courier New',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:42px;}
+		.r_url i{color:var(--marca);flex-shrink:0;font-size:12px;}
+		.r_url.vazia{color:#c3cdd9;font-style:italic;font-family:'Poppins',sans-serif;}
+		.r_url.vazia i{color:#c3cdd9;}
+
+		.r_card_foot{padding:12px 22px;border-top:1px solid #f2f6fa;background:#fbfdff;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+		.r_status{font-size:11.5px;color:#9aa3b0;display:flex;align-items:center;gap:6px;}
+		.r_status .dot{width:7px;height:7px;border-radius:50%;background:#c3cdd9;}
+		.r_card.conectado .r_status .dot{background:#22a75e;box-shadow:0 0 0 3px rgba(34,167,94,0.2);}
+		.r_card.pausado .r_status .dot{background:#c97a00;box-shadow:0 0 0 3px rgba(201,122,0,0.2);}
+		.r_card.conectado .r_status{color:#22a75e;font-weight:500;}
+		.r_card.pausado .r_status{color:#c97a00;font-weight:500;}
+		.r_acoes{display:flex;gap:5px;}
+		.r_acao{width:30px;height:30px;border-radius:8px;background:#fff;border:1px solid #eef3f8;color:#747474;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;font-size:11.5px;text-decoration:none;}
+		.r_acao:hover{background:var(--marca);color:#fff;border-color:var(--marca);}
+		.r_acao.excluir:hover{background:#c81f45;border-color:#c81f45;color:#fff;}
+		.r_add_btn{padding:8px 14px;font-size:12px;font-weight:500;letter-spacing:.5px;border-radius:20px;border:0;background:var(--marca);color:#fff;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none;}
+		.r_add_btn:hover{filter:brightness(0.9);color:#fff;}
+
+		.pv_wrap{background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);border-radius:16px;padding:32px 36px;margin-bottom:22px;position:relative;overflow:hidden;}
+		.pv_wrap:before{content:"";position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.12) 0%,rgba(255,170,23,0) 70%);}
+		.pv_head{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+		.pv_head h4{font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin:0;}
+		.pv_head small{font-size:11px;color:rgba(255,255,255,0.5);font-style:italic;}
+		.pv_rodape{position:relative;z-index:2;padding:20px 24px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.12);border-radius:12px;}
+		.pv_rodape .marca{color:rgba(255,255,255,0.5);font-family:Georgia,serif;font-style:italic;font-size:14px;margin-bottom:14px;}
+		.pv_icons{display:flex;gap:10px;flex-wrap:wrap;}
+		.pv_icons a{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85);display:inline-flex;align-items:center;justify-content:center;font-size:15px;transition:.3s;text-decoration:none;}
+		.pv_icons a:hover{transform:translateY(-3px);}
+		.pv_vazio{color:rgba(255,255,255,0.4);font-size:12.5px;font-style:italic;padding:12px 0;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group"><span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group"><span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link ativo"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ current_user.ADMIN_NAME }}</span>
+				<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <strong>Redes sociais</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.adicionar_rede_social') }}" class="adm_btn adm_btn_primary"><i class="fa fa-plus"></i>Nova rede</a>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Redes sociais</h1>
+			<p>Conecte os perfis oficiais da igreja. Apenas uma conta por plataforma pode estar ativa.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for categoria, mensagem in messages %}
+					<div class="flash flash_{{ 'success' if categoria == 'success' else ('danger' if categoria in ('danger','error') else 'info') }}">
+						<i class="fa fa-{{ 'check-circle' if categoria == 'success' else ('exclamation-circle' if categoria in ('danger','error') else 'info-circle') }}"></i>
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- RESUMO -->
+		<div class="r_resumo">
+			<div class="c">
+				<div class="info">
+					<span class="tag">Presença digital</span>
+					<h2>{{ total_ativas }} {{ 'rede conectada' if total_ativas == 1 else 'redes conectadas' }} · {{ total_disponiveis }} {{ 'disponível' if total_disponiveis == 1 else 'disponíveis' }}</h2>
+					<p>Os ícones das redes ativas aparecem no rodapé de todas as páginas do site. Ajuste a ordem editando cada conexão.</p>
+				</div>
+				<div class="stats">
+					<div class="st"><strong>{{ total_ativas }}</strong><small>Ativas</small></div>
+					<div class="st"><strong>{{ total_pausadas }}</strong><small>Pausadas</small></div>
+					<div class="st"><strong>{{ total_disponiveis }}</strong><small>Não conectadas</small></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- PREVIEW DO RODAPÉ -->
+		<div class="pv_wrap">
+			<div class="pv_head">
+				<h4><i class="fa fa-eye" style="margin-right:6px;"></i>Como aparece no rodapé do site</h4>
+				<small>Apenas redes ativas aparecem</small>
+			</div>
+			<div class="pv_rodape">
+				<p class="marca">Igreja de Cristo · Redes oficiais</p>
+				<div class="pv_icons">
+					{% set rodape = redes_no_rodape %}
+					{% if rodape %}
+						{% for rede in rodape %}
+							{% set meta = plataformas.get(rede.SOCIAL_PLATFORM, {}) %}
+							<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener"
+							   style="background:{{ meta.get('cor_bg','rgba(255,255,255,0.12)') }};color:{{ meta.get('cor_ic','#fff') }};"
+							   title="{{ meta.get('nome', rede.SOCIAL_PLATFORM) }}">
+								<i class="{{ rede.SOCIAL_ICON or meta.get('icone','fa fa-globe') }}"></i>
+							</a>
+						{% endfor %}
+					{% else %}
+						<div class="pv_vazio">Nenhuma rede ativa cadastrada — o rodapé aparece sem ícones sociais.</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<!-- GRID DE PLATAFORMAS -->
+		<div class="r_grid">
+			{% for slug, meta in plataformas.items() %}
+				{% set rede = redes_por_slug.get(slug) %}
+				{% set conectada = rede is not none %}
+				{% set pausada = conectada and not rede.SOCIAL_ACTIVE %}
+
+				<div class="r_card {{ 'conectado' if conectada and not pausada else '' }} {{ 'pausado' if pausada else '' }}"
+				     style="--marca:{{ meta.cor }};--sombra:{{ meta.sombra }};">
+					<div class="barra"></div>
+
+					{% if conectada %}
+						<span class="r_pos">#{{ rede.SOCIAL_ORDER or '—' }}</span>
+					{% endif %}
+
+					<div class="r_card_head">
+						<div class="r_icone" {% if meta.get('gradiente') %}style="background:{{ meta.gradiente }};"{% endif %}>
+							<i class="{{ meta.icone }}"></i>
+						</div>
+						<div class="r_card_info">
+							<h4>{{ meta.nome }}</h4>
+							<small>{{ meta.sub }}</small>
+						</div>
+					</div>
+
+					<div class="r_card_body">
+						{% if conectada %}
+							<div class="r_url" title="{{ rede.SOCIAL_URL }}">
+								<i class="fa fa-link"></i>{{ rede.SOCIAL_URL|replace('https://','')|replace('http://','') }}
+							</div>
+						{% else %}
+							<div class="r_url vazia"><i class="fa fa-plus-circle"></i>Ainda não conectada</div>
+						{% endif %}
+					</div>
+
+					<div class="r_card_foot">
+						<div class="r_status">
+							<span class="dot"></span>
+							{% if pausada %}Pausada
+							{% elif conectada %}Ativa
+							{% else %}Não conectada{% endif %}
+						</div>
+						{% if conectada %}
+							<div class="r_acoes">
+								<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener" class="r_acao" title="Abrir link"><i class="fa fa-external-link"></i></a>
+								<a href="{{ url_for('administrador.editar_rede_social', social_id=rede.SOCIAL_ID) }}" class="r_acao" title="Editar"><i class="fa fa-pencil"></i></a>
+								<a href="{{ url_for('administrador.excluir_rede_social', social_id=rede.SOCIAL_ID) }}"
+								   class="r_acao excluir" title="Desconectar"
+								   onclick="return confirm('Desconectar {{ meta.nome }}? A URL será removida do sistema.');">
+									<i class="fa fa-unlink"></i>
+								</a>
+							</div>
+						{% else %}
+							<a href="{{ url_for('administrador.adicionar_rede_social', plataforma=slug) }}" class="r_add_btn"><i class="fa fa-plus"></i>Conectar</a>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+	</main>
+</div>
+
+<script>
+document.getElementById('adm_toggle').addEventListener('click', function () {
+	document.getElementById('adm_side').classList.toggle('aberta');
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Nova pregação — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<!-- CSS do Quill (tema Snow) -->
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		/* ===== BOTÕES ===== */
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		/* ===== ALERTAS ===== */
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.alert-warning{background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.3);color:#c97a00;}
+		.alert-info{background:rgba(14,92,166,0.08);border:1px solid rgba(14,92,166,0.25);color:#0e5ca6;}
+
+		/* ===== GRID DO FORMULÁRIO ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:960px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		/* ===== CAMPOS ===== */
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+
+		.f_campo input[type="text"],
+		.f_campo input[type="email"],
+		.f_campo input[type="url"],
+		.f_campo select{
+			width:100%;height:48px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:0 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input:focus,.f_campo select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		span[style*="color: red"]{color:#c81f45 !important;font-size:12.5px !important;margin-top:6px !important;display:block !important;}
+
+		/* ===== UPLOAD DE BANNER ===== */
+		.f_upload{position:relative;background:#f7fafd;border:2px dashed #d5dee8;border-radius:12px;padding:26px 20px;text-align:center;transition:.3s;cursor:pointer;overflow:hidden;}
+		.f_upload:hover{border-color:#ffaa17;background:#fff;}
+		.f_upload i.f_upload_icone{font-size:32px;color:#c3cdd9;margin-bottom:10px;display:block;transition:.3s;}
+		.f_upload:hover i.f_upload_icone{color:#ffaa17;}
+		.f_upload strong{display:block;color:#1b2032;font-weight:600;font-size:14px;margin-bottom:2px;}
+		.f_upload small{display:block;font-size:12px;color:#9aa3b0;}
+		.f_upload input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2;}
+
+		/* Estado: arquivo selecionado */
+		.f_upload.preenchido{border-style:solid;border-color:#22a75e;background:#fff;padding:16px;text-align:left;}
+		.f_upload.preenchido i.f_upload_icone,
+		.f_upload.preenchido strong,
+		.f_upload.preenchido small{display:none;}
+
+		.f_upload_preview{display:none;align-items:center;gap:14px;}
+		.f_upload.preenchido .f_upload_preview{display:flex;}
+		.f_upload_preview img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #e8eef5;flex-shrink:0;background:#f7fafd;}
+		.f_upload_preview .f_upload_info{flex:1;min-width:0;}
+		.f_upload_preview .f_upload_nome{display:block;font-size:14px;color:#1b2032;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;}
+		.f_upload_preview .f_upload_meta{display:flex;align-items:center;gap:6px;font-size:12px;color:#22a75e;font-weight:500;}
+		.f_upload_preview .f_upload_meta i{font-size:13px;}
+		.f_upload_remover{background:none;border:0;color:#c81f45;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:.2s;position:relative;z-index:3;flex-shrink:0;}
+		.f_upload_remover:hover{background:rgba(200,31,69,0.08);}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;margin-bottom:12px;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle:last-child{margin-bottom:0;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-family:'Poppins',sans-serif;font-size:14px;color:#1b2032;font-weight:600;text-transform:none;letter-spacing:0;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== EDITOR QUILL =====
+		   No Quill 2, #editor-conteudo vira o CONTAINER (.ql-container).
+		   O conteúdo editável fica em .ql-editor dentro dele. */
+		#editor-conteudo{
+			background:#fff;
+			border:1px solid #e8eef5 !important;
+			border-top:0 !important;
+			border-radius:0 0 10px 10px !important;
+		}
+		#editor-conteudo .ql-editor{
+			min-height:400px;
+			padding:20px 22px;
+			font-family:'Poppins',sans-serif;
+			font-size:15.5px;
+			line-height:28px;
+			color:#1b2032;
+		}
+		#editor-conteudo .ql-editor.ql-blank::before{
+			color:#c3cdd9;
+			font-style:italic;
+			font-size:15px;
+			left:22px;
+			right:22px;
+		}
+		#editor-conteudo .ql-editor h2{
+			font-family:Georgia,'Times New Roman',serif;
+			font-style:italic;
+			font-weight:400;
+			font-size:26px;
+			color:#1b2032;
+			margin:24px 0 10px;
+		}
+		#editor-conteudo .ql-editor p{margin:0 0 14px;}
+		#editor-conteudo .ql-editor strong{color:#1b2032;font-weight:600;}
+		#editor-conteudo .ql-editor em{color:#0e5ca6;}
+
+		.ql-toolbar.ql-snow{
+			background:#f9fcff !important;
+			border:1px solid #e8eef5 !important;
+			border-bottom:0 !important;
+			border-radius:10px 10px 0 0 !important;
+			padding:10px 14px !important;
+		}
+		.ql-toolbar.ql-snow .ql-formats{margin-right:16px !important;}
+		.ql-snow .ql-picker,.ql-snow .ql-stroke{color:#4a5566 !important;stroke:#4a5566 !important;}
+		.ql-snow .ql-fill{fill:#4a5566 !important;}
+		.ql-snow.ql-toolbar button:hover,.ql-snow .ql-toolbar button:focus,
+		.ql-snow.ql-toolbar button.ql-active{color:#ffaa17 !important;}
+		.ql-snow.ql-toolbar button:hover .ql-stroke,
+		.ql-snow.ql-toolbar button.ql-active .ql-stroke{stroke:#ffaa17 !important;}
+		.ql-snow.ql-toolbar button:hover .ql-fill,
+		.ql-snow.ql-toolbar button.ql-active .ql-fill{fill:#ffaa17 !important;}
+
+		/* ===== BARRA DE AÇÕES ===== */
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+		.f_actions input[type="submit"],
+		.f_campo input[type="submit"]{
+			display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;
+			background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(255,170,23,.6);
+		}
+		.f_actions input[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ================== SIDEBAR ================== -->
+<aside class="adm_side" id="adm_side">
+	<div class="adm_brand">
+		<span>Painel Editor</span>
+		<strong>Igreja de Cristo</strong>
+	</div>
+
+	<div class="adm_side_nav">
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Conteúdo</span>
+			<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link ativo"><i class="fa fa-book"></i>Pregações</a>
+			<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+			<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Comunidade</span>
+			<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+			<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+			<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Instituição</span>
+			<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+			<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+			<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+		</div>
+	</div>
+
+	<div class="adm_user">
+		<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+		<div class="adm_user_info">
+			<span>{{ current_user.ADMIN_NAME }}</span>
+			<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+		</div>
+		<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+	</div>
+</aside>
+
+<!-- ================== MAIN ================== -->
+<main class="adm_main">
+
+	<div class="adm_top">
+		<div style="display:flex;align-items:center;">
+			<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+			<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_pregacoes') }}">Pregações</a> / <strong>Nova</strong></span>
+		</div>
+		<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+	</div>
+
+		<div class="adm_page_title">
+			<h1>Nova pregação</h1>
+			<p>Preencha os campos abaixo. Você pode salvar como rascunho e publicar depois.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<form id="loginForm" action="{{ url_for('administrador.cadastrar_estudo') }}" method="POST" enctype="multipart/form-data">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL: TÍTULO + EDITOR ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.titulo.label }}
+							{{ formulario.titulo(placeholder="Ex.: A paz que excede todo entendimento") }}
+							<small class="f_ajuda">Aparece no card da pregação e no cabeçalho da página.</small>
+							{% for error in formulario.titulo.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.referencia.label }}
+							{{ formulario.referencia(placeholder="Ex.: Filipenses 4:6-7") }}
+							<small class="f_ajuda">O texto bíblico base do estudo.</small>
+							{% for error in formulario.referencia.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+						</div>
+					</div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Conteúdo</h3>
+							<div class="f_icone"><i class="fa fa-file-text-o"></i></div>
+						</div>
+
+						{{ formulario.conteudo.label }}
+						<!-- Editor Quill -->
+						<div id="editor-conteudo"></div>
+						<input type="hidden" id="conteudo" name="conteudo">
+
+						<small class="f_ajuda">Use "H2" para subtítulos. Negrito e itálico ficam disponíveis na barra acima.</small>
+
+						{% for error in formulario.conteudo.errors %}
+							<span style="color: red;">{{ error }}</span>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL: METADADOS ==== -->
+				<div>
+
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Publicação</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							{{ formulario.tema.label }}
+							{{ formulario.tema }}
+							<small class="f_ajuda">Usado para filtrar e agrupar estudos.</small>
+							{% for error in formulario.tema.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+						</div>
+
+						<label class="f_toggle">
+							{{ formulario.destaque }}
+							<div class="info">
+								{{ formulario.destaque.label }}
+								<small>O estudo aparece no carrossel da home.</small>
+							</div>
+							{% for error in formulario.destaque.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+						</label>
+
+						<label class="f_toggle">
+							{{ formulario.publicar }}
+							<div class="info">
+								{{ formulario.publicar.label }}
+								<small>Desmarcado, fica salvo como rascunho.</small>
+							</div>
+							{% for error in formulario.publicar.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+						</label>
+					</div>
+
+					<div class="f_card">
+					<div class="f_card_head">
+						<h3>Banner de capa</h3>
+						<div class="f_icone"><i class="fa fa-image"></i></div>
+					</div>
+
+					{{ formulario.banner.label }}
+					<div class="f_upload" id="f_upload">
+						<i class="fa fa-cloud-upload f_upload_icone"></i>
+						<strong>Clique ou arraste uma imagem</strong>
+						<small>JPG ou PNG, largura recomendada de 1600px</small>
+
+						<div class="f_upload_preview">
+							<img id="f_upload_img" alt="Prévia do banner">
+							<div class="f_upload_info">
+								<span class="f_upload_nome" id="f_upload_nome"></span>
+								<span class="f_upload_meta">
+									<i class="fa fa-check-circle"></i>
+									<span id="f_upload_tamanho"></span>
+								</span>
+							</div>
+							<button type="button" class="f_upload_remover" id="f_upload_remover" title="Remover">
+								<i class="fa fa-times"></i> Remover
+							</button>
+						</div>
+
+						{{ formulario.banner(id="banner_input") }}
+					</div>
+					{% for error in formulario.banner.errors %}
+						<span style="color: red;">{{ error }}</span>
+					{% endfor %}
+				</div>
+
+				</div>
+
+			</div>
+
+			<!-- BARRA DE AÇÕES -->
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle" style="color:#ffaa17;"></i>
+					Um estudo publicado fica visível na página pública imediatamente.
+				</div>
+				<div class="dir">
+					<a href="pregacoes.html" class="adm_btn adm_btn_ghost">Cancelar</a>
+					{{ formulario.submit() }}
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+	const quill = new Quill('#editor-conteudo', {
+		theme: 'snow',
+		placeholder: 'Comece a escrever aqui...',
+		modules: {
+			toolbar: [
+				[{ 'header': 2 }],   // vira o "Subtítulo" (h2)
+				['bold', 'italic'],  // texto corrido
+			]
+		}
+	});
+
+	const form   = document.getElementById("loginForm");
+	const hidden = document.getElementById("conteudo");
+
+	form.addEventListener("submit", function (e) {
+		const texto = quill.getText().trim();
+		hidden.value = quill.root.innerHTML;  // sincroniza sempre
+
+		if (texto.length === 0) {
+			e.preventDefault();
+			alert("O conteúdo do estudo é obrigatório.");
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+	(function(){
+	const upload    = document.getElementById('f_upload');
+	const input     = document.getElementById('banner_input');
+	const img       = document.getElementById('f_upload_img');
+	const nome      = document.getElementById('f_upload_nome');
+	const tamanho   = document.getElementById('f_upload_tamanho');
+	const remover   = document.getElementById('f_upload_remover');
+
+	if (!input) return;
+
+	function formatarTamanho(bytes){
+		if (bytes < 1024) return bytes + ' B';
+		if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+		return (bytes/1024/1024).toFixed(2) + ' MB';
+	}
+
+	input.addEventListener('change', function(){
+		const arquivo = input.files && input.files[0];
+		if (!arquivo) return;
+
+		nome.textContent = arquivo.name;
+		tamanho.textContent = 'Arquivo carregado — ' + formatarTamanho(arquivo.size);
+		upload.classList.add('preenchido');
+
+		if (arquivo.type.startsWith('image/')) {
+			const leitor = new FileReader();
+			leitor.onload = e => img.src = e.target.result;
+			leitor.readAsDataURL(arquivo);
+		} else {
+			img.removeAttribute('src');
+		}
+	});
+
+	remover.addEventListener('click', function(e){
+		e.stopPropagation();
+		input.value = '';
+		img.removeAttribute('src');
+		nome.textContent = '';
+		tamanho.textContent = '';
+		upload.classList.remove('preenchido');
+	});
+})();
+</script>
+
+</body>
+</html>

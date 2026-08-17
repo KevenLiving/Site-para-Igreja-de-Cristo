@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Configurar autenticação em duas etapas | Igreja de Cristo</title>
+
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+
+
+	<style>
+		*{box-sizing:border-box;}
+		body{margin:0;font-family:'Poppins',sans-serif;color:#4a5566;min-height:100vh;background:#0b0f1a;overflow-x:hidden;}
+		a{text-decoration:none;color:inherit;}
+
+		/* ===== FUNDO ===== */
+		.bg{position:fixed;inset:0;background:linear-gradient(135deg,#0b0f1a 0%,#141a2f 55%,#0d2440 100%);z-index:-2;}
+		.bg::before{content:"";position:absolute;top:-200px;right:-150px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.15) 0%,rgba(255,170,23,0) 70%);animation:float1 14s ease-in-out infinite;}
+		.bg::after{content:"";position:absolute;bottom:-250px;left:-100px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.38) 0%,rgba(14,92,166,0) 70%);animation:float2 17s ease-in-out infinite;}
+		@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,20px);}}
+		@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-20px);}}
+
+		.cruz_deco{position:fixed;bottom:15%;right:8%;font-size:240px;color:rgba(255,255,255,0.02);font-family:Georgia,serif;line-height:1;z-index:-1;user-select:none;pointer-events:none;transform:rotate(12deg);}
+		.cruz_deco::before{content:"†";}
+
+		/* ===== TOPO ===== */
+		.topo{position:relative;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;z-index:2;}
+		.topo_marca{display:flex;align-items:center;gap:12px;}
+		.marca_logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:18px;box-shadow:0 10px 22px -6px rgba(255,170,23,.5);}
+		.marca_txt span{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:2px;}
+		.marca_txt strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:17px;color:#fff;font-weight:400;line-height:20px;}
+		.topo_sair{color:rgba(255,255,255,0.55);font-size:13px;transition:.3s;display:inline-flex;align-items:center;gap:6px;}
+		.topo_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTAINER PRINCIPAL ===== */
+		.wrap{position:relative;z-index:1;padding:20px 40px 60px;max-width:920px;margin:0 auto;}
+		@media (max-width:640px){.wrap{padding:20px 20px 40px;}}
+
+		/* Passos superiores */
+		.passos{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:34px;flex-wrap:wrap;}
+		.passo{display:flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+		.passo.feito{background:rgba(34,167,94,0.15);border-color:rgba(34,167,94,0.35);color:#4ade80;}
+		.passo.on{background:rgba(255,170,23,0.15);border-color:rgba(255,170,23,0.4);color:#ffaa17;}
+		.passo .num{width:16px;height:16px;border-radius:50%;background:currentColor;color:#0b0f1a;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+		.passo.feito .num::before{content:"\f00c";font-family:FontAwesome;font-size:8px;}
+		.passo.feito .num span{display:none;}
+		.passo_link{width:12px;height:2px;background:rgba(255,255,255,0.15);border-radius:2px;}
+		.passo_link.feito{background:rgba(34,167,94,0.5);}
+
+		/* ===== CABEÇALHO ===== */
+		.cabecalho{text-align:center;margin-bottom:30px;color:#fff;}
+		.cabecalho .selo{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(255,170,23,0.12);border:1px solid rgba(255,170,23,0.3);border-radius:22px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:18px;}
+		.cabecalho h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:38px;line-height:46px;color:#fff;margin:0 0 12px;}
+		@media (max-width:640px){.cabecalho h1{font-size:28px;line-height:36px;}}
+		.cabecalho p{margin:0 auto;font-size:15px;line-height:24px;color:rgba(255,255,255,0.7);max-width:560px;}
+
+		/* ===== GRID DE CONTEÚDO ===== */
+		.conteudo_grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+		@media (max-width:900px){.conteudo_grid{grid-template-columns:1fr;}}
+
+		/* ===== CARTÃO DO QR ===== */
+		.qr_card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:36px 32px;text-align:center;position:relative;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.4);}
+		.qr_card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,170,23,0.6) 50%,transparent 100%);}
+
+		.qr_head{margin-bottom:24px;}
+		.qr_head .icone{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(255,170,23,0.2) 0%,rgba(255,143,0,0.1) 100%);border:1px solid rgba(255,170,23,0.3);color:#ffaa17;display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px;box-shadow:0 12px 30px -10px rgba(255,170,23,.35);}
+		.qr_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#fff;margin:0 0 6px;}
+		.qr_head small{display:block;font-size:12.5px;color:rgba(255,255,255,0.55);}
+
+		/* O QR em si */
+		.qr_moldura{display:inline-block;background:#fff;padding:20px;border-radius:20px;box-shadow:0 25px 50px -12px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,0.05),0 0 60px -8px rgba(255,170,23,0.35);position:relative;margin-bottom:20px;}
+		.qr_moldura::before,.qr_moldura::after{content:"";position:absolute;width:24px;height:24px;border:3px solid #ffaa17;}
+		.qr_moldura::before{top:8px;left:8px;border-right:0;border-bottom:0;border-top-left-radius:8px;}
+		.qr_moldura::after{bottom:8px;right:8px;border-left:0;border-top:0;border-bottom-right-radius:8px;}
+		.qr_cantos_2{position:absolute;top:8px;right:8px;width:24px;height:24px;border:3px solid #ffaa17;border-left:0;border-bottom:0;border-top-right-radius:8px;}
+		.qr_cantos_3{position:absolute;bottom:8px;left:8px;width:24px;height:24px;border:3px solid #ffaa17;border-right:0;border-top:0;border-bottom-left-radius:8px;}
+		.qr_moldura img{display:block;width:220px;height:220px;image-rendering:pixelated;}
+
+		.qr_aviso{font-size:12px;color:rgba(255,255,255,0.5);margin-top:8px;line-height:18px;padding:0 10px;}
+		.qr_aviso i{color:#ffaa17;margin-right:5px;}
+
+		/* Código manual */
+		.qr_manual{margin-top:22px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);}
+		.qr_manual_lbl{font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;}
+		.qr_codigo{display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,0.3);border:1px dashed rgba(255,170,23,0.4);border-radius:12px;padding:12px 18px;font-family:'Courier New',monospace;font-size:14px;color:#ffaa17;letter-spacing:2.5px;font-weight:600;cursor:pointer;transition:.3s;user-select:all;}
+		.qr_codigo:hover{background:rgba(255,170,23,0.08);border-color:#ffaa17;}
+		.qr_codigo i{font-size:12px;opacity:.7;}
+		.qr_copiado{display:block;margin-top:8px;font-size:11.5px;color:#4ade80;opacity:0;transition:.3s;}
+		.qr_copiado.on{opacity:1;}
+
+		/* ===== CARTÃO DAS INSTRUÇÕES ===== */
+		.instr_card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:36px 32px;box-shadow:0 40px 80px -20px rgba(0,0,0,.4);}
+		.instr_head{margin-bottom:24px;}
+		.instr_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#fff;margin:0 0 6px;display:flex;align-items:center;gap:12px;}
+		.instr_head h3 i{color:#ffaa17;font-size:20px;}
+		.instr_head small{display:block;font-size:12.5px;color:rgba(255,255,255,0.55);}
+
+		.instr_lista{list-style:none;padding:0;margin:0;counter-reset:passo;}
+		.instr_lista li{position:relative;padding:16px 0 16px 56px;border-bottom:1px solid rgba(255,255,255,0.06);counter-increment:passo;}
+		.instr_lista li:last-child{border-bottom:0;padding-bottom:0;}
+		.instr_lista li:first-child{padding-top:0;}
+		.instr_lista li::before{content:counter(passo,decimal-leading-zero);position:absolute;left:0;top:16px;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(255,170,23,0.15) 0%,rgba(255,143,0,0.08) 100%);border:1px solid rgba(255,170,23,0.3);color:#ffaa17;display:flex;align-items:center;justify-content:center;font-family:oswald,sans-serif;font-size:13px;font-weight:600;letter-spacing:.5px;}
+		.instr_lista li:first-child::before{top:0;}
+		.instr_lista strong{display:block;font-size:14.5px;color:#fff;font-weight:600;margin-bottom:4px;}
+		.instr_lista p{margin:0;font-size:13px;line-height:20px;color:rgba(255,255,255,0.65);}
+		.instr_lista .app_row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+		.instr_lista .app_chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:5px 12px;font-size:11.5px;color:rgba(255,255,255,0.8);transition:.2s;}
+		.instr_lista .app_chip:hover{border-color:rgba(255,170,23,0.4);color:#ffaa17;}
+		.instr_lista .app_chip i{font-size:12px;}
+
+		/* ===== BLOCO DE AÇÃO ===== */
+		.acao_wrap{margin-top:28px;background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:32px 36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden;}
+		.acao_wrap::before{content:"";position:absolute;top:-40px;right:-20px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.acao_txt{position:relative;z-index:2;color:#fff;flex:1;min-width:240px;}
+		.acao_txt strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:19px;font-weight:400;color:#fff;margin-bottom:4px;}
+		.acao_txt small{display:block;font-size:12.5px;color:rgba(255,255,255,0.6);}
+
+		.btn_avancar{position:relative;z-index:2;display:inline-flex;align-items:center;gap:12px;padding:16px 34px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;border-radius:30px;font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:600;letter-spacing:1px;box-shadow:0 20px 40px -12px rgba(255,170,23,.55);transition:.3s;overflow:hidden;}
+		.btn_avancar::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.28) 50%,transparent 100%);transition:.5s;}
+		.btn_avancar:hover{transform:translateY(-2px);box-shadow:0 25px 45px -12px rgba(255,170,23,.7);}
+		.btn_avancar:hover::before{left:100%;}
+		.btn_avancar i{font-size:13px;transition:transform .3s;}
+		.btn_avancar:hover i{transform:translateX(5px);}
+
+		/* Aviso de segurança */
+		.aviso_seg{margin-top:24px;padding:16px 22px;background:rgba(14,92,166,0.15);border:1px solid rgba(14,92,166,0.35);border-radius:14px;display:flex;align-items:flex-start;gap:14px;color:rgba(255,255,255,0.8);}
+		.aviso_seg i{color:#7db8ee;font-size:20px;flex-shrink:0;margin-top:2px;}
+		.aviso_seg strong{display:block;color:#fff;font-weight:600;font-size:13.5px;margin-bottom:4px;}
+		.aviso_seg p{margin:0;font-size:12.5px;line-height:19px;color:rgba(255,255,255,0.7);}
+
+		/* Rodapé */
+		.rodape{text-align:center;margin-top:40px;font-size:11.5px;color:rgba(255,255,255,0.35);}
+		.rodape i{color:#ffaa17;}
+	</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="cruz_deco"></div>
+
+<!-- ===== TOPO ===== -->
+<div class="topo">
+	<div class="topo_marca">
+		<div class="marca_logo">IC</div>
+		<div class="marca_txt">
+			<span>Painel administrativo</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+	</div>
+	<a href="{{ url_for('auth.cancelar_login')}}" class="topo_sair"><i class="fa fa-sign-out"></i>Cancelar login</a>
+</div>
+
+<div class="wrap">
+
+	
+
+	<!-- ===== CABEÇALHO ===== -->
+	<div class="cabecalho">
+		<span class="selo"><i class="fa fa-shield"></i>Segurança em duas etapas</span>
+		<h1>Vamos proteger sua conta</h1>
+		<p>Escaneie o QR Code abaixo com um aplicativo autenticador. A cada login, você digitará o código de 6 dígitos gerado — assim mesmo que alguém descubra sua senha, não conseguirá entrar sem seu celular.</p>
+	</div>
+
+	<!-- ===== GRID PRINCIPAL ===== -->
+	<div class="conteudo_grid">
+
+		<!-- CARTÃO DO QR CODE -->
+		<div class="qr_card">
+			<div class="qr_head">
+				<div class="icone"><i class="fa fa-qrcode"></i></div>
+				<h3>Escaneie o QR Code</h3>
+				<small>Aponte a câmera do app para o código</small>
+			</div>
+
+			<div class="qr_moldura">
+				<span class="qr_cantos_2"></span>
+				<span class="qr_cantos_3"></span>
+				<img src="data:image/png;base64,{{ qr_img_base64 }}" alt="QR Code de autenticação" />
+			</div>
+
+			<p class="qr_aviso"><i class="fa fa-info-circle"></i>Este QR Code é único e válido apenas para esta conta.</p>
+
+			<!-- Código manual (fallback) -->
+			<div class="qr_manual">
+				<div class="qr_manual_lbl">Não consegue escanear?</div>
+				<div class="qr_codigo" id="codigo_manual" title="Clique para copiar">
+					<span>{{ secret_key or 'JBSWY3DPEHPK3PXP' }}</span>
+					<i class="fa fa-copy"></i>
+				</div>
+				<span class="qr_copiado" id="qr_copiado"><i class="fa fa-check"></i> Código copiado para a área de transferência</span>
+			</div>
+		</div>
+
+		<!-- CARTÃO DAS INSTRUÇÕES -->
+		<div class="instr_card">
+			<div class="instr_head">
+				<h3><i class="fa fa-mobile"></i>Como configurar</h3>
+				<small>Três passos simples no seu celular</small>
+			</div>
+
+			<ol class="instr_lista">
+				<li>
+					<strong>Baixe um app autenticador</strong>
+					<p>Use o Google Authenticator ou qualquer app compatível TOTP.</p>
+					<div class="app_row">
+						<a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank" class="app_chip"><i class="fa fa-apple"></i>App Store</a>
+						<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" class="app_chip"><i class="fa fa-android"></i>Google Play</a>
+					</div>
+				</li>
+				<li>
+					<strong>Abra o app e adicione conta</strong>
+					<p>Toque em <em>"+"</em> ou <em>"Adicionar conta"</em> e escolha <em>"Escanear código QR"</em>.</p>
+				</li>
+				<li>
+					<strong>Aponte a câmera para o QR</strong>
+					<p>A conta "Igreja de Cristo" será adicionada automaticamente. Um código de 6 dígitos aparecerá e mudará a cada 30 segundos.</p>
+				</li>
+			</ol>
+		</div>
+
+	</div>
+
+	<!-- ===== AVISO DE SEGURANÇA ===== -->
+	<div class="aviso_seg">
+		<i class="fa fa-lock"></i>
+		<div>
+			<strong>Guarde bem o acesso ao seu app autenticador</strong>
+			<p>Se você perder o celular ou trocar de aparelho sem transferir as contas, precisará contatar um administrador root para redefinir a autenticação em duas etapas.</p>
+		</div>
+	</div>
+
+	<!-- ===== AÇÃO ===== -->
+	<div class="acao_wrap">
+		<div class="acao_txt">
+			<strong>Já escaneou o código?</strong>
+			<small>Vamos verificar se está funcionando — digite o código de 6 dígitos gerado pelo app.</small>
+		</div>
+		<a href="{{ url_for('auth.two_factor_authentication') }}" class="btn_avancar">
+			Verificar código
+			<i class="fa fa-long-arrow-right"></i>
+		</a>
+	</div>
+
+	<div class="rodape">
+		<i class="fa fa-shield"></i> Autenticação TOTP · Compatível com RFC 6238 · Sua chave nunca deixa este servidor
+	</div>
+
+</div>
+
+<script>
+(function () {
+	/* Copiar código manual ao clicar */
+	var codigo = document.getElementById('codigo_manual');
+	var aviso = document.getElementById('qr_copiado');
+	if (codigo) {
+		codigo.addEventListener('click', function () {
+			var texto = this.querySelector('span').textContent.trim();
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText(texto).then(function () {
+					aviso.classList.add('on');
+					setTimeout(function () { aviso.classList.remove('on'); }, 2400);
+				});
+			} else {
+				/* Fallback: seleciona o texto para copiar manualmente */
+				var range = document.createRange();
+				range.selectNode(codigo.querySelector('span'));
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		});
+	}
+})();
+</script>
+
+</body>
+</html>

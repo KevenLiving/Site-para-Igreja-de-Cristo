@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="{{ ministerio.DEPARTMENT_NAME }} — Igreja de Cristo">
+		<meta name="keywords" content="ministério, {{ ministerio.DEPARTMENT_NAME|lower }}, igreja de cristo">
+		<title>{{ ministerio.DEPARTMENT_NAME }} — Igreja de Cristo</title>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+		<!-- Google Fonts -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+		<!-- Font Awesome / Themify -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+
+		<!-- Owl Carousel -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.carousel.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.theme.css') }}">
+
+		<!-- Fonts CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+		<!-- Animate -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+
+		<!-- Magnific Popup -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/magnific-popup.css') }}">
+
+		<!-- Style -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<style>
+			#lideranca {
+				scroll-margin-top: 100px;
+			}
+		</style>
+	</head>
+
+    <body data-spy="scroll" data-offset="80">
+
+		<!-- START PRELOADER -->
+		<div  class="preloader">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>
+		<!-- END PRELOADER -->
+
+		 <!-- START NAVBAR -->
+		<div class="site-mobile-menu site-navbar-target">
+		  <div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+			  <span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		  </div>
+		  <div class="site-mobile-menu-body"></div>
+		</div>
+
+		<header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+		  <div class="container">
+			<div class="row align-items-center">
+			  <div class="col-6 col-xl-2">
+				<h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+			  </div>
+			  <div class="col-12 col-md-10 d-none d-xl-block">
+				<nav class="site-navigation position-relative text-right" role="navigation">
+				  <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+					<li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+				  	<li class="has-children">
+					  <a href="#" class="nav-link">Conteudo</a>
+					  <ul class="dropdown">
+						<li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+						<li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+					  </ul>
+					</li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Ministérios</a>
+					  <ul class="dropdown">
+						{% for min_nav in ministerios %}
+							<li><a href="{{ url_for('public.ministerio', ministerio_id=min_nav.DEPARTMENT_ID) }}" class="nav-link">{{ min_nav.DEPARTMENT_NAME }}</a></li>
+						{% else %}
+							<li><a href="#" class="nav-link">Em breve</a></li>
+						{% endfor %}
+					  </ul>
+					</li>
+					<li>
+					  <a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a>
+					</li>
+			         <li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+				  </ul>
+				</nav>
+			  </div>
+			   <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+			   <a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+			   </div>
+			</div>
+		  </div>
+		</header>
+	   <!-- END NAVBAR-->
+
+		<!-- ===================== HERO ===================== -->
+<section style="position:relative;height:520px;overflow:hidden;background:#0e5ca6;">
+	<img src="{{ url_for('static', filename='assets/img/evangelismo.png') }}" alt="{{ ministerio.DEPARTMENT_NAME }}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.55;" />
+
+	<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(23,29,46,0.55) 0%,rgba(23,29,46,0.75) 55%,rgba(23,29,46,0.95) 100%);"></div>
+	<div style="position:absolute;top:-140px;right:-90px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+
+	<div class="container" style="position:relative;z-index:2;height:100%;">
+		<div class="row align-items-end" style="height:100%;padding-bottom:60px;">
+			<div class="col-lg-9 col-md-12">
+				{# Link "Todos os ministérios" — como não há uma listagem geral pública ainda,
+				   aponto para a home, que tem a seção de ministérios com os cards principais. #}
+				<a href="{{ url_for('public.index') }}#ministerios" style="display:inline-flex;align-items:center;font-family:oswald,sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:22px;transition:.3s;" onmouseover="this.style.color='#ffaa17';" onmouseout="this.style.color='rgba(255,255,255,0.7)';">
+					<i class="fa fa-long-arrow-left" style="margin-right:10px;"></i>Todos os ministérios
+				</a>
+				<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:14px;">Ministério</span>
+				<h1 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:64px;line-height:76px;color:#fff;margin:0;">{{ ministerio.DEPARTMENT_NAME }}</h1>
+			</div>
+		</div>
+	</div>
+</section>
+
+{# ============================================================
+   CARD DE IDENTIDADE — só aparece se houver informação de liderança
+   (nome, email ou telefone). Se o ministério não tiver liderança
+   cadastrada, o card inteiro é omitido.
+============================================================ #}
+{% if ministerio.DEPARTMENT_LEADER_NAME or ministerio.DEPARTMENT_CONTACT_EMAIL or ministerio.DEPARTMENT_CONTACT_PHONE %}
+<section  style="background:#f9fcff;padding:0 0 30px;">
+	<div  class="container">
+		<div class="row justify-content-center">
+			<div id="lideranca" class="col-lg-10 col-md-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0" style="margin-top:-70px;position:relative;z-index:5;">
+
+				<div style="background:#fff;border-radius:18px;box-shadow:0 40px 70px -35px rgba(0,64,128,.45);border:1px solid rgba(14,92,166,0.07);overflow:hidden;">
+					<div style="display:flex;flex-wrap:wrap;align-items:center;">
+
+						<!-- FOTO DO LÍDER -->
+						<div style="flex:0 0 200px;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);padding:28px;display:flex;align-items:center;justify-content:center;align-self:stretch;">
+							<div style="width:140px;height:140px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;box-shadow:0 15px 35px -12px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,0.18);background:#0a3d70;display:flex;align-items:center;justify-content:center;">
+								{% if ministerio.DEPARTMENT_LEADER_PHOTO %}
+									<img src="{{ url_for('static', filename='uploads/departamentos/' + ministerio.DEPARTMENT_LEADER_PHOTO) }}" alt="{{ ministerio.DEPARTMENT_LEADER_NAME or ministerio.DEPARTMENT_NAME }}" style="width:100%;height:100%;object-fit:cover;" />
+								{% else %}
+									<i class="icon-user" style="font-size:56px;color:rgba(255,255,255,0.5);"></i>
+								{% endif %}
+							</div>
+						</div>
+
+						<!-- LIDERANÇA + CONTATO -->
+						<div style="flex:1;min-width:280px;padding:30px 36px;">
+							<span style="display:inline-block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:8px;">Liderança</span>
+
+							{% if ministerio.DEPARTMENT_LEADER_NAME %}
+								<h3 style="margin:0 0 10px;font-size:24px;font-weight:600;color:#1b2032;">{{ ministerio.DEPARTMENT_LEADER_NAME }}</h3>
+							{% else %}
+								<h3 style="margin:0 0 10px;font-size:24px;font-weight:600;color:#1b2032;">Equipe do ministério</h3>
+							{% endif %}
+
+							{% if ministerio.DEPARTMENT_LEADER_BIO %}
+								<p style="font-size:14px;line-height:25px;color:#747474;margin-bottom:18px;">{{ ministerio.DEPARTMENT_LEADER_BIO }}</p>
+							{% endif %}
+
+							{% if ministerio.DEPARTMENT_CONTACT_EMAIL or ministerio.DEPARTMENT_CONTACT_PHONE %}
+								<div style="display:flex;flex-wrap:wrap;gap:10px;">
+									{% if ministerio.DEPARTMENT_CONTACT_EMAIL %}
+										<a href="mailto:{{ ministerio.DEPARTMENT_CONTACT_EMAIL }}" style="display:inline-flex;align-items:center;background:#f7fafd;border:1px solid #e8eef5;color:#1b2032;font-size:13.5px;padding:9px 16px;border-radius:30px;transition:.3s;" onmouseover="this.style.background='#ffaa17';this.style.color='#fff';this.style.borderColor='#ffaa17';" onmouseout="this.style.background='#f7fafd';this.style.color='#1b2032';this.style.borderColor='#e8eef5';">
+											<i class="icon-envelope-o" style="margin-right:8px;color:inherit;"></i>{{ ministerio.DEPARTMENT_CONTACT_EMAIL }}
+										</a>
+									{% endif %}
+									{% if ministerio.DEPARTMENT_CONTACT_PHONE %}
+										{# Remove tudo que não for dígito ou + para o `tel:` — mantém formato bonito na exibição #}
+										<a href="tel:{{ ministerio.DEPARTMENT_CONTACT_PHONE|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}" style="display:inline-flex;align-items:center;background:#f7fafd;border:1px solid #e8eef5;color:#1b2032;font-size:13.5px;padding:9px 16px;border-radius:30px;transition:.3s;" onmouseover="this.style.background='#ffaa17';this.style.color='#fff';this.style.borderColor='#ffaa17';" onmouseout="this.style.background='#f7fafd';this.style.color='#1b2032';this.style.borderColor='#e8eef5';">
+											<i class="icon-phone" style="margin-right:8px;color:inherit;"></i>{{ ministerio.DEPARTMENT_CONTACT_PHONE }}
+										</a>
+									{% endif %}
+								</div>
+							{% endif %}
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+{% endif %}
+
+<!-- ===================== SOBRE ===================== -->
+{% if ministerio.DEPARTMENT_DESCRIPTION %}
+<section style="background:#f9fcff;padding:60px 0 100px;">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-9 col-md-11 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+
+				<div style="text-align:center;margin-bottom:50px;">
+					<span style="display:inline-block;width:50px;height:3px;background:#ffaa17;border-radius:3px;margin-bottom:20px;"></span>
+					<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:44px;line-height:56px;color:#1b2032;margin:0;">Sobre este ministério</h2>
+				</div>
+
+				<div style="background:#fff;border:1px solid rgba(14,92,166,0.07);border-radius:18px;padding:50px 55px;box-shadow:0 30px 60px -35px rgba(0,64,128,.35);position:relative;">
+					<span style="position:absolute;top:20px;left:30px;font-family:Georgia,serif;font-size:120px;line-height:1;font-style:italic;color:rgba(255,170,23,0.12);pointer-events:none;user-select:none;">“</span>
+					{# `white-space: pre-line` respeita quebras de linha que o admin escreveu #}
+					<div style="position:relative;font-size:17px;line-height:33px;color:#5f6b7a;white-space:pre-line;">{{ ministerio.DEPARTMENT_DESCRIPTION }}</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+{% endif %}
+
+<!-- ===================== CHAMADA FINAL ===================== -->
+<section style="background:linear-gradient(135deg,#1b2032 0%,#0d2440 100%);padding:80px 0;position:relative;overflow:hidden;">
+	<div style="position:absolute;top:-120px;left:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.14) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+	<div style="position:absolute;bottom:-140px;right:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.4) 0%,rgba(14,92,166,0) 70%);pointer-events:none;"></div>
+
+	<div class="container" style="position:relative;z-index:2;">
+		<div class="row align-items-center justify-content-center">
+			<div class="col-lg-8 col-md-12 text-center">
+				<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;">Faça parte</span>
+				<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:40px;line-height:52px;color:#fff;margin:0 0 20px;">Quer conhecer de perto o {{ ministerio.DEPARTMENT_NAME }}?</h2>
+				<p style="font-size:16px;line-height:30px;color:rgba(255,255,255,0.65);margin-bottom:32px;">Estamos abertos para receber você. Fale com a liderança para saber quando são os encontros e como pode servir junto conosco.</p>
+
+				<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+					{% if ministerio.DEPARTMENT_CONTACT_EMAIL %}
+						<a href="#lideranca"
+							style="display:inline-block;background:#ffaa17;border:2px solid #ffaa17;color:#fff;font-size:15px;letter-spacing:1px;padding:13px 34px;border-radius:30px;box-shadow:0 15px 35px -12px rgba(255,170,23,.6);transition:.3s;"
+							onmouseover="this.style.background='transparent';this.style.borderColor='#fff';this.style.boxShadow='none';"
+							onmouseout="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';this.style.boxShadow='0 15px 35px -12px rgba(255,170,23,.6)';">
+
+								Falar com a liderança
+								<i class="fa fa-long-arrow-up" style="margin-left:8px;"></i>
+
+						</a>
+					{% else %}
+						{# Sem email da liderança — cai direto na página de contato geral #}
+						<a href="{{ url_for('public.contato') }}" style="display:inline-block;background:#ffaa17;border:2px solid #ffaa17;color:#fff;font-size:15px;letter-spacing:1px;padding:13px 34px;border-radius:30px;box-shadow:0 15px 35px -12px rgba(255,170,23,.6);transition:.3s;" onmouseover="this.style.background='transparent';this.style.borderColor='#fff';this.style.boxShadow='none';" onmouseout="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';this.style.boxShadow='0 15px 35px -12px rgba(255,170,23,.6)';">
+							Fale conosco <i class="fa fa-long-arrow-right" style="margin-left:8px;"></i>
+						</a>
+					{% endif %}
+					<a href="{{ url_for('public.contato') }}" style="display:inline-block;background:transparent;border:2px solid rgba(255,255,255,0.25);color:#fff;font-size:15px;letter-spacing:1px;padding:13px 34px;border-radius:30px;transition:.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='#fff';" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.25)';">
+						Fale com a igreja
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+		{# ============================================================
+		FOOTER
+		============================================================ #}
+		<div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }});  background-size:cover;">
+			<div class="container">
+				<div class="row footer_bg">
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="footer_logo">
+							<img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+							<p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+						</div>
+						<div class="social_profile">
+							<ul>
+								{% for rede in redes_sociais_publicas %}
+									<li>
+										<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}">
+											<i class="fa {{ rede.SOCIAL_ICON }}"></i>
+										</a>
+									</li>
+								{% else %}
+									<li><a href="#"><i class="fa fa-share-alt" title="Redes sociais"></i></a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Experimente</h4>
+							<ul>
+								<li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+								<li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+								<li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Comunidade</h4>
+							<ul>
+								{% for ministerio in ministerios[:1] %}
+									<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}">Ministérios</a></li>
+								{% else %}
+									<li><a href="#">Ministérios</a></li>
+								{% endfor %}
+								<li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+								<li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+								<li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="newsletter-form">
+							<h4>Inscreva-se para receber mais conteúdos</h4>
+							<form id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+								<div class="input-group input-group-lg newsletter">
+									<input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+									<button type="submit" class="subs_btn">Inscrever-se</button>
+								</div>
+								<div id="mce-responses">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="footer_copyright">
+							<p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/modernizr-2.8.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.mixitup.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.appear.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.inview.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.stellar.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scrolltopcontrol.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Registro de acessos — Painel Root</title>
+
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		*{box-sizing:border-box;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:absolute;bottom:0;left:0;right:0;padding:20px 30px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+
+		/* ===== ESTATÍSTICAS ===== */
+		.log_stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:26px;}
+		.log_stat{background:#fff;border:1px solid #eef3f8;border-radius:14px;padding:20px 22px;display:flex;align-items:center;gap:14px;transition:.3s;}
+		.log_stat:hover{transform:translateY(-3px);box-shadow:0 20px 40px -25px rgba(0,64,128,.3);}
+		.log_stat_icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+		.log_stat h3{font-family:oswald,sans-serif;font-size:26px;font-weight:600;color:#1b2032;margin:0;line-height:1;}
+		.log_stat small{display:block;font-size:11.5px;color:#9aa3b0;letter-spacing:.5px;margin-top:4px;}
+
+		/* ===== CARD PRINCIPAL ===== */
+		.adm_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);overflow:hidden;}
+
+		/* ===== FILTROS ===== */
+		.log_filtros{padding:22px 26px;border-bottom:1px solid #f2f6fa;display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto auto;gap:12px;align-items:end;}
+		@media (max-width:900px){.log_filtros{grid-template-columns:1fr 1fr;}}
+		.log_filtros label{display:block;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-bottom:6px;}
+		.log_filtros .campo{position:relative;}
+		.log_filtros input,.log_filtros select{width:100%;height:42px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 14px;font-size:13.5px;color:#1b2032;outline:none;transition:.3s;font-family:inherit;cursor:pointer;}
+		.log_filtros input[type="text"]{padding-left:38px;cursor:text;}
+		.log_filtros .campo i{position:absolute;left:14px;top:32px;color:#9aa3b0;pointer-events:none;}
+		.log_filtros input:focus,.log_filtros select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.log_filtros button{height:42px;padding:0 20px;font-size:13px;border-radius:10px;background:#f7fafd;border:1px solid #e8eef5;color:#747474;cursor:pointer;transition:.3s;font-family:inherit;display:flex;align-items:center;gap:8px;}
+		.log_filtros button:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.log_filtros .btn_buscar{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+		.log_filtros .btn_buscar:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+
+		/* ===== TIMELINE ===== */
+		.log_lista{padding:12px 0;}
+		.log_item{padding:16px 26px;border-bottom:1px solid #f6f9fc;display:grid;grid-template-columns:52px 1fr auto;gap:16px;align-items:start;transition:.2s;cursor:pointer;}
+		.log_item:last-child{border-bottom:0;}
+		.log_item:hover{background:#fbfdff;}
+		.log_item.aberto{background:#fbfdff;}
+
+		.log_acao_icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+		.log_acao_icon.create {background:rgba(34,167,94,0.13);color:#22a75e;}
+		.log_acao_icon.update {background:rgba(14,92,166,0.13);color:#0e5ca6;}
+		.log_acao_icon.delete {background:rgba(200,31,69,0.12);color:#c81f45;}
+		.log_acao_icon.login  {background:rgba(255,170,23,0.15);color:#ff8f00;}
+		.log_acao_icon.logout {background:rgba(154,163,176,0.18);color:#747474;}
+
+		.log_corpo{min-width:0;}
+		.log_titulo{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+		.log_titulo strong{font-size:14.5px;color:#1b2032;font-weight:600;}
+		.log_titulo .tag{display:inline-flex;align-items:center;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+		.log_titulo .tag.create{background:rgba(34,167,94,0.13);color:#178f4a;}
+		.log_titulo .tag.update{background:rgba(14,92,166,0.13);color:#0e5ca6;}
+		.log_titulo .tag.delete{background:rgba(200,31,69,0.12);color:#c81f45;}
+		.log_titulo .tag.login {background:rgba(255,170,23,0.15);color:#c97a00;}
+		.log_titulo .tag.logout{background:rgba(154,163,176,0.18);color:#5a636e;}
+
+		.log_meta{display:flex;align-items:center;flex-wrap:wrap;gap:14px;font-size:12.5px;color:#9aa3b0;}
+		.log_meta code{background:#f7fafd;padding:2px 8px;border-radius:6px;font-family:'Courier New',monospace;font-size:12px;color:#0e5ca6;border:1px solid #eef3f8;}
+
+		.log_data{text-align:right;font-size:12.5px;color:#9aa3b0;flex-shrink:0;white-space:nowrap;}
+		.log_data strong{display:block;font-size:13.5px;color:#1b2032;font-weight:600;margin-bottom:2px;}
+
+		/* ===== DETALHES EXPANDIDOS ===== */
+		.log_detalhes{grid-column:1/-1;background:#f9fcff;border-radius:12px;margin-top:14px;padding:22px 26px;border:1px solid #eef3f8;display:none;}
+		.log_item.aberto .log_detalhes{display:block;}
+
+		.log_diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+		@media (max-width:640px){.log_diff{grid-template-columns:1fr;}}
+		.log_diff_box{background:#fff;border:1px solid #eef3f8;border-radius:10px;padding:16px 18px;}
+		.log_diff_box h5{display:flex;align-items:center;gap:8px;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px;}
+		.log_diff_box.antes h5{color:#c81f45;}
+		.log_diff_box.depois h5{color:#22a75e;}
+		.log_diff_box .ponto{width:8px;height:8px;border-radius:50%;background:currentColor;}
+		.log_diff_box dl{margin:0;font-size:13px;}
+		.log_diff_box dt{color:#9aa3b0;font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;margin-top:10px;}
+		.log_diff_box dt:first-child{margin-top:0;}
+		.log_diff_box dd{margin:2px 0 0;color:#1b2032;font-family:'Courier New',monospace;font-size:12.5px;word-break:break-word;}
+		.log_diff_box dd.mudou{color:#c81f45;text-decoration:line-through;}
+		.log_diff_box.depois dd.mudou{color:#22a75e;text-decoration:none;font-weight:600;}
+
+		.log_sessao{display:grid;grid-template-columns:1fr 2fr;gap:16px;background:#fff;border:1px solid #eef3f8;border-radius:10px;padding:14px 18px;font-size:12.5px;}
+		@media (max-width:640px){.log_sessao{grid-template-columns:1fr;}}
+		.log_sessao div span{display:block;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-bottom:4px;}
+		.log_sessao div strong{color:#1b2032;font-weight:500;font-family:'Courier New',monospace;font-size:13px;}
+		.log_sessao div.ua strong{font-family:inherit;font-size:12.5px;color:#747474;font-weight:400;}
+
+		.log_vazio{text-align:center;padding:70px 30px;color:#9aa3b0;}
+		.log_vazio i{font-size:44px;color:#c3cdd9;margin-bottom:16px;display:block;}
+
+		/* ===== PAGINAÇÃO ===== */
+		.log_pag{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-top:1px solid #f2f6fa;flex-wrap:wrap;gap:10px;font-size:13px;color:#9aa3b0;}
+		.log_pag .paginas a,.log_pag .paginas span{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 12px;margin:0 2px;border-radius:8px;font-size:13px;color:#747474;background:#f7fafd;border:1px solid #eef3f8;transition:.3s;cursor:pointer;}
+		.log_pag .paginas a:hover{background:#ffaa17;color:#fff;border-color:#ffaa17;}
+		.log_pag .paginas .ativo{background:#1b2032;color:#fff;border-color:#1b2032;}
+		.log_pag .paginas .desativado{opacity:.4;pointer-events:none;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ============ SIDEBAR ============ -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Root</span><strong>Igreja de Cristo</strong></div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Gestão</span>
+			<a href="{{ url_for('administrador.listar_admins') }}" class="adm_link"><i class="fa fa-users"></i>Administradores</a>
+			<a href="{{ url_for('administrador.registro_acessos') }}" class="adm_link ativo"><i class="fa fa-history"></i>Registro de acessos</a>
+		</div>
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ administrador.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info">
+				<span>{{ administrador.ADMIN_NAME }}</span>
+				<small>Root</small>
+			</div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<!-- ============ CONTEÚDO ============ -->
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <strong>Registro de acessos</strong></span>
+			</div>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Registro de acessos</h1>
+			<p>Histórico completo de tudo que os administradores fizeram no sistema.</p>
+		</div>
+
+		<!-- ESTATÍSTICAS -->
+		<div class="log_stats">
+			<div class="log_stat">
+				<div class="log_stat_icon" style="background:rgba(14,92,166,0.13);color:#0e5ca6;"><i class="fa fa-list"></i></div>
+				<div><h3>{{ total_logs }}</h3><small>Total de registros</small></div>
+			</div>
+			<div class="log_stat">
+				<div class="log_stat_icon" style="background:rgba(255,170,23,0.15);color:#ff8f00;"><i class="fa fa-sign-in"></i></div>
+				<div><h3>{{ logins_30_dias }}</h3><small>Logins nos últimos 30 dias</small></div>
+			</div>
+			<div class="log_stat">
+				<div class="log_stat_icon" style="background:rgba(34,167,94,0.13);color:#22a75e;"><i class="fa fa-pencil"></i></div>
+				<div><h3>{{ alteracoes_mes }}</h3><small>Alterações no mês</small></div>
+			</div>
+			<div class="log_stat">
+				<div class="log_stat_icon" style="background:rgba(200,31,69,0.12);color:#c81f45;"><i class="fa fa-trash"></i></div>
+				<div><h3>{{ exclusoes_mes }}</h3><small>Exclusões no mês</small></div>
+			</div>
+		</div>
+
+		<div class="adm_card">
+
+			<!-- FILTROS: form GET simples, sem JS, pra funcionar direto com a rota -->
+			<form class="log_filtros" method="get" action="{{ url_for('administrador.registro_acessos') }}">
+				<div class="campo">
+					<label>Buscar</label>
+					<i class="fa fa-search"></i>
+					<input type="text" name="q" value="{{ busca }}" placeholder="Nome, tabela, IP..." autocomplete="off" />
+				</div>
+				<div class="campo">
+					<label>Ação</label>
+					<select name="acao">
+						<option value="" {{ 'selected' if not acao_filtro }}>Todas</option>
+						<option value="create" {{ 'selected' if acao_filtro == 'create' }}>Criação</option>
+						<option value="update" {{ 'selected' if acao_filtro == 'update' }}>Atualização</option>
+						<option value="delete" {{ 'selected' if acao_filtro == 'delete' }}>Exclusão</option>
+						<option value="login" {{ 'selected' if acao_filtro == 'login' }}>Login</option>
+						<option value="logout" {{ 'selected' if acao_filtro == 'logout' }}>Logout</option>
+					</select>
+				</div>
+				<div class="campo">
+					<label>Administrador</label>
+					<select name="admin_id">
+						<option value="" {{ 'selected' if not admin_filtro }}>Todos</option>
+						{% for adm in administradores %}
+							<option value="{{ adm.ADMIN_ID }}" {{ 'selected' if admin_filtro == adm.ADMIN_ID|string }}>{{ adm.ADMIN_NAME }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="campo">
+					<label>Período</label>
+					<select name="periodo">
+						<option value="" {{ 'selected' if not periodo_filtro }}>Todo o histórico</option>
+						<option value="hoje" {{ 'selected' if periodo_filtro == 'hoje' }}>Hoje</option>
+						<option value="7" {{ 'selected' if periodo_filtro == '7' }}>Últimos 7 dias</option>
+						<option value="30" {{ 'selected' if periodo_filtro == '30' }}>Últimos 30 dias</option>
+					</select>
+				</div>
+				<button type="submit" class="btn_buscar"><i class="fa fa-search"></i>Filtrar</button>
+				<a href="{{ url_for('administrador.registro_acessos') }}" title="Limpar filtros" style="display:flex;align-items:center;justify-content:center;height:42px;width:42px;border-radius:10px;background:#f7fafd;border:1px solid #e8eef5;color:#747474;"><i class="fa fa-refresh"></i></a>
+			</form>
+
+			<!-- LISTA / TIMELINE -->
+			<div class="log_lista" id="log_lista">
+
+				{% for item in logs %}
+				<div class="log_item">
+					<div class="log_acao_icon {{ item.log.LOG_ACTION }}"><i class="fa {{ item.icone }}"></i></div>
+					<div class="log_corpo">
+						<div class="log_titulo">
+							<span class="tag {{ item.log.LOG_ACTION }}">{{ item.label }}</span>
+							<strong>{{ item.admin_nome }}</strong>
+							<span style="color:#9aa3b0;font-size:13px;">{{ item.descricao }}</span>
+						</div>
+						<div class="log_meta">
+							<span><i class="fa fa-database" style="color:#ffaa17;margin-right:6px;"></i>{{ item.log.LOG_TABLE_AFFECTED }}</span>
+							{% if item.log.LOG_RECORD_ID %}
+								<span><i class="fa fa-hashtag" style="color:#ffaa17;margin-right:6px;"></i>#{{ item.log.LOG_RECORD_ID }}</span>
+							{% endif %}
+							{% if item.log.LOG_IP_ADDRESS %}
+								<span><i class="fa fa-globe" style="color:#ffaa17;margin-right:6px;"></i><code>{{ item.log.LOG_IP_ADDRESS }}</code></span>
+							{% endif %}
+						</div>
+
+						<div class="log_detalhes">
+							{% if item.tem_diff and item.diff %}
+								<div class="log_diff">
+									<div class="log_diff_box antes">
+										<h5><span class="ponto"></span>Antes</h5>
+										<dl>
+											{% if item.log.LOG_ACTION == 'create' %}
+												<dt>—</dt><dd style="color:#9aa3b0;">Registro inexistente</dd>
+											{% else %}
+												{% for campo in item.diff %}
+													<dt>{{ campo.campo }}</dt>
+													<dd class="{{ 'mudou' if campo.mudou }}">{{ campo.antes if campo.antes is not none else '—' }}</dd>
+												{% endfor %}
+											{% endif %}
+										</dl>
+									</div>
+									<div class="log_diff_box depois">
+										<h5><span class="ponto"></span>Depois</h5>
+										<dl>
+											{% if item.log.LOG_ACTION == 'delete' %}
+												<dt>—</dt><dd style="color:#9aa3b0;">Registro excluído</dd>
+											{% else %}
+												{% for campo in item.diff %}
+													<dt>{{ campo.campo }}</dt>
+													<dd class="{{ 'mudou' if campo.mudou }}">{{ campo.depois if campo.depois is not none else '—' }}</dd>
+												{% endfor %}
+											{% endif %}
+										</dl>
+									</div>
+								</div>
+							{% endif %}
+
+							<div class="log_sessao">
+								<div><span>Endereço IP</span><strong>{{ item.log.LOG_IP_ADDRESS or '—' }}</strong></div>
+								<div class="ua"><span>Navegador</span><strong>{{ item.log.LOG_USER_AGENT or '—' }}</strong></div>
+							</div>
+						</div>
+					</div>
+					<div class="log_data"><strong>{{ item.tempo_relativo }}</strong>{{ item.data_formatada }}</div>
+				</div>
+				{% endfor %}
+
+				<!-- ESTADO VAZIO -->
+				{% if not logs %}
+					<div class="log_vazio">
+						<i class="fa fa-search"></i>
+						<p style="margin:0;font-size:15px;">Nenhum registro encontrado com esses filtros.</p>
+					</div>
+				{% endif %}
+
+			</div>
+
+			<!-- PAGINAÇÃO -->
+			{% if total_registros > 0 %}
+			<div class="log_pag">
+				<span>Mostrando <strong>{{ ((pagina - 1) * por_pagina) + 1 }}–{{ [pagina * por_pagina, total_registros] | min }}</strong> de <strong>{{ total_registros }}</strong> registros</span>
+				<div class="paginas">
+					{% set args_base = {'q': busca, 'acao': acao_filtro, 'admin_id': admin_filtro, 'periodo': periodo_filtro} %}
+
+					<a href="{{ url_for('administrador.registro_acessos', pagina=pagina-1, **args_base) }}" class="{{ 'desativado' if pagina <= 1 }}"><i class="fa fa-angle-left"></i></a>
+
+					{% if paginas_exibir[0] > 1 %}
+						<a href="{{ url_for('administrador.registro_acessos', pagina=1, **args_base) }}">1</a>
+						{% if paginas_exibir[0] > 2 %}<span>…</span>{% endif %}
+					{% endif %}
+
+					{% for p in paginas_exibir %}
+						{% if p == pagina %}
+							<span class="ativo">{{ p }}</span>
+						{% else %}
+							<a href="{{ url_for('administrador.registro_acessos', pagina=p, **args_base) }}">{{ p }}</a>
+						{% endif %}
+					{% endfor %}
+
+					{% if paginas_exibir[-1] < total_paginas %}
+						{% if paginas_exibir[-1] < total_paginas - 1 %}<span>…</span>{% endif %}
+						<a href="{{ url_for('administrador.registro_acessos', pagina=total_paginas, **args_base) }}">{{ total_paginas }}</a>
+					{% endif %}
+
+					<a href="{{ url_for('administrador.registro_acessos', pagina=pagina+1, **args_base) }}" class="{{ 'desativado' if pagina >= total_paginas }}"><i class="fa fa-angle-right"></i></a>
+				</div>
+			</div>
+			{% endif %}
+
+		</div>
+
+	</main>
+</div>
+
+<script>
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+
+	// Expandir/recolher detalhes de cada registro (mesmo comportamento do mockup original)
+	document.querySelectorAll('.log_item').forEach(function (item) {
+		item.addEventListener('click', function (e) {
+			if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+			item.classList.toggle('aberto');
+		});
+	});
+</script>
+
+</body>
+</html>

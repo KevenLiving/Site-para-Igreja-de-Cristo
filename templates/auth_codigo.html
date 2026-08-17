@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Verificar código | Igreja de Cristo</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet"
+      href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<style>
+		*{box-sizing:border-box;}
+		body{margin:0;font-family:'Poppins',sans-serif;color:#4a5566;min-height:100vh;background:#0b0f1a;overflow-x:hidden;}
+		a{text-decoration:none;color:inherit;}
+
+		/* ===== FUNDO ===== */
+		.bg{position:fixed;inset:0;background:linear-gradient(135deg,#0b0f1a 0%,#141a2f 55%,#0d2440 100%);z-index:-2;}
+		.bg::before{content:"";position:absolute;top:-200px;right:-150px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.15) 0%,rgba(255,170,23,0) 70%);animation:float1 14s ease-in-out infinite;}
+		.bg::after{content:"";position:absolute;bottom:-250px;left:-100px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.38) 0%,rgba(14,92,166,0) 70%);animation:float2 17s ease-in-out infinite;}
+		@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,20px);}}
+		@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-20px);}}
+
+		.cruz_deco{position:fixed;top:20%;left:6%;font-size:260px;color:rgba(255,255,255,0.02);font-family:Georgia,serif;line-height:1;z-index:-1;user-select:none;pointer-events:none;transform:rotate(-6deg);}
+		.cruz_deco::before{content:"†";}
+
+		/* ===== TOPO ===== */
+		.topo{position:relative;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;z-index:2;}
+		.topo_marca{display:flex;align-items:center;gap:12px;}
+		.marca_logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:18px;box-shadow:0 10px 22px -6px rgba(255,170,23,.5);}
+		.marca_txt span{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:2px;}
+		.marca_txt strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:17px;color:#fff;font-weight:400;line-height:20px;}
+		.topo_sair{color:rgba(255,255,255,0.55);font-size:13px;transition:.3s;display:inline-flex;align-items:center;gap:6px;}
+		.topo_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTAINER ===== */
+		.wrap{position:relative;z-index:1;padding:20px 40px 60px;max-width:560px;margin:0 auto;}
+		@media (max-width:640px){.wrap{padding:20px 20px 40px;}}
+
+		/* Passos */
+		.passos{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:34px;flex-wrap:wrap;}
+		.passo{display:flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+		.passo.feito{background:rgba(34,167,94,0.15);border-color:rgba(34,167,94,0.35);color:#4ade80;}
+		.passo.on{background:rgba(255,170,23,0.15);border-color:rgba(255,170,23,0.4);color:#ffaa17;}
+		.passo .num{width:16px;height:16px;border-radius:50%;background:currentColor;color:#0b0f1a;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+		.passo.feito .num::before{content:"\f00c";font-family:FontAwesome;font-size:8px;}
+		.passo.feito .num span{display:none;}
+		.passo_link{width:12px;height:2px;background:rgba(255,255,255,0.15);border-radius:2px;}
+		.passo_link.feito{background:rgba(34,167,94,0.5);}
+
+		/* ===== CARTÃO ===== */
+		.card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:44px 40px;box-shadow:0 40px 80px -20px rgba(0,0,0,.5);position:relative;overflow:hidden;}
+		@media (max-width:640px){.card{padding:34px 24px;}}
+		.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,170,23,0.6) 50%,transparent 100%);}
+
+		.card_head{text-align:center;margin-bottom:34px;}
+		.card_head .icone{position:relative;width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,rgba(255,170,23,0.2) 0%,rgba(255,143,0,0.1) 100%);border:1px solid rgba(255,170,23,0.3);color:#ffaa17;display:inline-flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:22px;box-shadow:0 20px 40px -12px rgba(255,170,23,.4);}
+		.card_head .icone::after{content:"";position:absolute;inset:-8px;border-radius:28px;border:2px solid rgba(255,170,23,0.15);animation:halo 3s ease-in-out infinite;}
+		@keyframes halo{0%,100%{opacity:.4;transform:scale(1);}50%{opacity:.8;transform:scale(1.05);}}
+		.card_head h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:30px;line-height:38px;color:#fff;margin:0 0 10px;}
+		.card_head p{margin:0;font-size:14px;line-height:22px;color:rgba(255,255,255,0.65);max-width:400px;margin:0 auto;}
+
+		/* ===== CAIXAS DO CÓDIGO ===== */
+		.code_wrap{display:flex;justify-content:center;gap:10px;margin:8px 0 12px;flex-wrap:nowrap;}
+		@media (max-width:480px){.code_wrap{gap:6px;}}
+		.code_box{width:52px;height:64px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:12px;font-family:oswald,sans-serif;font-size:26px;font-weight:600;text-align:center;color:#fff;outline:none;transition:.25s;letter-spacing:0;}
+		@media (max-width:480px){.code_box{width:44px;height:56px;font-size:22px;}}
+		.code_box:focus{border-color:#ffaa17;background:rgba(255,170,23,0.08);box-shadow:0 0 0 3px rgba(255,170,23,.2),0 8px 20px -6px rgba(255,170,23,.35);transform:translateY(-2px);}
+		.code_box.cheio{border-color:rgba(255,170,23,0.4);background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.code_box.erro{border-color:#ff6b7f;background:rgba(200,31,69,0.15);color:#ff9aa8;animation:shake .5s ease-in-out;}
+		@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+		.code_sep{align-self:center;color:rgba(255,255,255,0.25);font-size:20px;font-weight:300;padding:0 2px;}
+
+		/* Input escondido para o WTForms */
+		.code_hidden{position:absolute;left:-9999px;opacity:0;pointer-events:none;}
+
+		/* ===== TIMER ===== */
+		.timer{margin:18px auto 26px;max-width:280px;}
+		.timer_topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.6);}
+		.timer_topo .lbl{display:flex;align-items:center;gap:7px;}
+		.timer_topo .lbl i{color:#ffaa17;font-size:11px;}
+		.timer_topo strong{font-family:oswald,sans-serif;color:#ffaa17;font-size:14px;letter-spacing:.5px;}
+		.timer_barra{width:100%;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+		.timer_fill{height:100%;background:linear-gradient(90deg,#22a75e 0%,#ffaa17 60%,#ff6b7f 100%);border-radius:3px;transition:width 1s linear;}
+
+		/* ===== FLASH ===== */
+		.flash{padding:12px 16px;border-radius:12px;margin-bottom:22px;font-size:13.5px;display:flex;align-items:center;gap:10px;animation:slideDown .4s ease;}
+		@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+		.flash.alert-success{background:rgba(34,167,94,0.12);border:1px solid rgba(34,167,94,0.35);color:#4ade80;}
+		.flash.alert-danger,.flash.alert-error{background:rgba(200,31,69,0.12);border:1px solid rgba(200,31,69,0.35);color:#ff9aa8;}
+		.flash.alert-warning{background:rgba(255,170,23,0.12);border:1px solid rgba(255,170,23,0.35);color:#ffcc70;}
+		.flash.alert-info{background:rgba(14,92,166,0.15);border:1px solid rgba(14,92,166,0.4);color:#7db8ee;}
+
+		/* Erros do WTForms */
+		.f_erros{text-align:center;}
+		.f_erros span[style*="color: red"]{color:#ff9aa8 !important;font-size:12.5px !important;display:block !important;margin-top:4px !important;}
+
+		/* ===== BOTÃO ===== */
+		.btn_verificar{width:100%;height:56px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);border:0;border-radius:14px;color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 20px 40px -12px rgba(255,170,23,.55);position:relative;overflow:hidden;margin-top:6px;}
+		.btn_verificar::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.28) 50%,transparent 100%);transition:.5s;}
+		.btn_verificar:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 25px 45px -12px rgba(255,170,23,.7);}
+		.btn_verificar:hover:not(:disabled)::before{left:100%;}
+		.btn_verificar:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;}
+		.btn_verificar i{font-size:13px;transition:transform .3s;}
+		.btn_verificar:hover:not(:disabled) i{transform:translateX(4px);}
+
+		/* Fallback WTForms submit sem classe */
+		input[type="submit"]{width:100%;height:56px;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);border:0;border-radius:14px;color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:.3s;box-shadow:0 20px 40px -12px rgba(255,170,23,.55);margin-top:6px;}
+		input[type="submit"]:hover{transform:translateY(-2px);box-shadow:0 25px 45px -12px rgba(255,170,23,.7);}
+
+		/* ===== RODAPÉ DO CARTÃO ===== */
+		.foot{margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;text-align:center;}
+		.foot .link_alt{font-size:12.5px;color:rgba(255,255,255,0.5);transition:.2s;display:inline-flex;align-items:center;gap:6px;justify-content:center;}
+		.foot .link_alt:hover{color:#ffaa17;}
+		.foot .link_alt i{font-size:11px;}
+		.foot .voltar{font-size:12.5px;color:rgba(255,255,255,0.4);display:inline-flex;align-items:center;gap:6px;justify-content:center;transition:.2s;}
+		.foot .voltar:hover{color:rgba(255,255,255,0.8);}
+
+		/* ===== BADGE APP INSTALADO ===== */
+		.badge_app{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:24px;}
+		.badge_app i{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+		.badge_app strong{display:block;font-size:12.5px;color:#fff;font-weight:600;}
+		.badge_app small{font-size:11.5px;color:rgba(255,255,255,0.55);}
+
+		/* Rodapé geral */
+		.rodape{text-align:center;margin-top:30px;font-size:11.5px;color:rgba(255,255,255,0.35);}
+		.rodape i{color:#ffaa17;}
+	</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="cruz_deco"></div>
+
+<!-- TOPO -->
+<div class="topo">
+	<div class="topo_marca">
+		<div class="marca_logo">IC</div>
+		<div class="marca_txt">
+			<span>Painel administrativo</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+	</div>
+	<a href="{{url_for('auth.cancelar_login')}}" class="topo_sair"><i class="fa fa-sign-out"></i>Cancelar login</a>
+</div>
+
+<div class="wrap">
+
+	<!-- CARTÃO -->
+	<div class="card">
+
+		<div class="card_head">
+			<div class="icone"><i class="fa fa-shield"></i></div>
+			<h1>Digite o código de 6 dígitos</h1>
+			<p>Abra o app autenticador no seu celular e digite o código que aparece agora para <strong style="color:#fff;">Igreja de Cristo</strong>.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+				<div class="flash alert-{{ category }}">
+					<i class="fa fa-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+					<span>{{ message }}</span>
+				</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- BADGE DO APP -->
+		<div class="badge_app">
+			<i class="fa fa-mobile"></i>
+			<div>
+				<strong>Google Authenticator</strong>
+				<small>Ou qualquer app TOTP compatível</small>
+			</div>
+		</div>
+
+		<form id="two_factor" action="{{ url_for('auth.two_factor_authentication') }}" method="POST">
+			{{ code_form.hidden_tag() }}
+
+			<!-- Caixas visuais (6 dígitos) -->
+			<div class="code_wrap" id="code_wrap">
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="0" autocomplete="one-time-code" />
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="1" />
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="2" />
+				<span class="code_sep">·</span>
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="3" />
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="4" />
+				<input type="text" class="code_box" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="5" />
+			</div>
+
+			<!-- Erros do WTForms -->
+			<div class="f_erros">
+				{% for error in code_form.code.errors %}
+					<span style="color: red;">{{ error }}</span>
+				{% endfor %}
+			</div>
+
+			<!-- Input real do WTForms — escondido, alimentado pelo JS -->
+			<div class="code_hidden">
+				{{ code_form.code(id="code_real", maxlength=6) }}
+			</div>
+
+			<!-- TIMER -->
+			<div class="timer">
+				<div class="timer_topo">
+					<span class="lbl"><i class="fa fa-refresh"></i>Novo código em</span>
+					<strong id="timer_txt">30s</strong>
+				</div>
+				<div class="timer_barra">
+					<div class="timer_fill" id="timer_fill" style="width:100%;"></div>
+				</div>
+			</div>
+
+			<button type="submit" class="btn_verificar" id="btn_ver" disabled>
+				<i class="fa fa-shield"></i>
+				Verificar e entrar
+				<i class="fa fa-long-arrow-right"></i>
+			</button>
+
+		</form>
+
+		<div class="foot">
+			<a href="#" class="link_alt"><i class="fa fa-life-ring"></i>Não recebo o código · Preciso de ajuda</a>
+			<a href="#" class="voltar"><i class="fa fa-long-arrow-left"></i>Voltar e trocar de conta</a>
+		</div>
+
+	</div>
+
+	<div class="rodape">
+		<i class="fa fa-lock"></i> O código muda a cada 30 segundos · Nunca compartilhe com ninguém
+	</div>
+
+</div>
+
+<script>
+(function () {
+	var boxes = document.querySelectorAll('.code_box');
+	var real  = document.getElementById('code_real');
+	var btn   = document.getElementById('btn_ver');
+	var form  = document.getElementById('two_factor');
+
+	function atualizarReal() {
+		var v = '';
+		boxes.forEach(function (b) { v += (b.value || ''); });
+		if (real) real.value = v;
+		btn.disabled = v.length !== 6;
+	}
+
+	function limparErro() {
+		boxes.forEach(function (b) { b.classList.remove('erro'); });
+	}
+
+	boxes.forEach(function (box, idx) {
+		/* Só aceita dígitos */
+		box.addEventListener('input', function (e) {
+			limparErro();
+			var v = this.value.replace(/\D/g, '');
+			this.value = v.slice(-1);  /* pega só o último dígito digitado */
+			if (v) this.classList.add('cheio'); else this.classList.remove('cheio');
+
+			/* Avança para o próximo campo */
+			if (this.value && idx < boxes.length - 1) {
+				boxes[idx + 1].focus();
+			}
+			atualizarReal();
+		});
+
+		/* Backspace volta para o anterior */
+		box.addEventListener('keydown', function (e) {
+			if (e.key === 'Backspace' && !this.value && idx > 0) {
+				boxes[idx - 1].focus();
+				boxes[idx - 1].value = '';
+				boxes[idx - 1].classList.remove('cheio');
+				atualizarReal();
+			}
+			if (e.key === 'ArrowLeft' && idx > 0) boxes[idx - 1].focus();
+			if (e.key === 'ArrowRight' && idx < boxes.length - 1) boxes[idx + 1].focus();
+			/* Enter submete se estiver completo */
+			if (e.key === 'Enter' && !btn.disabled) form.submit();
+		});
+
+		/* Colar código completo */
+		box.addEventListener('paste', function (e) {
+			e.preventDefault();
+			var pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+			for (var i = 0; i < pasted.length && i < boxes.length; i++) {
+				boxes[i].value = pasted[i];
+				boxes[i].classList.add('cheio');
+			}
+			if (pasted.length === 6) {
+				boxes[5].focus();
+			} else if (pasted.length > 0) {
+				boxes[pasted.length].focus();
+			}
+			atualizarReal();
+		});
+	});
+
+	/* Foco automático no primeiro campo */
+	setTimeout(function () { boxes[0].focus(); }, 300);
+
+	/* Se veio erro do backend, sacode as caixas */
+	if (document.querySelector('.f_erros span, .flash.alert-error, .flash.alert-danger')) {
+		boxes.forEach(function (b) { b.classList.add('erro'); b.value = ''; b.classList.remove('cheio'); });
+		setTimeout(function () { boxes[0].focus(); }, 600);
+	}
+
+	/* ===== TIMER TOTP ===== */
+	var timerTxt = document.getElementById('timer_txt');
+	var timerFill = document.getElementById('timer_fill');
+	function atualizarTimer() {
+		var agora = Math.floor(Date.now() / 1000);
+		var restam = 30 - (agora % 30);
+		timerTxt.textContent = restam + 's';
+		timerFill.style.width = (restam / 30 * 100) + '%';
+	}
+	atualizarTimer();
+	setInterval(atualizarTimer, 1000);
+})();
+</script>
+
+</body>
+</html>

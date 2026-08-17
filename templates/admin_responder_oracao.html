@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Enviar mensagem — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		/* ===== CABEÇALHO DESTINATÁRIO ===== */
+		.dest_head{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:18px;padding:28px 32px;color:#fff;position:relative;overflow:hidden;margin-bottom:26px;}
+		.dest_head:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.18) 0%,rgba(255,170,23,0) 70%);}
+		.dest_head_c{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;gap:18px;}
+		.dest_av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-family:oswald,sans-serif;font-weight:600;font-size:22px;border:3px solid rgba(255,255,255,0.2);flex-shrink:0;}
+		.dest_info{flex:1;min-width:220px;}
+		.dest_info span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#ffaa17;margin-bottom:4px;}
+		.dest_info h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:26px;color:#fff;margin:0 0 6px;}
+		.dest_info .contato{display:flex;flex-wrap:wrap;gap:14px;font-size:13.5px;color:rgba(255,255,255,0.8);}
+		.dest_info .contato i{margin-right:6px;color:#ffaa17;}
+		.dest_info .contato a{color:rgba(255,255,255,0.9);}
+		.dest_info .contato a:hover{color:#ffaa17;}
+
+		/* ===== PEDIDO DE REFERÊNCIA (o que ela pediu) ===== */
+		.ref_ped{background:#fff;border:1px solid rgba(14,92,166,0.12);border-radius:14px;padding:18px 22px;margin-bottom:26px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 15px 35px -25px rgba(0,64,128,.25);}
+		.ref_ped .icone{width:38px;height:38px;border-radius:10px;background:rgba(14,92,166,0.1);color:#0e5ca6;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+		.ref_ped .info{flex:1;min-width:0;}
+		.ref_ped h5{margin:0 0 6px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#0e5ca6;}
+		.ref_ped p{margin:0;font-size:13.5px;line-height:21px;color:#5f6b7a;font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+		.ref_ped .ver{flex-shrink:0;font-size:12px;color:#9aa3b0;text-decoration:underline;transition:.2s;background:transparent;border:0;cursor:pointer;font-family:inherit;padding:0;}
+		.ref_ped .ver:hover{color:#ffaa17;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:28px 32px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:36px;height:36px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:14px;}
+
+		.f_campo{margin-bottom:18px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo select,.f_campo textarea{
+			width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:12px 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo select{height:48px;padding:0 16px;}
+		.f_campo textarea{min-height:280px;resize:vertical;line-height:24px;font-size:14.5px;}
+		.f_campo input:focus,.f_campo select:focus,.f_campo textarea:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		.f_charcount{display:block;font-size:11px;color:#9aa3b0;text-align:right;margin-top:6px;letter-spacing:.5px;}
+
+		/* ===== MODELOS RÁPIDOS ===== */
+		.mod_wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+		.mod_btn{background:#f7fafd;border:1px solid #e8eef5;border-radius:12px;padding:14px 16px;cursor:pointer;transition:.25s;text-align:left;font-family:inherit;}
+		.mod_btn:hover{background:#fff;border-color:#ffaa17;transform:translateY(-2px);box-shadow:0 15px 30px -18px rgba(255,170,23,.5);}
+		.mod_btn .cab{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+		.mod_btn .cab i{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+		.mod_btn .cab .ic1{background:rgba(34,167,94,0.13);color:#22a75e;}
+		.mod_btn .cab .ic2{background:rgba(14,92,166,0.13);color:#0e5ca6;}
+		.mod_btn .cab .ic3{background:rgba(255,170,23,0.14);color:#ff8f00;}
+		.mod_btn .cab .ic4{background:rgba(142,88,220,0.13);color:#8e58dc;}
+		.mod_btn .cab strong{font-size:13px;color:#1b2032;font-weight:600;}
+		.mod_btn .txt{font-size:11.5px;color:#9aa3b0;line-height:16px;margin:0;}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;margin-bottom:10px;}
+		.f_toggle:last-child{margin-bottom:0;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== PREVIEW ===== */
+		.prev_box{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.12);border-radius:14px;padding:22px;}
+		.prev_box h4{margin:0 0 14px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#0e5ca6;}
+		.prev_email{background:#fff;border-radius:12px;border:1px solid #eef3f8;overflow:hidden;}
+		.prev_email .cab{padding:16px 20px;background:#fbfdff;border-bottom:1px solid #f2f6fa;}
+		.prev_email .cab .linha{display:flex;font-size:12px;color:#9aa3b0;padding:3px 0;}
+		.prev_email .cab .linha strong{width:70px;color:#5f6b7a;font-family:oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:10.5px;padding-top:2px;}
+		.prev_email .cab .linha span{flex:1;color:#1b2032;font-weight:500;}
+		.prev_email .corpo{padding:20px;font-size:13.5px;line-height:22px;color:#1b2032;white-space:pre-wrap;word-wrap:break-word;min-height:120px;}
+		.prev_email .corpo:empty:before{content:"O corpo da mensagem aparece aqui...";color:#c3cdd9;font-style:italic;}
+
+		/* ===== BARRA DE AÇÕES ===== */
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:18px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#22a75e;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions .btn_enviar{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;
+			font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #22a75e;
+			background:#22a75e;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;
+			box-shadow:0 12px 30px -12px rgba(34,167,94,.55);}
+		.f_actions .btn_enviar:hover{background:#178f4a;border-color:#178f4a;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	
+<aside class="adm_side" id="adm_side">
+	<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+	<div class="adm_side_nav">
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Conteúdo</span>
+			<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+			<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+			<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Comunidade</span>
+			<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+			<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+			<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link ativo"><i class="fa fa-heart"></i>Pedidos de oração</a>
+		</div>
+		<div class="adm_group">
+			<span class="adm_group_title">Instituição</span>
+			<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+			<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+			<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+		</div>
+	</div>
+	<div class="adm_user">
+		<div class="adm_user_av">{{ (current_user.ADMIN_NAME[:2] if current_user.ADMIN_NAME else 'AD')|upper }}</div>
+		<div class="adm_user_info">
+			<span>{{ current_user.ADMIN_NAME }}</span>
+			<small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small>
+		</div>
+		<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+	</div>
+</aside>
+
+<main class="adm_main">
+
+	<div class="adm_top">
+		<div style="display:flex;align-items:center;">
+			<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+			<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_pedidos_oracao') }}">Pedidos de oração</a> / <strong>Enviar mensagem</strong></span>
+		</div>
+		<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+	</div>
+
+
+		<!-- CABEÇALHO DESTINATÁRIO -->
+		<div class="dest_head">
+			<div class="dest_head_c">
+				<div class="dest_av">ME</div>
+				<div class="dest_info">
+					<span>Enviar mensagem para</span>
+					<h1>Maria Eduarda</h1>
+					<div class="contato">
+						<span><i class="fa fa-envelope-o"></i><a href="mailto:m.eduarda@gmail.com">m.eduarda@gmail.com</a></span>
+						<span><i class="fa fa-phone"></i>(11) 98765-4321</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- REFERÊNCIA AO PEDIDO -->
+		<div class="ref_ped">
+			<div class="icone"><i class="fa fa-heart"></i></div>
+			<div class="info">
+				<h5>Pedido de oração original · 05/08/2026</h5>
+				<p>"Minha mãe vai passar por uma cirurgia complexa amanhã cedo. Ela tem lutado contra um problema no coração há meses e os médicos disseram que essa é a chance de recuperação..."</p>
+			</div>
+			<button class="ver" onclick="alert('Volta para a listagem e abre o modal do pedido');">Ver completo</button>
+		</div>
+
+		<form id="msgForm" action="{{ url_for('administrador.enviar_mensagem_oracao', oracao_id=oracao.PRAYER_ID) }}" method="POST">
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<!-- MODELOS RÁPIDOS -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Modelos rápidos</h3>
+							<div class="f_icone"><i class="fa fa-magic"></i></div>
+						</div>
+						<p style="margin:0 0 14px;font-size:12.5px;color:#9aa3b0;">Escolha um ponto de partida. Você pode editar o texto depois de aplicar.</p>
+						<div class="mod_wrap">
+							<button type="button" class="mod_btn" data-modelo="oracao">
+								<div class="cab"><i class="ic1 fa fa-heart"></i><strong>Estamos orando</strong></div>
+								<p class="txt">Aviso simples de que a equipe recebeu e está orando pelo pedido.</p>
+							</button>
+							<button type="button" class="mod_btn" data-modelo="acompanhar">
+								<div class="cab"><i class="ic2 fa fa-hand-o-right"></i><strong>Vamos acompanhar</strong></div>
+								<p class="txt">Oferece contato pastoral e disponibilidade da liderança.</p>
+							</button>
+							<button type="button" class="mod_btn" data-modelo="convite">
+								<div class="cab"><i class="ic3 fa fa-users"></i><strong>Convite ao culto</strong></div>
+								<p class="txt">Convida para participar de um encontro presencial.</p>
+							</button>
+							<button type="button" class="mod_btn" data-modelo="agradecer">
+								<div class="cab"><i class="ic4 fa fa-check-circle"></i><strong>Agradecer testemunho</strong></div>
+								<p class="txt">Para respostas quando a pessoa relatou que a oração foi respondida.</p>
+							</button>
+						</div>
+					</div>
+
+					<!-- MENSAGEM -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Mensagem</h3>
+							<div class="f_icone"><i class="fa fa-envelope"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="para">Para</label>
+							<input type="email" id="para" name="para" value="m.eduarda@gmail.com" readonly style="background:#eef6fc;cursor:not-allowed;" />
+							<small class="f_ajuda"><i class="fa fa-lock"></i>Endereço vem do pedido — não pode ser alterado aqui.</small>
+						</div>
+
+						<div class="f_campo">
+							<label for="assunto">Assunto</label>
+							<input type="text" id="assunto" name="assunto" value="Recebemos seu pedido de oração — Igreja de Cristo" placeholder="Assunto do e-mail" />
+						</div>
+
+						<div class="f_campo">
+							<label for="corpo">Corpo da mensagem</label>
+							<textarea id="corpo" name="corpo" placeholder="Escreva a mensagem com carinho...">Olá, Maria Eduarda,
+
+Recebemos com carinho o seu pedido de oração. Toda a equipe pastoral está intercedendo por sua mãe, pela cirurgia de amanhã e pela paz da sua família neste momento.
+
+Deus é o Grande Médico, e confiamos na fidelidade dele em cada detalhe. Se precisar de qualquer apoio, mesmo que seja só alguém para ouvir, escreva para nós.
+
+Com carinho,
+Equipe pastoral · Igreja de Cristo</textarea>
+							<small class="f_charcount" id="charcount">0 caracteres</small>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<!-- PREVIEW -->
+					<div class="prev_box" style="margin-bottom:22px;">
+						<h4><i class="fa fa-eye"></i> Como vai chegar</h4>
+						<div class="prev_email">
+							<div class="cab">
+								<div class="linha"><strong>De</strong><span>Igreja de Cristo &lt;contato@igrejadecristo.org&gt;</span></div>
+								<div class="linha"><strong>Para</strong><span id="pv_para">m.eduarda@gmail.com</span></div>
+								<div class="linha"><strong>Assunto</strong><span id="pv_assunto">Recebemos seu pedido de oração — Igreja de Cristo</span></div>
+							</div>
+							<div class="corpo" id="pv_corpo"></div>
+						</div>
+					</div>
+
+					<!-- OPÇÕES -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Opções de envio</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<label class="f_toggle">
+							<input type="checkbox" name="copia_pastor" />
+							<div class="info">
+								<label>Copiar liderança pastoral</label>
+								<small>Envia uma cópia para <strong>pastoral@igrejadecristo.org</strong>.</small>
+							</div>
+						</label>
+
+						<label class="f_toggle">
+							<input type="checkbox" name="marcar_orando" checked />
+							<div class="info">
+								<label>Marcar pedido como "Em oração"</label>
+								<small>Ao enviar, o status do pedido é atualizado automaticamente.</small>
+							</div>
+						</label>
+
+						<label class="f_toggle">
+							<input type="checkbox" name="assinatura_padrao" checked />
+							<div class="info">
+								<label>Usar assinatura padrão</label>
+								<small>Adiciona o rodapé institucional ao final da mensagem.</small>
+							</div>
+						</label>
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- BARRA DE AÇÕES -->
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-shield"></i>
+					A mensagem é enviada do e-mail oficial da igreja e o envio é registrado no log.
+				</div>
+				<div class="dir">
+					<a href="oracoes.html" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit" class="btn_enviar"><i class="fa fa-paper-plane"></i>Enviar mensagem</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var assunto = document.getElementById('assunto');
+	var corpo   = document.getElementById('corpo');
+	var pvA     = document.getElementById('pv_assunto');
+	var pvC     = document.getElementById('pv_corpo');
+	var contad  = document.getElementById('charcount');
+
+	function atualizar() {
+		pvA.textContent = assunto.value || '(sem assunto)';
+		pvC.textContent = corpo.value;
+		contad.textContent = corpo.value.length + ' caracteres';
+	}
+	assunto.addEventListener('input', atualizar);
+	corpo.addEventListener('input', atualizar);
+	atualizar();
+
+	/* ===== MODELOS PRONTOS ===== */
+	var MODELOS = {
+		oracao: {
+			assunto: "Recebemos seu pedido de oração — Igreja de Cristo",
+			corpo: "Olá, Maria Eduarda,\n\nRecebemos com carinho o seu pedido de oração. Toda a equipe pastoral está intercedendo por você e pela sua necessidade.\n\nQue a paz de Deus, que excede todo entendimento, guarde o seu coração neste momento.\n\nCom carinho,\nEquipe pastoral · Igreja de Cristo"
+		},
+		acompanhar: {
+			assunto: "Estamos por perto — Igreja de Cristo",
+			corpo: "Olá, Maria Eduarda,\n\nRecebemos seu pedido e queremos estar por perto neste momento. Se quiser conversar com um pastor, agendar uma visita ou apenas um café, é só responder este e-mail — teremos alegria em servir você.\n\nA porta da igreja e o coração da liderança estão abertos.\n\nCom carinho,\nEquipe pastoral · Igreja de Cristo"
+		},
+		convite: {
+			assunto: "Um convite especial para você — Igreja de Cristo",
+			corpo: "Olá, Maria Eduarda,\n\nAgradecemos por compartilhar seu pedido conosco. Gostaríamos de convidar você para um dos nossos encontros — seria uma alegria receber você pessoalmente.\n\nNossos cultos acontecem aos domingos às 18h, e nossa igreja fica à sua espera.\n\nCom carinho,\nEquipe pastoral · Igreja de Cristo"
+		},
+		agradecer: {
+			assunto: "Que alegria receber seu testemunho! — Igreja de Cristo",
+			corpo: "Olá, Maria Eduarda,\n\nQue alegria receber a notícia de que Deus respondeu à sua oração! Toda a equipe pastoral se alegra com você.\n\nContinuamos orando pela caminhada da sua família, e agradecemos por compartilhar esse momento de gratidão conosco.\n\n\"Graças a Deus, que sempre nos conduz vitoriosamente em Cristo.\" (2Co 2:14)\n\nCom carinho,\nEquipe pastoral · Igreja de Cristo"
+		}
+	};
+
+	document.querySelectorAll('.mod_btn').forEach(function (b) {
+		b.addEventListener('click', function () {
+			var m = MODELOS[this.dataset.modelo];
+			if (!m) return;
+			if (corpo.value.trim() && !confirm('Isso substitui o texto atual da mensagem. Deseja continuar?')) return;
+			assunto.value = m.assunto;
+			corpo.value = m.corpo;
+			atualizar();
+			corpo.focus();
+			/* Scroll suave até o corpo */
+			corpo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		});
+	});
+
+	/* Validação antes de enviar */
+	document.getElementById('msgForm').addEventListener('submit', function (e) {
+		if (corpo.value.trim().length < 20) {
+			e.preventDefault();
+			alert('A mensagem parece muito curta. Escreva algo com carinho para a pessoa.');
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

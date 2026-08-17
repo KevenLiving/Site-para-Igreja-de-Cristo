@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Monoline - Design Agency HTML Template">
+		<meta name="keywords" content="agency, business, corporate, creative, html5, modern, multipurpose, One Page, parallax, startup ">
+		<title>Igreja de Cristo em Jucurutu</title>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+		<!-- Google Fonts -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+		<!-- Font Awesome / Themify -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/themify-icons.css') }}">
+
+		<!-- Owl Carousel -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.carousel.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/owlcarousel/css/owl.theme.css') }}">
+
+		<!-- Fonts CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+		<!-- Animate -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+
+		<!-- Magnific Popup -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/magnific-popup.css') }}">
+
+		<!-- Style -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<style>
+		.mensagens_carousel{position:relative;}
+		.mensagens_carousel .owl-prev,
+		.mensagens_carousel .owl-next{
+			position:absolute;top:45%;transform:translateY(-50%);
+			width:52px;height:52px;line-height:52px;
+			margin:0!important;padding:0!important;
+			text-align:center;font-size:20px!important;
+			background:#fff!important;color:#1b2032!important;
+			border:1px solid rgba(14,92,166,0.07)!important;
+			border-radius:50%!important;opacity:1!important;
+			box-shadow:0 15px 35px -15px rgba(0,64,128,.55);
+			transition:.3s ease;z-index:10;
+		}
+		.mensagens_carousel .owl-prev{left:-26px;}
+		.mensagens_carousel .owl-next{right:-26px;}
+		.mensagens_carousel .owl-prev:hover,
+		.mensagens_carousel .owl-next:hover{
+			background:#ffaa17!important;color:#fff!important;
+			border-color:#ffaa17!important;
+			box-shadow:0 18px 35px -12px rgba(255,170,23,.6);
+		}
+		@keyframes msgNudge{
+			0%,60%,100%{transform:translate(0,-50%);}
+			75%{transform:translate(7px,-50%);}
+		}
+		.mensagens_carousel .owl-next{animation:msgNudge 2.8s ease-in-out infinite;}
+		.mensagens_carousel:hover .owl-next{animation:none;}
+		.mensagens_carousel .owl-controls{margin-top:35px;}
+		.mensagens_carousel .owl-dots{margin-top:35px;}
+		.mensagens_carousel .owl-controls .owl-page span,
+		.mensagens_carousel .owl-dots .owl-dot span{
+			background:#dbe3ec;width:9px;height:9px;margin:5px;opacity:1;transition:.3s;
+		}
+		.mensagens_carousel .owl-controls .owl-page.active span,
+		.mensagens_carousel .owl-dots .owl-dot.active span{
+			background:#ffaa17;width:28px;border-radius:10px;
+		}
+		@media only screen and (max-width:991px){
+			.mensagens_carousel .owl-prev,
+			.mensagens_carousel .owl-next{display:none!important;}
+		}
+		</style>
+
+		<style>
+			.videos_carousel{position:relative;}
+			.videos_carousel .owl-prev,
+			.videos_carousel .owl-next{
+				position:absolute!important;top:130px!important;
+				margin:0!important;padding:0!important;
+				display:block!important;visibility:visible!important;
+				width:52px!important;height:52px!important;line-height:52px!important;
+				text-align:center!important;font-size:22px!important;
+				background:#fff!important;color:#1b2032!important;
+				border:0!important;border-radius:50%!important;
+				opacity:1!important;filter:alpha(opacity=100)!important;
+				box-shadow:0 15px 35px -12px rgba(0,0,0,.7);
+				transition:background .3s ease;z-index:50!important;
+			}
+			.videos_carousel .owl-prev{left:8px!important;right:auto!important;}
+			.videos_carousel .owl-next{right:8px!important;left:auto!important;}
+			.videos_carousel .owl-prev:hover,
+			.videos_carousel .owl-next:hover{background:#ffaa17!important;color:#fff!important;}
+			@keyframes vidNudge{0%,60%,100%{transform:translateX(0);}75%{transform:translateX(7px);}}
+			.videos_carousel .owl-next{animation:vidNudge 2.8s ease-in-out infinite;}
+			.videos_carousel:hover .owl-next{animation:none;}
+			.videos_carousel .owl-controls{margin-top:35px;}
+			.videos_carousel .owl-dots{margin-top:35px;}
+			.videos_carousel .owl-controls .owl-page span,
+			.videos_carousel .owl-dots .owl-dot span{background:rgba(255,255,255,0.25);width:9px;height:9px;margin:5px;opacity:1;transition:.3s;}
+			.videos_carousel .owl-controls .owl-page.active span,
+			.videos_carousel .owl-dots .owl-dot.active span{background:#ffaa17;width:28px;border-radius:10px;}
+			.videos_carousel .vid-titulo{
+				height:58px;overflow:hidden;display:-webkit-box;
+				-webkit-line-clamp:2;-webkit-box-orient:vertical;
+			}
+			.videos_carousel a > div:last-child p:nth-of-type(1){
+				white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+			}
+			.videos_carousel a > div:last-child p:nth-of-type(2){
+				height:78px;overflow:hidden;display:-webkit-box;
+				-webkit-line-clamp:3;-webkit-box-orient:vertical;
+			}
+			@media only screen and (max-width:575px){
+				.videos_carousel .owl-prev,
+				.videos_carousel .owl-next{display:none!important;}
+			}
+		</style>
+
+	</head>
+
+    <body data-spy="scroll" data-offset="80">
+
+		{# Dicionários auxiliares para exibir datas em pt-BR #}
+		{% set dias_semana_extenso = {
+			0: 'Segunda-feira', 1: 'Terça-feira', 2: 'Quarta-feira',
+			3: 'Quinta-feira', 4: 'Sexta-feira', 5: 'Sábado', 6: 'Domingo'
+		} %}
+		{% set meses_extenso = {
+			1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
+			5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
+			9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
+		} %}
+		{% set meses_curto = {
+			1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Abr',
+			5: 'Mai', 6: 'Jun', 7: 'Jul', 8: 'Ago',
+			9: 'Set', 10: 'Out', 11: 'Nov', 12: 'Dez'
+		} %}
+
+		<div class="preloader">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>
+
+		<div class="site-mobile-menu site-navbar-target">
+		  <div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+			  <span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		  </div>
+		  <div class="site-mobile-menu-body"></div>
+		</div>
+
+		<header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+		  <div class="container">
+			<div class="row align-items-center">
+			  <div class="col-6 col-xl-2">
+				<h1 class="mb-0 site-logo"><a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt=""></a></h1>
+			  </div>
+			  <div class="col-12 col-md-10 d-none d-xl-block">
+				<nav class="site-navigation position-relative text-right" role="navigation">
+				  <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+					<li><a class="nav-link" href="{{ url_for('public.sobre') }}">Sobre</a></li>
+				  	<li class="has-children">
+					  <a href="#" class="nav-link">Conteudo</a>
+					  <ul class="dropdown">
+						<li><a href="{{ url_for('public.estudos') }}" class="nav-link">Estudos Bíblicos</a></li>
+						<li><a href="{{ url_for('public.videos') }}" class="nav-link">Pregações em Vídeo</a></li>
+					  </ul>
+					</li>
+					<li class="has-children">
+					  <a href="#" class="nav-link">Ministérios</a>
+					  <ul class="dropdown">
+						{% for ministerio in ministerios %}
+							<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="nav-link">{{ ministerio.DEPARTMENT_NAME }}</a></li>
+						{% else %}
+							<li><a href="#" class="nav-link">Em breve</a></li>
+						{% endfor %}
+					  </ul>
+					</li>
+					<li>
+					  <a href="{{ url_for('public.agenda') }}" class="nav-link">Agenda</a>
+					</li>
+			         <li><a class="nav-link" href="{{ url_for('public.contato') }}">Contato</a></li>
+				  </ul>
+				</nav>
+			  </div>
+			   <div class="col-6 d-inline-block d-xl-none ml-md-0 py-3" style="position: relative; top: 3px;">
+			   <a href="#" class="site-menu-toggle js-menu-toggle float-right"><span class="icon-menu h3"></span></a>
+			   </div>
+			</div>
+		  </div>
+		</header>
+
+		<section data-stellar-background-ratio="0.3" id="home" class="home_bg" style="background-image: url({{ url_for('static', filename='assets/img/amada_igreja.png') }});  background-size:cover; background-position: center center;">
+			<div class="container">
+				<div class="row">
+				  <div class="col-lg-12 col-sm-12 col-xs-12 text-center">
+					<div class="hero-text">
+						<h2>É uma alegria receber você</h2>
+						<p>Sinta-se em casa na Igreja de Cristo</p>
+						<a href="{{ url_for('public.sobre') }}">Ler mais</a>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</section>
+
+		<section class="feature_area">
+			<div class="container">
+				<div class="row feature_bg justify-content-center">
+
+					<div class="col-lg-12">
+						<div class="section-title text-center" style="margin-bottom:45px;">
+							<span style="display:inline-block;width:50px;height:3px;background:#ffaa17;border-radius:3px;margin-bottom:20px;"></span>
+							<h2 style="margin-bottom:20px;">quem somos</h2>
+							<p>Somos uma comunidade que acredita que a fé se vive em conjunto — no culto, no estudo da Palavra e no cuidado com quem está ao lado. Cada pessoa que chega, chega para ficar, não para apenas assistir.</p>
+						</div>
+					</div>
+
+					<div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+						<div class="single_why_choose_img text-center" style="background:#fff;border:1px solid #f0f4f8;border-radius:18px;padding:10px;box-shadow:0 30px 60px -32px rgba(0,64,128,.4);">
+							<img src="{{ url_for('static', filename='assets/img/templo.jpeg') }}" class="img-fluid" alt="about-image" style="width:100%;border-radius:12px;display:block;" />
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+
+		{# ============================================================
+		   AGENDA SEMANAL — vem agrupada por título/dia do controller
+		============================================================ #}
+		<section class="section-padding" style="background:linear-gradient(180deg,#ffffff 0%,#f6fafd 100%);">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-10 offset-lg-1 col-md-12 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+						<div style="background:#fff;border-radius:18px;border:1px solid rgba(14,92,166,0.07);box-shadow:0 30px 60px -30px rgba(0,64,128,.28);padding:45px 50px;">
+
+							<div style="padding-bottom:30px;border-bottom:1px solid #f0f4f8;margin-bottom:35px;">
+								<span style="display:block;width:50px;height:3px;background:#ffaa17;border-radius:3px;margin-bottom:20px;"></span>
+								<h2 style="margin:0 0 18px;font-size:38px;font-weight:600;color:#1b2032;text-transform:capitalize;">Agenda Semanal</h2>
+								<h3 style="margin:0 0 6px;font-size:24px;font-weight:500;color:#1b2032;">Templo Sede</h3>
+								<p style="font-size:15px;color:#747474;">
+									<i class="icon-map-marker" style="color:#ffaa17;margin-right:8px;"></i>Rua Celso Fernandes, 163 - Jucurutu/RN
+								</p>
+							</div>
+
+							<div style="display:flex;flex-wrap:wrap;gap:30px;">
+
+								{% for programacao in agenda_home %}
+									<div style="flex:1 1 calc(50% - 15px);min-width:260px;background:#fafcfe;border:1px solid #f0f4f8;border-radius:12px;padding:24px 26px;transition:0.3s ease;" onmouseover="this.style.background='#fff';this.style.borderColor='rgba(255,170,23,0.4)';this.style.boxShadow='0 18px 35px -20px rgba(0,64,128,.3)';" onmouseout="this.style.background='#fafcfe';this.style.borderColor='#f0f4f8';this.style.boxShadow='none';">
+										<h4 style="margin:0 0 10px;font-size:20px;font-weight:500;color:#1b2032;line-height:28px;">
+											<span style="display:inline-block;width:3px;height:15px;background:#ffaa17;border-radius:3px;margin-right:12px;vertical-align:-1px;"></span>{{ programacao.titulo }}
+										</h4>
+										<p style="font-size:15px;line-height:30px;color:#747474;padding-left:15px;">
+											{% for dia in programacao.dias %}
+												{% if not loop.first %}<span style="color:#dde5ee;margin:0 10px;">|</span>{% endif %}
+												<span style="color:#0e5ca6;font-weight:500;">{{ dia.abreviacao }}:</span>
+												{% for horario in dia.horarios %}
+													{% if not loop.first %}{% if loop.last %} e {% else %}, {% endif %}{% endif %}{{ horario }}
+												{% endfor %}
+											{% endfor %}
+										</p>
+									</div>
+								{% else %}
+									<div style="width:100%;text-align:center;padding:30px;color:#9aa3b0;">Nenhuma programação semanal cadastrada.</div>
+								{% endfor %}
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ============================================================
+		   DEVOCIONAL DO DIA — só aparece se houver vigente
+		   O background continua fixo (skill-bg.jpg) como no original.
+		============================================================ #}
+		{% if devocional %}
+		<section class="section-padding" style="background:linear-gradient(180deg,#ffffff 0%,#f6fafd 100%);">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+
+						<div style="position:relative;min-height:520px;display:flex;align-items:center;border-radius:18px;overflow:hidden;box-shadow:0 40px 70px -35px rgba(0,64,128,.55);background-image:url({{ url_for('static', filename='uploads/devocionais/' ~ devocional.DEVOTIONAL_BANNER) }}); background-size:cover;background-position:center center;">
+
+							<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(27,32,50,0.95) 0%,rgba(27,32,50,0.88) 38%,rgba(27,32,50,0.45) 75%,rgba(27,32,50,0.25) 100%);"></div>
+
+							<span style="position:absolute;right:6%;top:12%;font-family:oswald,sans-serif;font-size:230px;line-height:1;color:rgba(255,255,255,0.05);pointer-events:none;user-select:none;">&rdquo;</span>
+
+							<div style="position:relative;z-index:2;padding:70px 8% 70px 60px;max-width:680px;">
+
+								<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:18px;">
+									<span style="display:inline-block;width:28px;height:2px;background:#ffaa17;vertical-align:middle;margin-right:12px;"></span>Devocional do Dia
+								</span>
+
+								<p style="font-size:14px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:14px;">
+									<i class="icon-calendar-o" style="margin-right:9px;color:#ffaa17;"></i>{{ dias_semana_extenso[hoje.weekday()] }}, {{ '%02d'|format(hoje.day) }} de {{ meses_extenso[hoje.month] }} de {{ hoje.year }}
+								</p>
+
+								<h2 style="color:#fff;font-size:46px;font-weight:600;line-height:58px;margin-bottom:26px;text-transform:capitalize;">
+									{{ devocional.DEVOTIONAL_TITLE }}
+								</h2>
+
+								{% if devocional.DEVOTIONAL_BIBLICAL_VERSE %}
+								<div style="border-left:3px solid #ffaa17;padding-left:24px;margin-bottom:38px;">
+									<p style="color:rgba(255,255,255,0.88);font-size:19px;line-height:34px;font-style:italic;margin-bottom:10px;">
+										“{{ devocional.DEVOTIONAL_BIBLICAL_VERSE }}”
+									</p>
+								</div>
+								{% endif %}
+
+								<a href="{{ url_for('public.devocional', devocional_id=devocional.DEVOTIONAL_ID) }}" ...>
+									Ler devocional completo <i class="fa fa-long-arrow-right" style="margin-left:8px;"></i>
+								</a>
+
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</section>
+		{% endif %}
+
+		{# ============================================================
+		   ESTUDOS BÍBLICOS
+		   Cada card cai numa imagem fixa por posição; se o admin
+		   subiu banner (STUDY_BANNER), a imagem uploaded substitui.
+		============================================================ #}
+		<section class="section-padding" style="background:linear-gradient(180deg,#f6fafd 0%,#ffffff 100%);">
+			<div class="container">
+
+				<div class="section-title text-center" style="margin-bottom:55px;">
+					<span style="display:inline-block;width:50px;height:3px;background:#ffaa17;border-radius:3px;margin-bottom:22px;"></span>
+					<h2 style="margin-bottom:0;">Estudos Bíblicos</h2>
+				</div>
+
+				<div class="mensagens_carousel owl-carousel owl-theme">
+
+					{% set imagens_estudos_fixas = [
+						'assets/img/blog/1.jpg',
+						'assets/img/blog/2.jpg',
+						'assets/img/blog/3.jpg',
+						'assets/img/portfolio/2.jpg',
+						'assets/img/portfolio/4.jpg',
+						'assets/img/portfolio/5.jpg'
+					] %}
+
+					{% for estudo in estudos_recentes %}
+						{% set imagem_fixa = imagens_estudos_fixas[loop.index0 % imagens_estudos_fixas|length] %}
+						<div style="padding:15px;">
+							<div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px -25px rgba(0,64,128,.35);transition:0.4s ease;" onmouseover="this.style.transform='translateY(-10px)';this.style.boxShadow='0 35px 60px -25px rgba(0,64,128,.45)';this.querySelector('.msg-img').style.transform='scale(1.07)';this.querySelector('.msg-titulo').style.color='#ffaa17';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 20px 45px -25px rgba(0,64,128,.35)';this.querySelector('.msg-img').style.transform='scale(1)';this.querySelector('.msg-titulo').style.color='#1b2032';">
+								<div style="position:relative;height:230px;overflow:hidden;">
+									{% if estudo.STUDY_BANNER %}
+										<img class="msg-img" src="{{ url_for('static', filename='uploads/estudos/' + estudo.STUDY_BANNER) }}" alt="{{ estudo.STUDY_TITLE }}" style="width:100%;height:100%;object-fit:cover;transition:0.6s ease;" />
+									{% else %}
+										<img class="msg-img" src="{{ url_for('static', filename=imagem_fixa) }}" alt="{{ estudo.STUDY_TITLE }}" style="width:100%;height:100%;object-fit:cover;transition:0.6s ease;" />
+									{% endif %}
+									<span style="position:absolute;top:18px;right:18px;background:rgba(27,32,50,0.88);color:#fff;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border-radius:30px;">{{ estudo.STUDY_THEME or 'Estudo' }}</span>
+								</div>
+								<div style="padding:26px 28px 30px;">
+									<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#a5adba;margin-bottom:12px;">
+										<span style="display:inline-block;width:18px;height:2px;background:#ffaa17;vertical-align:middle;margin-right:10px;"></span>{{ '%02d'|format(estudo.STUDY_CREATED_AT.day) }} de {{ meses_extenso[estudo.STUDY_CREATED_AT.month] }}, {{ estudo.STUDY_CREATED_AT.year }}
+									</p>
+									<h4 style="margin:0;font-size:18px;line-height:28px;text-transform:uppercase;">
+										<a href="{{ url_for('public.estudo', estudo_id=estudo.STUDY_ID) }}" class="msg-titulo" style="color:#1b2032;font-weight:600;transition:0.3s;">{{ estudo.STUDY_TITLE }}{% if estudo.STUDY_BIBLICAL_REFERENCE %}
+    <span style="font-weight:400;color:#8a929e;">
+        – {{ estudo.STUDY_BIBLICAL_REFERENCE
+            .replace('“', '"')
+            .replace('”', '"')
+            .split('"')[-1]
+            .strip() }}
+    </span>
+{% endif %}</a>
+									</h4>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<div style="padding:60px;text-align:center;color:#9aa3b0;">Nenhum estudo publicado ainda.</div>
+					{% endfor %}
+
+				</div>
+
+			</div>
+		</section>
+
+		{# ============================================================
+		   VÍDEOS — VIDEO_THUMBNAIL já é URL completa do YouTube
+		============================================================ #}
+		<section class="section-padding" style="background:#1b2032;position:relative;overflow:hidden;">
+
+			<div style="position:absolute;top:-140px;right:-90px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.16) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+			<div style="position:absolute;bottom:-160px;left:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.35) 0%,rgba(14,92,166,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+
+				<div class="text-center" style="margin-bottom:55px;">
+					<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;">
+						<i class="fa fa-youtube-play" style="margin-right:10px;font-size:16px;vertical-align:-1px;"></i>Canal no YouTube
+					</span>
+					<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:52px;line-height:64px;color:#fff;margin:0;">Últimas mensagens</h2>
+				</div>
+
+				<div class="videos_carousel">
+
+					{% set imagens_videos_fixas = [
+						'https://img.youtube.com/vi/alswD2tCc_Q/hqdefault.jpg',
+						url_for('static', filename='assets/img/blog/2.jpg'),
+						url_for('static', filename='assets/img/blog/3.jpg'),
+						url_for('static', filename='assets/img/portfolio/4.jpg')
+					] %}
+
+					{% for video in videos_recentes %}
+						{% set imagem_fixa = imagens_videos_fixas[loop.index0 % imagens_videos_fixas|length] %}
+						<div style="padding:15px;">
+							<a href="{{ url_for('public.ver_video', video_id=video.VIDEO_ID) }}" target="_blank" rel="noopener noreferrer" style="display:block;background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;transition:0.4s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,170,23,0.45)';this.style.transform='translateY(-10px)';this.querySelector('.vid-thumb').style.transform='scale(1.07)';this.querySelector('.vid-play').style.background='#ffaa17';this.querySelector('.vid-play').style.color='#fff';this.querySelector('.vid-titulo').style.color='#ffaa17';" onmouseout="this.style.background='rgba(255,255,255,0.045)';this.style.borderColor='rgba(255,255,255,0.09)';this.style.transform='translateY(0)';this.querySelector('.vid-thumb').style.transform='scale(1)';this.querySelector('.vid-play').style.background='#fff';this.querySelector('.vid-play').style.color='#1b2032';this.querySelector('.vid-titulo').style.color='#ffffff';">
+
+								<div style="position:relative;height:200px;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);">
+									<img class="vid-thumb" src="{{ video.VIDEO_THUMBNAIL or imagem_fixa }}" alt="{{ video.VIDEO_TITLE }}" style="width:100%;height:100%;object-fit:cover;opacity:0.85;transition:0.6s ease;" />
+									<span class="vid-play" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;line-height:64px;text-align:center;background:#fff;color:#1b2032;border-radius:50%;font-size:18px;padding-left:5px;box-shadow:0 12px 30px -8px rgba(0,0,0,.6);transition:0.35s ease;">
+										<i class="fa fa-play"></i>
+									</span>
+									<span style="position:absolute;bottom:14px;right:14px;background:rgba(11,15,26,0.88);color:#fff;font-family:oswald,sans-serif;font-size:12px;letter-spacing:1px;padding:5px 12px;border-radius:6px;">{{ video.get_duration_formatted() }}</span>
+								</div>
+
+								<div style="padding:24px 26px 28px;">
+									<span style="display:inline-block;background:rgba(14,92,166,0.3);border:1px solid rgba(125,184,238,0.35);color:#7db8ee;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:30px;margin-bottom:16px;">{{ video.VIDEO_CATEGORY or 'Mensagem' }}</span>
+									<h4 class="vid-titulo" style="margin:0 0 10px;font-size:20px;font-weight:600;line-height:29px;color:#ffffff;transition:0.3s;">{{ video.VIDEO_TITLE }}</h4>
+									<p style="font-size:13px;letter-spacing:0.5px;color:rgba(255,255,255,0.45);margin-bottom:14px;">{% if video.VIDEO_PREACHER %}{{ video.VIDEO_PREACHER }} <span style="color:#ffaa17;margin:0 6px;">·</span>{% endif %}{{ '%02d'|format(video.VIDEO_CREATED_AT.day) }} {{ meses_curto[video.VIDEO_CREATED_AT.month]|lower }} {{ video.VIDEO_CREATED_AT.year }}</p>
+									<p style="font-size:14px;line-height:26px;color:rgba(255,255,255,0.62);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">Assista à mensagem{% if video.VIDEO_PREACHER %} com {{ video.VIDEO_PREACHER }}{% endif %} e fortaleça sua fé através desta palavra.</p>
+								</div>
+							</a>
+						</div>
+					{% else %}
+						<div style="padding:60px;text-align:center;color:rgba(255,255,255,0.45);">Nenhum vídeo publicado ainda.</div>
+					{% endfor %}
+
+				</div>
+
+				<div class="text-center" style="margin-top:50px;">
+					<a href="{{ url_for('public.videos') }}" style="display:inline-block;background:transparent;border:2px solid rgba(255,255,255,0.25);color:#fff;font-size:15px;letter-spacing:1px;padding:12px 36px;border-radius:30px;transition:0.3s;" onmouseover="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.25)';">
+						Ver todos os vídeos <i class="fa fa-youtube-play" style="margin-left:8px;"></i>
+					</a>
+				</div>
+
+			</div>
+		</section>
+
+		{# ============================================================
+   Catálogo de estilos por palavra-chave no nome do ministério.
+   Ordem importa — quem casar primeiro ganha (coloque termos mais
+   específicos antes dos genéricos).
+============================================================ #}
+{% set catalogo_ministerios = [
+    {'chaves': ['infantil', 'crianca', 'criança', 'kids'],
+     'icone': 'fa fa-child',
+     'grad':  'linear-gradient(135deg,#ffc457 0%,#ff8f00 100%)',
+     'sombra':'rgba(255,143,0,.65)',
+     'blob':  '58% 42% 62% 38% / 45% 55% 45% 55%'},
+
+    {'chaves': ['adolesc', 'teen', 'pre-teen'],
+     'icone': 'fa fa-rocket',
+     'grad':  'linear-gradient(135deg,#7ee1c8 0%,#0a86a3 100%)',
+     'sombra':'rgba(12,188,227,.6)',
+     'blob':  '50% 50% 62% 38% / 60% 40% 55% 45%'},
+
+    {'chaves': ['jovens', 'juventude', 'jovem'],
+     'icone': 'fa fa-fire',
+     'grad':  'linear-gradient(135deg,#ff8a5c 0%,#ff2e63 100%)',
+     'sombra':'rgba(255,46,99,.6)',
+     'blob':  '45% 55% 40% 60% / 55% 45% 60% 40%'},
+
+    {'chaves': ['casais', 'casament', 'família', 'familia'],
+     'icone': 'fa fa-heart',
+     'grad':  'linear-gradient(135deg,#ff6b8a 0%,#c81f45 100%)',
+     'sombra':'rgba(245,50,92,.6)',
+     'blob':  '62% 38% 48% 52% / 40% 60% 40% 60%'},
+
+    {'chaves': ['louvor', 'musica', 'música', 'adoraç', 'adorac', 'canto', 'coral', 'banda'],
+     'icone': 'fa fa-music',
+     'grad':  'linear-gradient(135deg,#3ad6f0 0%,#0a86a3 100%)',
+     'sombra':'rgba(12,188,227,.6)',
+     'blob':  '50% 50% 62% 38% / 60% 40% 55% 45%'},
+
+    {'chaves': ['mulher', 'senhora', 'damas', 'feminin'],
+     'icone': 'fa fa-female',
+     'grad':  'linear-gradient(135deg,#f78fb3 0%,#a84370 100%)',
+     'sombra':'rgba(168,67,112,.6)',
+     'blob':  '62% 38% 55% 45% / 45% 55% 45% 55%'},
+
+    {'chaves': ['homens', 'varões', 'varoes', 'masculin'],
+     'icone': 'fa fa-male',
+     'grad':  'linear-gradient(135deg,#2a86d8 0%,#0a3d70 100%)',
+     'sombra':'rgba(14,92,166,.65)',
+     'blob':  '45% 55% 40% 60% / 55% 45% 60% 40%'},
+
+    {'chaves': ['oraç', 'orac', 'intercess'],
+     'icone': 'fa fa-hand-peace-o',
+     'grad':  'linear-gradient(135deg,#f6c85f 0%,#c68f00 100%)',
+     'sombra':'rgba(198,143,0,.55)',
+     'blob':  '58% 42% 45% 55% / 50% 50% 60% 40%'},
+
+    {'chaves': ['ensino', 'escola', 'estudo', 'biblic', 'discipul'],
+     'icone': 'fa fa-book',
+     'grad':  'linear-gradient(135deg,#6dd39a 0%,#118a4e 100%)',
+     'sombra':'rgba(17,138,78,.55)',
+     'blob':  '55% 45% 50% 50% / 50% 50% 55% 45%'},
+
+    {'chaves': ['miss', 'evangel'],
+     'icone': 'fa fa-globe',
+     'grad':  'linear-gradient(135deg,#42d392 0%,#0f6b4a 100%)',
+     'sombra':'rgba(15,107,74,.55)',
+     'blob':  '52% 48% 55% 45% / 45% 55% 50% 50%'},
+
+    {'chaves': ['diacon', 'serviço', 'servico', 'social', 'acao', 'ação'],
+     'icone': 'fa fa-hand-o-right',
+     'grad':  'linear-gradient(135deg,#9aa3b0 0%,#4a5566 100%)',
+     'sombra':'rgba(74,85,102,.55)',
+     'blob':  '55% 45% 55% 45% / 50% 50% 45% 55%'},
+
+    {'chaves': ['multim', 'midia', 'mídia', 'audiov', 'comunic'],
+     'icone': 'fa fa-video-camera',
+     'grad':  'linear-gradient(135deg,#8e7bff 0%,#4b2fc4 100%)',
+     'sombra':'rgba(75,47,196,.55)',
+     'blob':  '55% 45% 50% 50% / 55% 45% 50% 50%'}
+] %}
+
+{% set estilo_padrao = {
+    'icone': 'fa fa-users',
+    'grad':  'linear-gradient(135deg,#c3cdd9 0%,#5f6b7a 100%)',
+    'sombra':'rgba(95,107,122,.55)',
+    'blob':  '50% 50% 50% 50% / 50% 50% 50% 50%'
+} %}
+
+<div style="display:flex;flex-wrap:wrap;gap:30px;justify-content:center;">
+
+    {% for ministerio in ministerios[:4] %}
+        {# Detecta o estilo pelo nome do ministério #}
+        {% set ns = namespace(estilo=estilo_padrao) %}
+        {% set nome_lower = ministerio.DEPARTMENT_NAME|lower %}
+        {% for item in catalogo_ministerios %}
+            {% if ns.estilo == estilo_padrao %}
+                {% for chave in item.chaves %}
+                    {% if chave in nome_lower and ns.estilo == estilo_padrao %}
+                        {% set ns.estilo = item %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        {% set estilo = ns.estilo %}
+
+        <a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}" class="wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ '%.1f'|format(loop.index * 0.1) }}s" data-wow-offset="0" style="text-decoration:none;flex:1 1 calc(25% - 23px);min-width:230px;background:#fff;border:1px solid #f0f4f8;border-radius:18px;padding:48px 30px 42px;text-align:center;box-shadow:0 25px 50px -30px rgba(0,64,128,.3);transition:0.4s ease;" onmouseover="this.style.transform='translateY(-10px)';this.style.boxShadow='0 40px 60px -30px rgba(0,64,128,.42)';this.querySelector('.min-blob').style.transform='scale(1.08) rotate(6deg)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 25px 50px -30px rgba(0,64,128,.3)';this.querySelector('.min-blob').style.transform='scale(1) rotate(0deg)';">
+            <div class="min-blob" style="width:96px;height:96px;margin:0 auto 26px;background:{{ estilo.grad }};border-radius:{{ estilo.blob }};display:flex;align-items:center;justify-content:center;box-shadow:0 18px 35px -14px {{ estilo.sombra }};transition:0.45s ease;">
+                <i class="{{ estilo.icone }}" style="font-size:34px;color:#fff;"></i>
+            </div>
+            <h4 style="margin:0 0 8px;font-size:22px;font-weight:600;color:#1b2032;">{{ ministerio.DEPARTMENT_NAME }}</h4>
+            {% if ministerio.DEPARTMENT_DESCRIPTION %}
+                <p style="font-size:14px;line-height:24px;font-style:italic;color:#9aa3b0;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ ministerio.DEPARTMENT_DESCRIPTION }}</p>
+            {% endif %}
+        </a>
+    {% else %}
+        <div style="padding:60px;text-align:center;color:#9aa3b0;">Nenhum ministério cadastrado ainda.</div>
+    {% endfor %}
+
+</div>
+
+		{# ============================================================
+		   EVENTOS — mesma lógica: fallback nas imagens fixas
+		============================================================ #}
+		<section class="section-padding" style="background:#171d2e;position:relative;overflow:hidden;">
+
+			<div style="position:absolute;top:50%;left:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(14,92,166,0.3) 0%,rgba(14,92,166,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+
+				<div style="display:flex;align-items:center;flex-wrap:wrap;gap:28px;margin-bottom:45px;">
+					<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:52px;line-height:60px;color:#fff;margin:0;">Eventos</h2>
+					<span style="flex:1;min-width:40px;height:1px;background:rgba(255,255,255,0.16);"></span>
+					<a href="{{ url_for('public.agenda') }}" style="font-size:15px;letter-spacing:1px;color:rgba(255,255,255,0.65);transition:0.3s;" onmouseover="this.style.color='#ffaa17';" onmouseout="this.style.color='rgba(255,255,255,0.65)';">
+						Ver todos os eventos <i class="fa fa-long-arrow-right" style="margin-left:6px;"></i>
+					</a>
+				</div>
+
+				{% set imagens_eventos_fixas = [
+					'assets/img/portfolio/1.jpg',
+					'assets/img/portfolio/3.jpg',
+					'assets/img/portfolio/5.jpg'
+				] %}
+
+				{% for evento in eventos_proximos %}
+					{% set imagem_fixa = imagens_eventos_fixas[loop.index0 % imagens_eventos_fixas|length] %}
+					<div class="evento_card" style="display:flex;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;margin-bottom:22px;transition:0.4s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,170,23,0.45)';this.querySelector('.evt-btn').style.background='#ffaa17';this.querySelector('.evt-btn').style.color='#fff';this.querySelector('.evt-nome').style.color='#ffaa17';" onmouseout="this.style.background='rgba(255,255,255,0.045)';this.style.borderColor='rgba(255,255,255,0.09)';this.querySelector('.evt-btn').style.background='transparent';this.querySelector('.evt-btn').style.color='#ffaa17';this.querySelector('.evt-nome').style.color='#ffffff';">
+
+						<div style="flex:0 0 155px;height:210px;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);">
+							{% if evento.EVENT_BANNER %}
+								<img src="{{ url_for('static', filename='uploads/eventos/' + evento.EVENT_BANNER) }}" alt="{{ evento.EVENT_TITLE }}" style="width:100%;height:100%;object-fit:cover;" />
+							{% else %}
+								<img src="{{ url_for('static', filename=imagem_fixa) }}" alt="{{ evento.EVENT_TITLE }}" style="width:100%;height:100%;object-fit:cover;" />
+							{% endif %}
+						</div>
+
+						<div style="flex:0 0 130px;text-align:center;padding:0 18px;border-right:1px solid rgba(255,255,255,0.09);">
+							<span style="display:block;font-family:oswald,sans-serif;font-size:52px;font-weight:600;line-height:56px;color:#ffaa17;">{{ '%02d'|format(evento.EVENT_DATE.day) }}</span>
+							<span style="display:block;font-family:oswald,sans-serif;font-size:15px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.55);">{{ meses_curto[evento.EVENT_DATE.month] }}</span>
+						</div>
+
+						<div style="flex:1;min-width:250px;padding:24px 34px;">
+							<h4 class="evt-nome" style="margin:0 0 14px;font-size:26px;font-weight:600;line-height:34px;color:#ffffff;transition:0.3s;">{{ evento.EVENT_TITLE }}</h4>
+							<p style="font-size:14px;line-height:26px;color:rgba(255,255,255,0.6);margin-bottom:6px;">
+								<i class="icon-calendar-o" style="color:#ffaa17;margin-right:10px;"></i>{% if evento.EVENT_TIME %}{{ evento.EVENT_TIME.strftime('%H:%M') }}{% else %}Horário a definir{% endif %}
+							</p>
+							<p style="font-size:14px;line-height:26px;color:rgba(255,255,255,0.6);">
+								<i class="icon-map-marker" style="color:#ffaa17;margin-right:12px;"></i>{{ evento.EVENT_LOCATION or 'Local a definir' }}
+							</p>
+						</div>
+
+						<div style="flex:0 0 auto;padding:20px 38px;">
+							<a class="evt-btn" href="{{ url_for('public.evento', evento_id=evento.EVENT_ID) }}" style="display:inline-block;background:transparent;border:2px solid #ffaa17;color:#ffaa17;font-size:14px;letter-spacing:1px;padding:11px 32px;border-radius:30px;white-space:nowrap;transition:0.3s;">Ver evento</a>
+						</div>
+
+					</div>
+				{% else %}
+					<div style="text-align:center;padding:60px;color:rgba(255,255,255,0.45);border:1px dashed rgba(255,255,255,0.15);border-radius:16px;">Nenhum evento agendado no momento.</div>
+				{% endfor %}
+
+			</div>
+		</section>
+
+		<section class="section-padding" style="background:linear-gradient(180deg,#ffffff 0%,#f6fafd 100%);position:relative;overflow:hidden;">
+
+			<div style="position:absolute;top:-120px;left:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.12) 0%,rgba(255,170,23,0) 70%);pointer-events:none;"></div>
+
+			<div class="container" style="position:relative;z-index:2;">
+				<div class="row align-items-center">
+
+					<div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+						<div style="padding-right:30px;margin-bottom:40px;">
+
+							<span style="display:inline-block;font-family:oswald,sans-serif;font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;">Estamos com você</span>
+
+							<h2 style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:50px;line-height:62px;color:#1b2032;margin:0 0 22px;">Pedido de Oração</h2>
+
+							<p style="font-size:16px;line-height:30px;color:#747474;margin-bottom:28px;">Seja qual for o motivo, você não precisa carregar sozinho. Escreva seu pedido e nossa equipe pastoral vai orar por você durante a semana.</p>
+
+							<div style="border-left:3px solid #ffaa17;padding-left:24px;margin-bottom:28px;">
+								<p style="font-size:17px;line-height:32px;font-style:italic;color:#1b2032;margin-bottom:8px;">“Confessai as vossas culpas uns aos outros e orai uns pelos outros, para que sareis.”</p>
+								<span style="font-family:oswald,sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;">Tiago 5:16</span>
+							</div>
+
+							<p style="font-size:14px;line-height:26px;color:#9aa3b0;">
+								<i class="icon-lock" style="color:#0e5ca6;margin-right:10px;"></i>Seu pedido é tratado com sigilo pela equipe pastoral.
+							</p>
+
+						</div>
+					</div>
+
+					<div class="col-lg-7 col-md-12 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0">
+						<div style="background:#fff;border:1px solid rgba(14,92,166,0.07);border-radius:16px;box-shadow:0 30px 55px -35px rgba(0,64,128,.35);padding:36px 36px 32px;">
+
+							<form id="form_oracao" method="post" action="{{ url_for('public.pedido_oracao') }}">
+								 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+								<div style="margin-bottom:18px;">
+									<label for="ora_nome" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Nome <span style="color:#9aa3b0;font-weight:400;">(opcional)</span></label>
+									<input  type="text" id="ora_nome" name="nome" placeholder="Como podemos te chamar?" style="width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:11px 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';" />
+									<p style="font-size:12px;line-height:20px;color:#9aa3b0;margin-top:6px;">Deixe em branco se preferir enviar sem se identificar.</p>
+								</div>
+
+								<div style="margin-bottom:18px;">
+									<label for="ora_pedido" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Seu pedido</label>
+									<textarea id="ora_pedido" name="pedido" rows="5" required placeholder="Escreva com liberdade — o que você compartilhar aqui fica entre você e a equipe pastoral." style="width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:13px 15px;font-size:14px;line-height:24px;color:#1b2032;font-family:'Poppins',sans-serif;resize:vertical;min-height:120px;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';"></textarea>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6 col-sm-12" style="margin-bottom:18px;">
+										<label for="ora_categoria" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">Categoria</label>
+										<select id="ora_categoria" name="categoria" required style="width:100%;height:44px;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:0 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;cursor:pointer;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';">
+											<option value="">Selecione...</option>
+											<option value="espiritual">Espiritual</option>
+											<option value="saude">Saúde</option>
+											<option value="familia">Família</option>
+											<option value="trabalho">Trabalho e provisão</option>
+											<option value="relacionamentos">Relacionamentos</option>
+											<option value="gratidao">Gratidão</option>
+											<option value="outro">Outro</option>
+										</select>
+									</div>
+
+									<div class="col-md-6 col-sm-12" style="margin-bottom:18px;">
+										<label for="ora_email" style="display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:7px;">E-mail para contato</label>
+										<input type="email" id="ora_email" name="email" placeholder="seuemail@exemplo.com" style="width:100%;height:44px;background:#f7fafd;border:1px solid #e8eef5;border-radius:9px;padding:0 15px;font-size:14px;color:#1b2032;transition:0.3s;outline:none;" onfocus="this.style.borderColor='#ffaa17';this.style.background='#fff';" onblur="this.style.borderColor='#e8eef5';this.style.background='#f7fafd';" />
+									</div>
+								</div>
+
+								<div style="background:#f7fafd;border:1px solid #eef3f8;border-radius:11px;padding:16px 18px;margin-bottom:22px;">
+
+									<label id="lbl_anonimato" for="ora_anonimato" style="display:flex;align-items:flex-start;cursor:pointer;margin-bottom:12px;transition:0.3s;">
+										<input type="checkbox" id="ora_anonimato" name="anonimato" value="1" onchange="oracaoAnonimato(this);" style="width:16px;height:16px;margin-right:12px;margin-top:3px;accent-color:#ffaa17;cursor:pointer;flex-shrink:0;" />
+										<span style="font-size:13.5px;line-height:22px;color:#747474;">Quero enviar <strong style="color:#1b2032;font-weight:600;">anonimamente</strong> — meu nome e contato não serão gravados.</span>
+									</label>
+
+									<label id="lbl_autorizacao" for="ora_autorizacao" style="display:flex;align-items:flex-start;cursor:pointer;transition:0.3s;">
+										<input type="checkbox" id="ora_autorizacao" name="autorizacao" value="1" onchange="oracaoAutorizacao(this);" style="width:16px;height:16px;margin-right:12px;margin-top:3px;accent-color:#ffaa17;cursor:pointer;flex-shrink:0;" />
+										<span style="font-size:13.5px;line-height:22px;color:#747474;">Autorizo a <strong style="color:#1b2032;font-weight:600;">equipe pastoral</strong> a entrar em contato comigo sobre este pedido.</span>
+									</label>
+
+								</div>
+
+								<button type="submit" style="width:100%;background:#ffaa17;border:2px solid #ffaa17;color:#fff;font-family:oswald,sans-serif;font-size:16px;font-weight:500;letter-spacing:1px;padding:12px;border-radius:30px;cursor:pointer;box-shadow:0 12px 30px -12px rgba(255,170,23,.65);transition:0.3s;" onmouseover="this.style.background='#1b2032';this.style.borderColor='#1b2032';this.style.boxShadow='0 12px 30px -12px rgba(27,32,50,.5)';" onmouseout="this.style.background='#ffaa17';this.style.borderColor='#ffaa17';this.style.boxShadow='0 12px 30px -12px rgba(255,170,23,.65)';">
+									Enviar pedido
+								</button>
+
+								<p style="text-align:center;font-size:12.5px;line-height:22px;color:#9aa3b0;margin-top:13px;">Recebemos cada pedido com carinho e oramos por ele durante a semana.</p>
+
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ============================================================
+		FOOTER
+		============================================================ #}
+		<div class="footer" style="background-image: url({{ url_for('static', filename='assets/img/bg/footer.png') }});  background-size:cover;">
+			<div class="container">
+				<div class="row footer_bg">
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="footer_logo">
+							<img src="{{ url_for('static', filename='assets/img/logo_ic.png') }}" alt="" />
+							<p>Levando a luz de Cristo às nações, guiando vidas pela Palavra de Deus.</p>
+						</div>
+						<div class="social_profile">
+							<ul>
+								{% for rede in redes_sociais_publicas %}
+									<li>
+										<a href="{{ rede.SOCIAL_URL }}" target="_blank" rel="noopener noreferrer" title="{{ rede.SOCIAL_NAME }}">
+											<i class="fa {{ rede.SOCIAL_ICON }}"></i>
+										</a>
+									</li>
+								{% else %}
+									<li><a href="#"><i class="fa fa-share-alt" title="Redes sociais"></i></a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Experimente</h4>
+							<ul>
+								<li><a href="{{ url_for('public.videos') }}">Pregações em vídeo</a></li>
+								<li><a href="{{ url_for('public.estudos') }}">Estudos Bíblicos</a></li>
+								<li><a href="{{ url_for('public.pagina_pedido_oracao') }}">Pedido de Oração</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="single_footer">
+							<h4>Comunidade</h4>
+							<ul>
+								{% for ministerio in ministerios[:1] %}
+									<li><a href="{{ url_for('public.ministerio', ministerio_id=ministerio.DEPARTMENT_ID) }}">Ministérios</a></li>
+								{% else %}
+									<li><a href="#">Ministérios</a></li>
+								{% endfor %}
+								<li><a href="{{ url_for('public.agenda') }}">Agenda</a></li>
+								<li><a href="{{ url_for('public.sobre') }}">Sobre nós</a></li>
+								<li><a href="{{ url_for('public.contato') }}">Contato</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6 col-xs-12">
+						<div class="newsletter-form">
+							<h4>Inscreva-se para receber mais conteúdos</h4>
+							<form id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+								<div class="input-group input-group-lg newsletter">
+									<input type="email" name="EMAIL" class="subscribe__input" placeholder="Endereço de email">
+									<button type="submit" class="subs_btn">Inscrever-se</button>
+								</div>
+								<div id="mce-responses">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="footer_copyright">
+							<p>&copy; 2026 Igreja de Cristo. Todos os direitos reservados.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{{ url_for('static', filename='assets/js/jquery-1.12.4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/modernizr-2.8.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.mixitup.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.appear.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.inview.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.stellar.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/menu.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/form-contact.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scrolltopcontrol.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+
+			<script>
+				$(document).ready(function () {
+					$('.mensagens_carousel').owlCarousel({
+						items: 3, margin: 0, loop: true, nav: true, dots: true,
+						autoplay: true, autoplayTimeout: 5000, autoplayHoverPause: true,
+						navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+						responsive: { 0: { items: 1 }, 768: { items: 2 }, 992: { items: 3 } },
+						navigation: true, pagination: true, autoPlay: 5000, stopOnHover: true,
+						navigationText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+						itemsDesktop: [1199, 3], itemsDesktopSmall: [992, 2], itemsTablet: [768, 2], itemsMobile: [480, 1]
+					});
+				});
+			</script>
+
+			<script>
+			$(document).ready(function () {
+				var opcoes = {
+					items: 3, margin: 0, loop: true, nav: true, dots: true,
+					autoplay: true, autoplayTimeout: 5000, autoplayHoverPause: true,
+					navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+					responsive: { 0: { items: 1 }, 768: { items: 2 }, 992: { items: 3 } },
+					navigation: true, pagination: true, autoPlay: 5000, stopOnHover: true,
+					navigationText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+					itemsDesktop: [1199, 3], itemsDesktopSmall: [992, 2], itemsTablet: [768, 2], itemsMobile: [480, 1]
+				};
+
+				$('.mensagens_carousel').addClass('owl-carousel owl-theme').owlCarousel(opcoes);
+				$('.videos_carousel').addClass('owl-carousel owl-theme').owlCarousel(opcoes);
+			});
+		</script>
+
+		<script>
+			function oracaoTravar(alvo, label, travar) {
+				if (travar) {
+					alvo.checked = false;
+					alvo.disabled = true;
+					label.style.opacity = '0.4';
+					label.style.cursor = 'not-allowed';
+				} else {
+					alvo.disabled = false;
+					label.style.opacity = '1';
+					label.style.cursor = 'pointer';
+				}
+			}
+
+			function oracaoAnonimato(el) {
+				oracaoTravar(document.getElementById('ora_autorizacao'), document.getElementById('lbl_autorizacao'), el.checked);
+
+				['ora_nome', 'ora_email'].forEach(function (id) {
+					var campo = document.getElementById(id);
+					campo.disabled = el.checked;
+					campo.style.opacity = el.checked ? '0.45' : '1';
+					if (el.checked) { campo.value = ''; }
+				});
+			}
+
+			function oracaoAutorizacao(el) {
+				oracaoTravar(document.getElementById('ora_anonimato'), document.getElementById('lbl_anonimato'), el.checked);
+			}
+	</script>
+
+
+    </body>
+</html>

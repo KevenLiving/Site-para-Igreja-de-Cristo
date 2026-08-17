@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Novo departamento — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:#f7fafd;color:#747474;border-color:#e8eef5;}
+		.adm_btn_ghost:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.f_erro{display:block;margin-top:6px;font-size:12px;color:#c81f45;}
+		.f_erro i{margin-right:5px;}
+		.f_invalid{border-color:#c81f45!important;background:#fff!important;box-shadow:0 0 0 3px rgba(200,31,69,.08)!important;}
+
+		/* ===== GRID ===== */
+		.f_grid{display:grid;grid-template-columns:2fr 1fr;gap:26px;align-items:start;}
+		@media (max-width:1100px){.f_grid{grid-template-columns:1fr;}}
+
+		.f_card{background:#fff;border:1px solid #eef3f8;border-radius:18px;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);padding:32px 36px;margin-bottom:22px;}
+		.f_card_head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #f2f6fa;}
+		.f_card_head h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#1b2032;margin:0;}
+		.f_card_head .f_icone{width:38px;height:38px;border-radius:10px;background:rgba(255,170,23,0.12);color:#ff8f00;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+		.f_campo{margin-bottom:20px;}
+		.f_campo:last-child{margin-bottom:0;}
+		.f_campo > label{display:block;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#1b2032;margin-bottom:8px;}
+		.f_campo > label .opc{font-family:'Poppins',sans-serif;font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:#9aa3b0;margin-left:6px;}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="tel"],.f_campo input[type="number"],.f_campo select,.f_campo textarea{
+			width:100%;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;
+			padding:12px 16px;font-size:14px;color:#1b2032;outline:none;font-family:inherit;transition:.3s;
+		}
+		.f_campo input[type="text"],.f_campo input[type="email"],.f_campo input[type="tel"],.f_campo input[type="number"],.f_campo select{height:48px;padding:0 16px;}
+		.f_campo textarea{min-height:110px;resize:vertical;line-height:22px;}
+		.f_campo input:focus,.f_campo select:focus,.f_campo textarea:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.f_ajuda{display:block;font-size:12px;color:#9aa3b0;margin-top:6px;}
+		.f_ajuda i{color:#0e5ca6;margin-right:5px;}
+		.f_dupla{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+		@media (max-width:640px){.f_dupla{grid-template-columns:1fr;}}
+
+		/* ===== UPLOAD DE FOTO DO LÍDER (COM BLOB) ===== */
+		.f_foto_wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap;background:#f7fafd;border:1px dashed #d5dee8;border-radius:14px;padding:22px;transition:.3s;}
+		.f_foto_wrap.on{border-style:solid;border-color:#22a75e;background:#fff;}
+		.f_blob_up{position:relative;width:110px;height:110px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);flex-shrink:0;box-shadow:0 12px 25px -8px rgba(0,64,128,.35);}
+		.f_blob_up img{width:100%;height:100%;object-fit:cover;display:block;}
+		.f_blob_up .sem{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-size:34px;}
+		.f_blob_up .over{position:absolute;inset:0;background:rgba(27,32,50,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transition:.3s;}
+		.f_blob_up:hover .over{opacity:1;}
+		.f_foto_info{flex:1;min-width:200px;}
+		.f_foto_info strong{display:block;font-size:14px;color:#1b2032;margin-bottom:4px;}
+		.f_foto_info p{margin:0 0 12px;font-size:12.5px;color:#9aa3b0;line-height:18px;}
+		.f_foto_btns{display:flex;gap:8px;flex-wrap:wrap;}
+		.f_foto_btns button,.f_foto_btns label{position:relative;padding:9px 18px;font-size:12.5px;font-weight:500;letter-spacing:.5px;border-radius:22px;cursor:pointer;transition:.3s;border:2px solid;font-family:inherit;display:inline-flex;align-items:center;gap:7px;}
+		.f_foto_btns .esc{background:#0e5ca6;border-color:#0e5ca6;color:#fff;overflow:hidden;}
+		.f_foto_btns .esc:hover{background:#0a3d70;border-color:#0a3d70;}
+		.f_foto_btns .esc input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+		.f_foto_btns .rem{background:transparent;border-color:#eef3f8;color:#c81f45;}
+		.f_foto_btns .rem:hover{background:#c81f45;border-color:#c81f45;color:#fff;}
+
+		/* ===== SELETOR DE COR ===== */
+		.f_cores{display:flex;gap:8px;flex-wrap:wrap;}
+		.f_cor{width:44px;height:44px;border-radius:12px;cursor:pointer;position:relative;transition:.25s;border:3px solid transparent;}
+		.f_cor:hover{transform:scale(1.08);}
+		.f_cor.sel{border-color:#1b2032;box-shadow:0 8px 18px -6px rgba(0,0,0,.35);}
+		.f_cor.sel::after{content:"\f00c";font-family:FontAwesome;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;text-shadow:0 2px 4px rgba(0,0,0,.4);}
+
+		/* ===== TOGGLES ===== */
+		.f_toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;cursor:pointer;transition:.3s;}
+		.f_toggle:hover{background:#fff;border-color:#ffaa17;}
+		.f_toggle input[type="checkbox"]{width:18px;height:18px;accent-color:#ffaa17;cursor:pointer;margin:3px 0 0;flex-shrink:0;}
+		.f_toggle .info{flex:1;min-width:0;}
+		.f_toggle .info label{display:block;font-size:14px;color:#1b2032;font-weight:600;margin:0 0 2px;cursor:pointer;}
+		.f_toggle .info small{font-size:12px;color:#9aa3b0;}
+
+		/* ===== PREVIEW (mesmo card da listagem) ===== */
+		.prev_wrap{background:linear-gradient(135deg,#f9fcff 0%,#eef6fc 100%);border:1px solid rgba(14,92,166,0.15);border-radius:16px;padding:20px;}
+		.prev_wrap h4{margin:0 0 14px;font-family:oswald,sans-serif;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#0e5ca6;}
+		.prev_card{background:#fff;border:1px solid #eef3f8;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px -20px rgba(0,64,128,.3);}
+		.prev_head{background:linear-gradient(135deg,var(--cor1,#0e5ca6) 0%,var(--cor2,#0a3d70) 100%);padding:24px 22px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;transition:background .3s;}
+		.prev_head:before{content:"";position:absolute;top:-60px;right:-30px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0) 70%);}
+		.prev_blob{width:66px;height:66px;border-radius:58% 42% 62% 38% / 45% 55% 45% 55%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.15);position:relative;z-index:2;}
+		.prev_blob img{width:100%;height:100%;object-fit:cover;display:block;}
+		.prev_blob .sem{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:22px;}
+		.prev_head_info{flex:1;min-width:0;position:relative;z-index:2;}
+		.prev_head_info h5{margin:0 0 3px;font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:17px;color:#fff;line-height:22px;}
+		.prev_head_info small{display:block;font-size:11.5px;color:rgba(255,255,255,0.85);}
+		.prev_head_info small i{color:#ffaa17;margin-right:5px;}
+		.prev_head_info small.vazio{color:rgba(255,255,255,0.5);font-style:italic;}
+		.prev_body{padding:16px 20px;}
+		.prev_body p{margin:0 0 12px;font-size:12.5px;line-height:19px;color:#5f6b7a;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;}
+		.prev_body p.vazio{color:#c3cdd9;font-style:italic;}
+		.prev_body .ct{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:1px solid #f2f6fa;}
+		.prev_body .ct .item{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#747474;}
+		.prev_body .ct .item i{width:12px;color:#0e5ca6;font-size:11px;}
+		.prev_body .ct .sem_ct{font-size:11px;color:#c3cdd9;font-style:italic;text-align:center;padding:2px 0;}
+
+		/* ===== BARRA DE AÇÕES ===== */
+		.f_actions{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 25px 50px -32px rgba(0,64,128,.3);}
+		.f_actions .esq{display:flex;align-items:center;gap:10px;color:#9aa3b0;font-size:13px;}
+		.f_actions .esq i{color:#ffaa17;}
+		.f_actions .dir{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+		.f_actions button[type="submit"]{display:inline-flex;align-items:center;gap:10px;padding:12px 32px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid #ffaa17;background:#ffaa17;color:#fff;cursor:pointer;transition:.3s;font-family:inherit;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.f_actions button[type="submit"]:hover{background:#ff8f00;border-color:#ff8f00;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand"><span>Painel Editor</span><strong>Igreja de Cristo</strong></div>
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link ativo"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+		<div class="adm_user">
+			<div class="adm_user_av">{{ iniciais_administrador }}</div>
+			<div class="adm_user_info"><span>{{ administrador.ADMIN_NAME }}</span><small>{{ administrador.ADMIN_ROLE|capitalize }}</small></div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <a href="{{ url_for('administrador.exibir_departamentos') }}">Departamentos</a> / <strong>Novo</strong></span>
+			</div>
+			<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_btn adm_btn_ghost"><i class="fa fa-long-arrow-left"></i>Voltar</a>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Novo departamento</h1>
+			<p>Cadastre um ministério com sua liderança, descrição e formas de contato.</p>
+		</div>
+
+		{% with mensagens = get_flashed_messages(with_categories=true) %}
+			{% if mensagens %}
+				{% for categoria, mensagem in mensagens %}
+					<div class="alert alert-{{ categoria if categoria else 'danger' }}">
+						{{ mensagem }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<form id="depForm" action="{{ url_for('administrador.adicionar_departamento') }}" method="POST" enctype="multipart/form-data">
+			{{ formulario.hidden_tag() }}
+
+			<div class="f_grid">
+
+				<!-- ==== COLUNA PRINCIPAL ==== -->
+				<div>
+
+					<!-- IDENTIFICAÇÃO -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Identificação</h3>
+							<div class="f_icone"><i class="fa fa-tag"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="nome">Nome do departamento</label>
+							{{ formulario.nome(
+								id='nome',
+								placeholder='Ex.: Ministério de Louvor',
+								autocomplete='off',
+								class_='f_invalid' if formulario.nome.errors else ''
+							) }}
+							{% for erro in formulario.nome.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							<label for="descricao">Descrição <span class="opc">(opcional)</span></label>
+							{{ formulario.descricao(
+								id='descricao',
+								placeholder='Uma breve descrição do que este departamento faz, quem serve e como funciona...',
+								class_='f_invalid' if formulario.descricao.errors else ''
+							) }}
+							{% for erro in formulario.descricao.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Aparece no card do site e na página interna do departamento.</small>
+						</div>
+
+					</div>
+
+					<!-- LIDERANÇA -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Liderança</h3>
+							<div class="f_icone"><i class="fa fa-user"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label>Foto do líder <span class="opc">(opcional)</span></label>
+							<div class="f_foto_wrap" id="foto_wrap">
+								<div class="f_blob_up" id="blob_prev">
+									<div class="sem" id="blob_sem"><i class="fa fa-user-plus"></i></div>
+									<img id="blob_img" src="" alt="" style="display:none;" />
+									<div class="over"><i class="fa fa-camera"></i></div>
+								</div>
+								<div class="f_foto_info">
+									<strong>Foto de perfil do líder</strong>
+									<p>Recomendado: quadrada, mínimo 400×400px. JPG ou PNG.</p>
+									<div class="f_foto_btns">
+										<label class="esc">
+											<i class="fa fa-cloud-upload"></i>Escolher arquivo
+											{{ formulario.lider_foto(id='foto_input', accept='image/*') }}
+										</label>
+										<button type="button" class="rem" id="foto_rem" style="display:none;"><i class="fa fa-times"></i>Remover</button>
+									</div>
+								</div>
+							</div>
+							{% for erro in formulario.lider_foto.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							<label for="lider_nome">Nome do líder <span class="opc">(opcional)</span></label>
+							{{ formulario.lider_nome(
+								id='lider_nome',
+								placeholder='Ex.: Rafael Monteiro',
+								autocomplete='off',
+								class_='f_invalid' if formulario.lider_nome.errors else ''
+							) }}
+							{% for erro in formulario.lider_nome.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+						</div>
+
+						<div class="f_campo">
+							<label for="lider_bio">Biografia curta <span class="opc">(opcional)</span></label>
+							{{ formulario.lider_bio(
+								id='lider_bio',
+								placeholder='Uma breve apresentação do líder — formação, tempo na comunidade, chamado ministerial...',
+								style='min-height:90px;',
+								class_='f_invalid' if formulario.lider_bio.errors else ''
+							) }}
+							{% for erro in formulario.lider_bio.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+							<small class="f_ajuda"><i class="fa fa-info-circle"></i>Aparece na página interna do departamento, abaixo do nome do líder.</small>
+						</div>
+					</div>
+
+					<!-- CONTATOS -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Contato</h3>
+							<div class="f_icone"><i class="fa fa-envelope-o"></i></div>
+						</div>
+
+						<div class="f_dupla">
+							<div class="f_campo">
+								<label for="email">E-mail <span class="opc">(opcional)</span></label>
+								{{ formulario.contato_email(
+									id='email',
+									placeholder='departamento@igrejadecristo.org',
+									class_='f_invalid' if formulario.contato_email.errors else ''
+								) }}
+								{% for erro in formulario.contato_email.errors %}
+									<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							</div>
+							<div class="f_campo">
+								<label for="telefone">Telefone / WhatsApp <span class="opc">(opcional)</span></label>
+								{{ formulario.contato_telefone(
+									id='telefone',
+									placeholder='(11) 99876-5432',
+									class_='f_invalid' if formulario.contato_telefone.errors else ''
+								) }}
+								{% for erro in formulario.contato_telefone.errors %}
+									<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+								{% endfor %}
+							</div>
+						</div>
+						<small class="f_ajuda" style="margin-top:10px;"><i class="fa fa-info-circle"></i>Pelo menos um contato é recomendado para que as pessoas possam falar com este ministério.</small>
+					</div>
+
+				</div>
+
+				<!-- ==== COLUNA LATERAL ==== -->
+				<div>
+
+					<!-- PREVIEW -->
+					<div class="prev_wrap" style="margin-bottom:22px;">
+						<h4><i class="fa fa-eye"></i> Como vai aparecer</h4>
+						<div class="prev_card">
+							<div class="prev_head" id="prev_head">
+								<div class="prev_blob" id="prev_blob">
+									<div class="sem" id="prev_sem"><i class="fa fa-user-plus"></i></div>
+									<img id="prev_img" src="" alt="" style="display:none;" />
+								</div>
+								<div class="prev_head_info">
+									<h5 id="prev_nome">Nome do departamento</h5>
+									<small id="prev_lider" class="vazio"><i class="fa fa-user-o"></i>Sem liderança definida</small>
+								</div>
+							</div>
+							<div class="prev_body">
+								<p id="prev_desc" class="vazio">A descrição do departamento aparece aqui.</p>
+								<div class="ct" id="prev_ct">
+									<div class="sem_ct">Nenhum contato cadastrado</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- POSIÇÃO E STATUS -->
+					<div class="f_card">
+						<div class="f_card_head">
+							<h3>Posição e status</h3>
+							<div class="f_icone"><i class="fa fa-cog"></i></div>
+						</div>
+
+						<div class="f_campo">
+							<label for="ordem">Posição no site</label>
+							{{ formulario.ordem(
+								id='ordem',
+								min='1',
+								class_='f_invalid' if formulario.ordem.errors else ''
+							) }}
+							{% for erro in formulario.ordem.errors %}
+								<small class="f_erro"><i class="fa fa-exclamation-circle"></i>{{ erro }}</small>
+							{% endfor %}
+							<small class="f_ajuda"><i class="fa fa-sort"></i>Departamentos são exibidos em ordem crescente. Números menores aparecem primeiro. Padrão: última posição.</small>
+						</div>
+
+						<label class="f_toggle">
+							{{ formulario.ativo(id='ativo') }}
+							<div class="info">
+								<label>Ativar imediatamente</label>
+								<small>Marcado, o departamento aparece no site assim que salvo.</small>
+							</div>
+						</label>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="f_actions">
+				<div class="esq">
+					<i class="fa fa-info-circle"></i>
+					Departamentos ativos aparecem na página pública "Ministérios".
+				</div>
+				<div class="dir">
+					<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_btn adm_btn_ghost">Cancelar</a>
+					<button type="submit"><i class="fa fa-check"></i>Cadastrar departamento</button>
+				</div>
+			</div>
+
+		</form>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	/* ===== ELEMENTOS ===== */
+	var nome    = document.getElementById('nome');
+	var desc    = document.getElementById('descricao');
+	var liderN  = document.getElementById('lider_nome');
+	var email   = document.getElementById('email');
+	var tel     = document.getElementById('telefone');
+	var foto    = document.getElementById('foto_input');
+	var fotoRem = document.getElementById('foto_rem');
+	var fotoWrap= document.getElementById('foto_wrap');
+	var blobImg = document.getElementById('blob_img');
+	var blobSem = document.getElementById('blob_sem');
+
+	var pvNome  = document.getElementById('prev_nome');
+	var pvLider = document.getElementById('prev_lider');
+	var pvDesc  = document.getElementById('prev_desc');
+	var pvCt    = document.getElementById('prev_ct');
+	var pvImg   = document.getElementById('prev_img');
+	var pvSem   = document.getElementById('prev_sem');
+	var pvHead  = document.getElementById('prev_head');
+
+	function atualizarPrev() {
+		pvNome.textContent = nome.value.trim() || 'Nome do departamento';
+
+		if (liderN.value.trim()) {
+			pvLider.className = '';
+			pvLider.innerHTML = '<i class="fa fa-user"></i>' + liderN.value.trim();
+		} else {
+			pvLider.className = 'vazio';
+			pvLider.innerHTML = '<i class="fa fa-user-o"></i>Sem liderança definida';
+		}
+
+		if (desc.value.trim()) {
+			pvDesc.className = '';
+			pvDesc.textContent = desc.value.trim();
+		} else {
+			pvDesc.className = 'vazio';
+			pvDesc.textContent = 'A descrição do departamento aparece aqui.';
+		}
+
+		var contatoHtml = '';
+		if (email.value.trim()) contatoHtml += '<div class="item"><i class="fa fa-envelope-o"></i>' + email.value.trim() + '</div>';
+		if (tel.value.trim())   contatoHtml += '<div class="item"><i class="fa fa-phone"></i>' + tel.value.trim() + '</div>';
+		pvCt.innerHTML = contatoHtml || '<div class="sem_ct">Nenhum contato cadastrado</div>';
+	}
+
+	[nome, desc, liderN, email, tel].forEach(function (el) {
+		el.addEventListener('input', atualizarPrev);
+	});
+	atualizarPrev();
+
+	/* Se o formulário voltou com erro do servidor, os campos WTForms
+	   já permanecem preenchidos e o preview acompanha esses valores. */
+
+	/* ===== UPLOAD DE FOTO ===== */
+	foto.addEventListener('change', function () {
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				blobImg.src = e.target.result;
+				blobImg.style.display = 'block';
+				blobSem.style.display = 'none';
+				pvImg.src = e.target.result;
+				pvImg.style.display = 'block';
+				pvSem.style.display = 'none';
+				fotoWrap.classList.add('on');
+				fotoRem.style.display = 'inline-flex';
+			};
+			reader.readAsDataURL(this.files[0]);
+		}
+	});
+
+	fotoRem.addEventListener('click', function () {
+		foto.value = '';
+		blobImg.src = '';
+		blobImg.style.display = 'none';
+		blobSem.style.display = 'flex';
+		pvImg.src = '';
+		pvImg.style.display = 'none';
+		pvSem.style.display = 'flex';
+		fotoWrap.classList.remove('on');
+		this.style.display = 'none';
+	});
+
+	/* ===== SELETOR DE COR ===== */
+	document.querySelectorAll('.f_cor').forEach(function (c) {
+		c.addEventListener('click', function () {
+			document.querySelectorAll('.f_cor').forEach(function (x) { x.classList.remove('sel'); });
+			this.classList.add('sel');
+			var c1 = this.dataset.c1, c2 = this.dataset.c2;
+			document.getElementById('cor1_input').value = c1;
+			document.getElementById('cor2_input').value = c2;
+			pvHead.style.setProperty('--cor1', c1);
+			pvHead.style.setProperty('--cor2', c2);
+		});
+	});
+
+	/* ===== VALIDAÇÃO NO SUBMIT ===== */
+	document.getElementById('depForm').addEventListener('submit', function (e) {
+		if (!nome.value.trim()) {
+			e.preventDefault();
+			alert('Informe o nome do departamento.');
+			nome.focus();
+		}
+	});
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>

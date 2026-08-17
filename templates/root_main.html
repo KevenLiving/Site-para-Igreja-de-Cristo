@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Painel Root — Igreja de Cristo</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+
+		/* ===== LAYOUT ===== */
+		.adm_layout{display:flex;min-height:100vh;}
+
+		/* ===== SIDEBAR ===== */
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+
+		.adm_user{position:absolute;bottom:0;left:0;right:0;padding:20px 30px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ffaa17 0%,#ff8f00 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ffaa17;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		/* ===== CONTEÚDO ===== */
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+		.adm_top_action{display:flex;gap:10px;align-items:center;}
+		.adm_top_action .adm_btn{padding:9px 20px;font-size:13px;}
+
+		/* ===== BOAS-VINDAS ===== */
+		.adm_welcome{background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);border-radius:20px;padding:50px 55px;color:#fff;position:relative;overflow:hidden;margin-bottom:34px;}
+		.adm_welcome:before{content:"";position:absolute;top:-140px;right:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,23,0.22) 0%,rgba(255,170,23,0) 70%);}
+		.adm_welcome:after{content:"";position:absolute;bottom:-160px;left:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0) 70%);}
+		.adm_welcome_content{position:relative;z-index:2;max-width:640px;}
+		.adm_welcome_tag{display:inline-block;font-family:oswald,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:16px;}
+		.adm_welcome h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:44px;line-height:56px;margin:0 0 16px;color:#fff;}
+		.adm_welcome p{font-size:16px;line-height:28px;color:rgba(255,255,255,0.75);margin-bottom:28px;}
+
+		/* ===== BOTÕES ===== */
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:12px 26px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_ghost{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2);}
+		.adm_btn_ghost:hover{background:rgba(255,255,255,0.16);color:#fff;border-color:#fff;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+
+		/* ===== ESTATÍSTICAS ===== */
+		.adm_stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:34px;}
+		.adm_stat{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:26px 28px;transition:.3s;position:relative;overflow:hidden;}
+		.adm_stat:hover{transform:translateY(-4px);box-shadow:0 25px 45px -25px rgba(0,64,128,.3);}
+		.adm_stat_icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px;}
+		.adm_stat_icon.laranja{background:rgba(255,170,23,0.12);color:#ff8f00;}
+		.adm_stat_icon.azul   {background:rgba(14,92,166,0.12);color:#0e5ca6;}
+		.adm_stat_icon.verde  {background:rgba(34,167,94,0.12);color:#22a75e;}
+		.adm_stat_icon.roxo   {background:rgba(142,88,220,0.12);color:#8e58dc;}
+		.adm_stat h3{font-family:oswald,sans-serif;font-size:32px;font-weight:600;color:#1b2032;margin:0;line-height:1;}
+		.adm_stat p{font-size:13px;color:#9aa3b0;margin:8px 0 0;letter-spacing:.5px;}
+
+		/* ===== CARDS DE AÇÃO ===== */
+		.adm_section_title{display:flex;align-items:baseline;gap:12px;margin:0 0 22px;}
+		.adm_section_title h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:26px;color:#1b2032;margin:0;}
+		.adm_section_title span{flex:1;height:1px;background:#e8eef5;}
+
+		.adm_actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+		.adm_action{display:flex;align-items:flex-start;gap:18px;background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:24px 26px;transition:.3s;color:inherit;}
+		.adm_action:hover{border-color:rgba(255,170,23,0.4);box-shadow:0 25px 45px -25px rgba(0,64,128,.3);transform:translateY(-3px);color:inherit;}
+		.adm_action:hover .adm_action_icon{background:#ffaa17;color:#fff;}
+		.adm_action:hover .adm_action_arrow{transform:translateX(4px);color:#ffaa17;}
+		.adm_action_icon{width:50px;height:50px;border-radius:14px;background:rgba(14,92,166,0.1);color:#0e5ca6;display:flex;align-items:center;justify-content:center;font-size:20px;transition:.3s;flex-shrink:0;}
+		.adm_action_body{flex:1;min-width:0;}
+		.adm_action_body h4{margin:0 0 6px;font-size:16px;font-weight:600;color:#1b2032;}
+		.adm_action_body p{margin:0;font-size:13.5px;color:#747474;line-height:22px;}
+		.adm_action_arrow{align-self:center;color:#c3cdd9;font-size:18px;transition:.3s;}
+		.adm_action.destaque{border:2px solid #ffaa17;background:linear-gradient(135deg,rgba(255,170,23,0.06) 0%,rgba(255,143,0,0.02) 100%);}
+		.adm_action.destaque .adm_action_icon{background:#ffaa17;color:#fff;}
+
+		/* ===== RESPONSIVO ===== */
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_welcome{padding:34px 30px;}
+			.adm_welcome h1{font-size:32px;line-height:42px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ============ SIDEBAR ============ -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand">
+			<span>Painel Root</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Principal</span>
+			<a href="{{ url_for('administrador.index') }}" class="adm_link ativo"><i class="fa fa-home"></i>Início</a>
+		</div>
+
+		<div class="adm_group">
+			<span class="adm_group_title">Gestão</span>
+			<a href="{{ url_for('administrador.listar_admins') }}" class="adm_link"><i class="fa fa-users"></i>Administradores</a>
+			<a href="{{url_for('administrador.registro_acessos')}}" class="adm_link"><i class="fa fa-history"></i>Registro de acessos</a>
+		</div>
+
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ administrador.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info">
+				<span>{{administrador.ADMIN_NAME}}</span>
+				<small>Root</small>
+			</div>
+			<a href="{{url_for('auth.deslogar_do_sistema')}}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<!-- ============ CONTEÚDO ============ -->
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="#">Painel</a> / <strong>Início</strong></span>
+			</div>
+			<div class="adm_top_action">
+				<a href="{{url_for('administrador.cadastrar_adm')}}" class="adm_btn adm_btn_primary"><i class="fa fa-user-plus"></i>Novo administrador</a>
+			</div>
+		</div>
+
+		<!-- BOAS-VINDAS -->
+		<div class="adm_welcome">
+			<div class="adm_welcome_content">
+				<span class="adm_welcome_tag">Bem-vindo de volta</span>
+				<h1>Olá, {{administrador.ADMIN_NAME}}. Tudo pronto para começar.</h1>
+				<p>Você está no painel <strong style="color:#ffaa17;font-weight:600;">Root</strong>, o nível mais alto do sistema. A partir daqui, você gerencia quem tem acesso administrativo à plataforma da igreja e o que cada um pode fazer.</p>
+				<div style="display:flex;gap:12px;flex-wrap:wrap;">
+					<a href="{{ url_for('administrador.listar_admins') }}" class="adm_btn adm_btn_primary"><i class="fa fa-users"></i>Gerenciar administradores</a>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- ESTATÍSTICAS -->
+		<div class="adm_stats">
+			<div class="adm_stat">
+				<div class="adm_stat_icon laranja"><i class="fa fa-users"></i></div>
+				<h3>{{ administradores_ativos }}</h3>
+				<p>Administradores ativos</p>
+			</div>
+			<div class="adm_stat">
+				<div class="adm_stat_icon azul"><i class="fa fa-user-plus"></i></div>
+				<h3>{{total_administradores}}</h3>
+				<p>Cadastrados no sistema</p>
+			</div>
+			<div class="adm_stat">
+				<div class="adm_stat_icon verde"><i class="fa fa-check-circle"></i></div>
+				<h3>{{acessaram_hoje}}</h3>
+				<p>Acessaram hoje</p>
+			</div>
+		</div>
+
+		<!-- AÇÕES RÁPIDAS -->
+		<div class="adm_section_title">
+			<h2>O que você quer fazer?</h2>
+			<span></span>
+		</div>
+
+		<div class="adm_actions">
+			<a href="{{ url_for('administrador.listar_admins') }}" class="adm_action destaque">
+				<div class="adm_action_icon"><i class="fa fa-users"></i></div>
+				<div class="adm_action_body">
+					<h4>Gerenciar administradores</h4>
+					<p>Cadastrar, editar, desativar ou alterar as permissões dos administradores.</p>
+				</div>
+				<i class="fa fa-long-arrow-right adm_action_arrow"></i>
+			</a>
+
+			<a href="{{url_for('administrador.cadastrar_adm')}}" class="adm_action">
+				<div class="adm_action_icon"><i class="fa fa-user-plus"></i></div>
+				<div class="adm_action_body">
+					<h4>Novo administrador</h4>
+					<p>Adicione uma nova pessoa ao painel administrativo com o nível de acesso adequado.</p>
+				</div>
+				<i class="fa fa-long-arrow-right adm_action_arrow"></i>
+			</a>
+
+			<a href="{{url_for('administrador.registro_acessos')}}" class="adm_action">
+				<div class="adm_action_icon"><i class="fa fa-history"></i></div>
+				<div class="adm_action_body">
+					<h4>Registro de acessos</h4>
+					<p>Consulte o histórico de quem acessou o painel, quando e o que foi alterado.</p>
+				</div>
+				<i class="fa fa-long-arrow-right adm_action_arrow"></i>
+			</a>
+		</div>
+
+	</main>
+</div>
+
+<script>
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+</script>
+
+</body>
+</html>

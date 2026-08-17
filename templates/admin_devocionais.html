@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Devocional — Painel Editor</title>
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo_ic_favicon.png') }}">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+
+	<style>
+		body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#4a5566;margin:0;min-height:100vh;}
+		a{text-decoration:none;}
+		.adm_layout{display:flex;min-height:100vh;}
+
+		.adm_side{flex:0 0 270px;background:linear-gradient(180deg,#171d2e 0%,#0d2440 100%);color:#fff;padding:34px 0 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+		.adm_side_nav{flex:1;padding-bottom:20px;}
+		.adm_brand{padding:0 30px 30px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
+		.adm_brand span{display:block;font-family:oswald,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ffaa17;margin-bottom:6px;}
+		.adm_brand strong{display:block;font-family:Georgia,serif;font-style:italic;font-size:22px;color:#fff;line-height:28px;}
+		.adm_group{padding:0 20px;margin-bottom:18px;}
+		.adm_group_title{display:block;font-family:oswald,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 12px;margin-bottom:8px;}
+		.adm_link{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;transition:.3s;margin-bottom:3px;}
+		.adm_link i{width:20px;text-align:center;font-size:15px;color:rgba(255,255,255,0.5);transition:.3s;}
+		.adm_link:hover{background:rgba(255,255,255,0.05);color:#fff;}
+		.adm_link:hover i{color:#ffaa17;}
+		.adm_link.ativo{background:rgba(255,170,23,0.12);color:#ffaa17;}
+		.adm_link.ativo i{color:#ffaa17;}
+		.adm_user{position:sticky;bottom:0;margin-top:auto;padding:18px 24px;background:rgba(9,14,26,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;z-index:2;}
+		.adm_user_av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;}
+		.adm_user_info{flex:1;min-width:0;}
+		.adm_user_info span{display:block;font-size:13px;color:#fff;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.adm_user_info small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7db8ee;}
+		.adm_user_sair{color:rgba(255,255,255,0.5);font-size:14px;transition:.3s;cursor:pointer;}
+		.adm_user_sair:hover{color:#ffaa17;}
+
+		.adm_main{flex:1;padding:36px 44px;overflow-x:hidden;min-width:0;}
+		.adm_top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+		.adm_breadcrumb{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.adm_breadcrumb a{color:#9aa3b0;}
+		.adm_breadcrumb strong{color:#1b2032;font-weight:600;}
+
+		.adm_page_title{margin-bottom:28px;}
+		.adm_page_title h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:36px;color:#1b2032;margin:0 0 6px;}
+		.adm_page_title p{margin:0;font-size:14.5px;color:#9aa3b0;}
+
+		.adm_btn{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;letter-spacing:.5px;border:2px solid transparent;cursor:pointer;transition:.3s;font-family:inherit;}
+		.adm_btn_primary{background:#ffaa17;color:#fff;border-color:#ffaa17;box-shadow:0 12px 30px -12px rgba(255,170,23,.6);}
+		.adm_btn_primary:hover{background:#ff8f00;border-color:#ff8f00;color:#fff;}
+		.adm_btn_outline{background:transparent;color:#0e5ca6;border-color:#0e5ca6;}
+		.adm_btn_outline:hover{background:#0e5ca6;color:#fff;}
+
+		.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:14px;}
+		.alert-success{background:rgba(34,167,94,0.1);border:1px solid rgba(34,167,94,0.3);color:#22a75e;}
+		.alert-danger,.alert-error,.alert-message{background:rgba(200,31,69,0.08);border:1px solid rgba(200,31,69,0.25);color:#c81f45;}
+		.alert-warning{background:rgba(255,170,23,0.1);border:1px solid rgba(255,170,23,0.3);color:#c97a00;}
+
+		.d_filtros{background:#fff;border:1px solid #eef3f8;border-radius:16px;padding:20px 24px;margin-bottom:28px;display:grid;grid-template-columns:2fr 1fr auto;gap:12px;align-items:end;box-shadow:0 20px 40px -30px rgba(0,64,128,.25);}
+		@media (max-width:900px){.d_filtros{grid-template-columns:1fr 1fr;}}
+		.d_filtros label{display:block;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-bottom:6px;}
+		.d_campo{position:relative;}
+		.d_filtros input,.d_filtros select{width:100%;height:42px;background:#f7fafd;border:1px solid #e8eef5;border-radius:10px;padding:0 14px;font-size:13.5px;color:#1b2032;outline:none;transition:.3s;font-family:inherit;cursor:pointer;}
+		.d_filtros input[type="text"]{padding-left:38px;cursor:text;}
+		.d_campo > i{position:absolute;left:14px;top:32px;color:#9aa3b0;pointer-events:none;}
+		.d_filtros input:focus,.d_filtros select:focus{border-color:#ffaa17;background:#fff;box-shadow:0 0 0 3px rgba(255,170,23,.1);}
+		.d_filtros .limpar{height:42px;padding:0 18px;font-size:13px;border-radius:10px;background:#f7fafd;border:1px solid #e8eef5;color:#747474;cursor:pointer;transition:.3s;font-family:inherit;display:flex;align-items:center;gap:8px;}
+		.d_filtros .limpar:hover{background:#1b2032;color:#fff;border-color:#1b2032;}
+
+		.d_secao{margin-bottom:36px;}
+		.d_secao_head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;}
+		.d_secao_head h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:26px;color:#1b2032;margin:0;display:flex;align-items:center;gap:12px;}
+		.d_secao_head h2 .p{width:10px;height:10px;border-radius:50%;display:inline-block;}
+		.d_secao_head h2 .p.ar    {background:#22a75e;box-shadow:0 0 0 4px rgba(34,167,94,0.18);animation:pulse 2s ease-in-out infinite;}
+		.d_secao_head h2 .p.agend {background:#ffaa17;}
+		.d_secao_head h2 .p.hist  {background:#c3cdd9;}
+		@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(34,167,94,0.18);}50%{box-shadow:0 0 0 8px rgba(34,167,94,0.08);}}
+		.d_secao_head small{font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;}
+		.d_secao_head .linha{flex:1;height:1px;background:#e8eef5;}
+		.d_secao_head .contador{font-family:oswald,sans-serif;font-size:12px;letter-spacing:1.5px;color:#9aa3b0;background:#fff;border:1px solid #eef3f8;padding:4px 12px;border-radius:20px;}
+
+		.d_ativo{background:#fff;border:2px solid rgba(34,167,94,0.3);border-radius:20px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(34,167,94,.35);display:grid;grid-template-columns:320px 1fr;gap:0;}
+		@media (max-width:900px){.d_ativo{grid-template-columns:1fr;}}
+		.d_ativo_img{position:relative;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);min-height:260px;}
+		.d_ativo_img img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0;}
+		.d_ativo_img .selo{position:absolute;top:16px;left:16px;background:#22a75e;color:#fff;font-family:oswald,sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;padding:6px 14px;border-radius:30px;display:inline-flex;align-items:center;gap:8px;z-index:2;box-shadow:0 8px 20px -6px rgba(34,167,94,.5);}
+		.d_ativo_img .selo .p{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse2 2s ease-in-out infinite;}
+		@keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.4;}}
+		.d_ativo_body{padding:32px 36px;}
+		.d_ativo_body .periodo{display:inline-flex;align-items:center;gap:8px;font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22a75e;margin-bottom:12px;}
+		.d_ativo_body h3{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:32px;line-height:40px;color:#1b2032;margin:0 0 12px;}
+		.d_ativo_body .versiculo{border-left:3px solid #ffaa17;padding-left:16px;margin:14px 0 18px;font-style:italic;font-size:14.5px;color:#5f6b7a;line-height:24px;}
+		.d_ativo_body .stats{display:flex;flex-wrap:wrap;gap:22px;padding-top:16px;border-top:1px solid #f2f6fa;margin-top:18px;font-size:13px;color:#747474;}
+		.d_ativo_body .stats i{color:#ffaa17;margin-right:6px;}
+		.d_ativo_body .acoes{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+
+		.d_grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;}
+		.d_card{background:#fff;border:1px solid #eef3f8;border-radius:14px;overflow:hidden;box-shadow:0 20px 40px -28px rgba(0,64,128,.3);transition:.35s;display:flex;flex-direction:column;}
+		.d_card:hover{transform:translateY(-4px);box-shadow:0 30px 50px -25px rgba(0,64,128,.4);border-color:rgba(255,170,23,0.4);}
+		.d_card_img{position:relative;height:140px;background:linear-gradient(135deg,#0e5ca6 0%,#0a3d70 100%);overflow:hidden;}
+		.d_card_img img{width:100%;height:100%;object-fit:cover;display:block;}
+		.d_card_img .badge{position:absolute;top:12px;left:12px;background:rgba(27,32,50,0.9);color:#fff;font-family:oswald,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:30px;display:inline-flex;align-items:center;gap:6px;}
+		.d_card_img .badge.agend{background:#ffaa17;}
+		.d_card_img .badge.hist {background:rgba(154,163,176,0.9);}
+		.d_card_img .badge.rasc {background:rgba(154,163,176,0.9);color:#fff;}
+		.d_card_body{padding:18px 20px;flex:1;display:flex;flex-direction:column;}
+		.d_card_body .periodo{font-family:oswald,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9aa3b0;margin-bottom:8px;}
+		.d_card_body .periodo i{color:#ffaa17;margin-right:6px;}
+		.d_card_body h4{font-size:16px;font-weight:600;color:#1b2032;line-height:22px;margin:0 0 8px;height:44px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+		.d_card_body .versiculo{font-family:oswald,sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#0e5ca6;margin:0 0 12px;}
+		.d_card_body .versiculo i{color:#ffaa17;margin-right:5px;}
+		.d_card_foot{margin-top:auto;padding:12px 20px;border-top:1px solid #f2f6fa;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fbfdff;}
+		.d_card_foot .views{font-size:12px;color:#9aa3b0;}
+		.d_card_foot .views i{color:#ffaa17;margin-right:5px;}
+		.d_card_foot .acoes{display:flex;gap:6px;}
+		.d_acao{width:32px;height:32px;border-radius:8px;background:#fff;border:1px solid #eef3f8;color:#747474;display:inline-flex;align-items:center;justify-content:center;transition:.3s;font-size:12px;cursor:pointer;}
+		.d_acao.editar:hover{background:#ffaa17;border-color:#ffaa17;color:#fff;}
+		.d_acao.excluir:hover{background:#c81f45;border-color:#c81f45;color:#fff;}
+
+		.d_vazio{text-align:center;padding:40px 30px;background:#fff;border:1px dashed #d5dee8;border-radius:14px;color:#9aa3b0;}
+		.d_vazio i{font-size:36px;color:#c3cdd9;margin-bottom:12px;display:block;}
+		.d_vazio p{margin:0;font-size:14px;}
+
+		@media (max-width:900px){
+			.adm_side{position:fixed;left:-270px;z-index:100;transition:.3s;}
+			.adm_side.aberta{left:0;}
+			.adm_main{padding:24px;}
+			.adm_mobile_toggle{display:flex;}
+		}
+		.adm_mobile_toggle{display:none;width:42px;height:42px;border-radius:10px;background:#fff;border:1px solid #eef3f8;color:#1b2032;align-items:center;justify-content:center;cursor:pointer;margin-right:12px;}
+	</style>
+</head>
+<body>
+
+<div class="adm_layout">
+
+	<!-- ================== SIDEBAR ================== -->
+	<aside class="adm_side" id="adm_side">
+		<div class="adm_brand">
+			<span>Painel Editor</span>
+			<strong>Igreja de Cristo</strong>
+		</div>
+
+		<div class="adm_side_nav">
+			<div class="adm_group">
+				<span class="adm_group_title">Principal</span>
+				<a href="{{ url_for('administrador.index') }}" class="adm_link"><i class="fa fa-home"></i>Início</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Conteúdo</span>
+				<a href="{{ url_for('administrador.exibir_pregacoes') }}" class="adm_link"><i class="fa fa-book"></i>Pregações</a>
+				<a href="{{ url_for('administrador.exibir_videos') }}" class="adm_link"><i class="fa fa-play-circle"></i>Vídeos</a>
+				<a href="{{ url_for('administrador.exibir_devocionais') }}" class="adm_link ativo"><i class="fa fa-sun-o"></i>Devocional</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Comunidade</span>
+				<a href="{{ url_for('administrador.exibir_eventos') }}" class="adm_link"><i class="fa fa-calendar"></i>Eventos</a>
+				<a href="{{ url_for('administrador.exibir_agenda') }}" class="adm_link"><i class="fa fa-clock-o"></i>Agenda semanal</a>
+				<a href="{{ url_for('administrador.exibir_pedidos_oracao') }}" class="adm_link"><i class="fa fa-heart"></i>Pedidos de oração</a>
+			</div>
+			<div class="adm_group">
+				<span class="adm_group_title">Instituição</span>
+				<a href="{{ url_for('administrador.exibir_departamentos') }}" class="adm_link"><i class="fa fa-users"></i>Departamentos</a>
+				<a href="{{ url_for('administrador.exibir_historia') }}" class="adm_link"><i class="fa fa-history"></i>História da igreja</a>
+				<a href="{{ url_for('administrador.exibir_redes_sociais') }}" class="adm_link"><i class="fa fa-share-alt"></i>Redes sociais</a>
+			</div>
+		</div>
+
+		<div class="adm_user">
+			<div class="adm_user_av">{{ current_user.ADMIN_NAME[:2] | upper }}</div>
+			<div class="adm_user_info"><span>{{ current_user.ADMIN_NAME }}</span><small>{{ 'Root' if current_user.ADMIN_ROLE == 'root' else 'Editor' }}</small></div>
+			<a href="{{ url_for('auth.deslogar_do_sistema') }}" class="adm_user_sair" title="Sair"><i class="fa fa-sign-out"></i></a>
+		</div>
+	</aside>
+
+	<!-- ================== MAIN ================== -->
+	<main class="adm_main">
+
+		<div class="adm_top">
+			<div style="display:flex;align-items:center;">
+				<button type="button" class="adm_mobile_toggle" id="adm_toggle"><i class="fa fa-bars"></i></button>
+				<span class="adm_breadcrumb"><a href="{{ url_for('administrador.index') }}">Painel</a> / <strong>Devocional</strong></span>
+			</div>
+			<div style="display:flex;gap:10px;align-items:center;">
+				<a href="{{ url_for('administrador.adicionar_devocional') }}" class="adm_btn adm_btn_primary"><i class="fa fa-plus"></i>Novo devocional</a>
+			</div>
+		</div>
+
+		<div class="adm_page_title">
+			<h1>Devocional</h1>
+			<p>Programe os devocionais que aparecem na home ao longo das semanas.</p>
+		</div>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- FILTROS -->
+		<div class="d_filtros">
+			<div class="d_campo">
+				<label>Buscar</label>
+				<i class="fa fa-search"></i>
+				<input type="text" id="dev_q" placeholder="Título ou versículo..." autocomplete="off" />
+			</div>
+			<div class="d_campo">
+				<label>Status</label>
+				<select id="dev_status">
+					<option value="">Todos</option>
+					<option value="ar">No ar</option>
+					<option value="agend">Agendados</option>
+					<option value="hist">Histórico</option>
+				</select>
+			</div>
+			<button type="button" class="limpar" id="dev_limpar"><i class="fa fa-refresh"></i></button>
+		</div>
+
+		<!-- ============ NO AR ============ -->
+		{% if no_ar %}
+		<div class="d_secao" data-secao="ar">
+			<div class="d_secao_head">
+				<h2><span class="p ar"></span>No ar agora</h2>
+				<small>o devocional que aparece na home hoje</small>
+				<span class="linha"></span>
+				<span class="contador">{{ no_ar|length }}</span>
+			</div>
+
+			{% for d in no_ar %}
+			<div class="d_ativo dev_item" data-status="ar" data-titulo="{{ (d.DEVOTIONAL_TITLE ~ ' ' ~ (d.DEVOTIONAL_BIBLICAL_VERSE or ''))|lower }}" style="{% if not loop.last %}margin-bottom:18px;{% endif %}">
+				<div class="d_ativo_img">
+					{% if d.DEVOTIONAL_BANNER %}
+						<img src="{{ url_for('static', filename='uploads/devocionais/' ~ d.DEVOTIONAL_BANNER) }}" alt="{{ d.DEVOTIONAL_TITLE }}" />
+					{% else %}
+						<img src="{{ url_for('static', filename='assets/img/bg/skill-bg.jpg') }}" alt="{{ d.DEVOTIONAL_TITLE }}" />
+					{% endif %}
+					<span class="selo"><span class="p"></span>Ao vivo</span>
+				</div>
+				<div class="d_ativo_body">
+					<span class="periodo"><i class="fa fa-calendar-o"></i>{{ d.DEVOTIONAL_WEEK_START.strftime('%d/%m/%Y') }} — {{ d.DEVOTIONAL_WEEK_END.strftime('%d/%m/%Y') }}</span>
+					<h3>{{ d.DEVOTIONAL_TITLE }}</h3>
+					{% if d.DEVOTIONAL_BIBLICAL_VERSE %}
+						<div class="versiculo">
+							<i class="fa fa-book" style="color:#ffaa17;margin-right:8px;"></i>{{ d.DEVOTIONAL_BIBLICAL_VERSE }}
+						</div>
+					{% endif %}
+					<div class="stats">
+						{% set dias_restantes = (d.DEVOTIONAL_WEEK_END - hoje).days %}
+						<span><i class="fa fa-clock-o"></i>termina em <strong style="color:#22a75e;">{{ dias_restantes }} dia{{ 's' if dias_restantes != 1 else '' }}</strong></span>
+						<span><i class="fa fa-hashtag"></i>ID #{{ d.DEVOTIONAL_ID }}</span>
+					</div>
+					<div class="acoes">
+						<a href="{{ url_for('administrador.editar_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="adm_btn adm_btn_primary" style="padding:10px 22px;font-size:13px;"><i class="fa fa-pencil"></i>Editar</a>
+						<a href="{{ url_for('administrador.excluir_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="adm_btn" style="padding:10px 22px;font-size:13px;background:transparent;color:#c81f45;border-color:rgba(200,31,69,.3);" onclick="return confirm('Excluir este devocional? Esta ação não pode ser desfeita.');"><i class="fa fa-trash"></i>Excluir</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+
+		<!-- ============ AGENDADOS ============ -->
+		{% if agendados %}
+		<div class="d_secao" data-secao="agend">
+			<div class="d_secao_head">
+				<h2><span class="p agend"></span>Agendados</h2>
+				<small>vão ao ar nas próximas semanas</small>
+				<span class="linha"></span>
+				<span class="contador">{{ agendados|length }}</span>
+			</div>
+
+			<div class="d_grid">
+				{% for d in agendados %}
+					{% set dias_faltando = (d.DEVOTIONAL_WEEK_START - hoje).days %}
+					<div class="d_card dev_item" data-status="agend" data-titulo="{{ (d.DEVOTIONAL_TITLE ~ ' ' ~ (d.DEVOTIONAL_BIBLICAL_VERSE or ''))|lower }}">
+						<div class="d_card_img {% if not d.DEVOTIONAL_PUBLISHED %}style="opacity:.75;"{% endif %}">
+							{% if d.DEVOTIONAL_BANNER %}
+								<img src="{{ url_for('static', filename='uploads/devocionais/' ~ d.DEVOTIONAL_BANNER) }}" alt="" />
+							{% else %}
+								<img src="{{ url_for('static', filename='assets/img/blog/2.jpg') }}" alt="" />
+							{% endif %}
+							{% if d.DEVOTIONAL_PUBLISHED %}
+								<span class="badge agend"><i class="fa fa-clock-o" style="font-size:9px;"></i>Em {{ dias_faltando }} dia{{ 's' if dias_faltando != 1 else '' }}</span>
+							{% else %}
+								<span class="badge rasc"><i class="fa fa-file-o" style="font-size:9px;"></i>Rascunho</span>
+							{% endif %}
+						</div>
+						<div class="d_card_body">
+							<span class="periodo"><i class="fa fa-calendar-o"></i>{{ d.DEVOTIONAL_WEEK_START.strftime('%d/%m/%Y') }} — {{ d.DEVOTIONAL_WEEK_END.strftime('%d/%m/%Y') }}</span>
+							<h4>{{ d.DEVOTIONAL_TITLE }}</h4>
+							{% if d.DEVOTIONAL_BIBLICAL_VERSE %}
+								<p class="versiculo"><i class="fa fa-book"></i>{{ d.DEVOTIONAL_BIBLICAL_VERSE }}</p>
+							{% endif %}
+						</div>
+						<div class="d_card_foot">
+							{% if d.DEVOTIONAL_PUBLISHED %}
+								<span class="views"><i class="fa fa-check-circle" style="color:#22a75e;"></i>Publicado</span>
+							{% else %}
+								<span class="views" style="color:#c81f45;"><i class="fa fa-exclamation-circle"></i>Falta publicar</span>
+							{% endif %}
+							<div class="acoes">
+								<a href="{{ url_for('administrador.editar_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="d_acao editar" title="Editar"><i class="fa fa-pencil"></i></a>
+								<a href="{{ url_for('administrador.excluir_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="d_acao excluir" title="Excluir" onclick="return confirm('Excluir {{ d.DEVOTIONAL_TITLE }}? Esta ação não pode ser desfeita.');"><i class="fa fa-trash"></i></a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+
+		<!-- ============ HISTÓRICO ============ -->
+		{% if historico %}
+		<div class="d_secao" data-secao="hist">
+			<div class="d_secao_head">
+				<h2><span class="p hist"></span>Histórico</h2>
+				<small>devocionais que já saíram do ar</small>
+				<span class="linha"></span>
+				<span class="contador">{{ historico|length }}</span>
+			</div>
+
+			<div class="d_grid">
+				{% for d in historico %}
+					<div class="d_card dev_item" data-status="hist" data-titulo="{{ (d.DEVOTIONAL_TITLE ~ ' ' ~ (d.DEVOTIONAL_BIBLICAL_VERSE or ''))|lower }}">
+						<div class="d_card_img" style="filter:grayscale(.35);">
+							{% if d.DEVOTIONAL_BANNER %}
+								<img src="{{ url_for('static', filename='uploads/devocionais/' ~ d.DEVOTIONAL_BANNER) }}" alt="" />
+							{% else %}
+								<img src="{{ url_for('static', filename='assets/img/blog/1.jpg') }}" alt="" />
+							{% endif %}
+							<span class="badge hist"><i class="fa fa-history" style="font-size:9px;"></i>Passado</span>
+						</div>
+						<div class="d_card_body">
+							<span class="periodo"><i class="fa fa-calendar-o"></i>{{ d.DEVOTIONAL_WEEK_START.strftime('%d/%m/%Y') }} — {{ d.DEVOTIONAL_WEEK_END.strftime('%d/%m/%Y') }}</span>
+							<h4>{{ d.DEVOTIONAL_TITLE }}</h4>
+							{% if d.DEVOTIONAL_BIBLICAL_VERSE %}
+								<p class="versiculo"><i class="fa fa-book"></i>{{ d.DEVOTIONAL_BIBLICAL_VERSE }}</p>
+							{% endif %}
+						</div>
+						<div class="d_card_foot">
+							<span class="views"><i class="fa fa-calendar-check-o"></i>Encerrado</span>
+							<div class="acoes">
+								<a href="{{ url_for('administrador.editar_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="d_acao editar" title="Editar"><i class="fa fa-pencil"></i></a>
+								<a href="{{ url_for('administrador.excluir_devocional', devocional_id=d.DEVOTIONAL_ID) }}" class="d_acao excluir" title="Excluir" onclick="return confirm('Excluir {{ d.DEVOTIONAL_TITLE }}? Esta ação não pode ser desfeita.');"><i class="fa fa-trash"></i></a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+
+		{% if not no_ar and not agendados and not historico %}
+			<div class="d_vazio">
+				<i class="fa fa-sun-o"></i>
+				<p style="margin:0 0 16px;font-size:15px;">Nenhum devocional cadastrado ainda.</p>
+				<a href="{{ url_for('administrador.adicionar_devocional') }}" class="adm_btn adm_btn_primary"><i class="fa fa-plus"></i>Cadastrar primeiro devocional</a>
+			</div>
+		{% endif %}
+
+		<div class="d_vazio" id="dev_vazio" style="display:none;">
+			<i class="fa fa-search"></i>
+			<p>Nenhum devocional encontrado com esses filtros.</p>
+		</div>
+
+	</main>
+</div>
+
+<script>
+(function () {
+	var q       = document.getElementById('dev_q');
+	var status  = document.getElementById('dev_status');
+	var itens   = document.querySelectorAll('.dev_item');
+	var secoes  = document.querySelectorAll('.d_secao');
+	var vazio   = document.getElementById('dev_vazio');
+
+	function semAcento(t){return (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+
+	function filtrar() {
+		var termo = semAcento(q.value.trim());
+		var sFil  = status.value;
+		var totalGlobal = 0;
+
+		itens.forEach(function (i) {
+			var texto = semAcento(i.dataset.titulo);
+			var passa = (!termo || texto.indexOf(termo) !== -1) &&
+			            (!sFil  || i.dataset.status === sFil);
+			i.style.display = passa ? '' : 'none';
+			if (passa) totalGlobal++;
+		});
+
+		secoes.forEach(function (s) {
+			var visiveis = s.querySelectorAll('.dev_item:not([style*="display: none"])').length;
+			s.style.display = visiveis > 0 ? '' : 'none';
+		});
+
+		vazio.style.display = totalGlobal ? 'none' : 'block';
+	}
+
+	if (q) {
+		q.addEventListener('input', filtrar);
+		status.addEventListener('change', filtrar);
+
+		document.getElementById('dev_limpar').addEventListener('click', function () {
+			q.value = ''; status.value = '';
+			filtrar();
+		});
+	}
+
+	document.getElementById('adm_toggle').addEventListener('click', function () {
+		document.getElementById('adm_side').classList.toggle('aberta');
+	});
+})();
+</script>
+
+</body>
+</html>
