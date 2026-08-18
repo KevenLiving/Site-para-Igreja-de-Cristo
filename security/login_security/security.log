@@ -506,3 +506,4 @@
 2026-08-17 02:06:45 | security | WARNING | LOGIN_FAILURE: paulo@gmail.com from 127.0.0.1
 2026-08-17 02:07:11 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
 2026-08-17 02:11:10 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-17 21:45:30 | security | WARNING | LOGIN_FAILURE: paulo@gmail.com from 127.0.0.1

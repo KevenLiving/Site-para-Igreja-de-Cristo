@@ -34,7 +34,7 @@ app = Flask(__name__)
 IS_PRODUCTION = os.getenv('FLASK_ENV') == 'production' 
 
 # Configurando pasta de uploads
-app.config["UPLOADS_FOLDER"] = r"static\uploads"
+app.config["UPLOADS_FOLDER"] = os.path.join("static", "uploads")
 
 # Configurando o APP de modo mais seguro ao invés de só colocar uma senha
 
@@ -171,9 +171,9 @@ login_manager.init_app(app)
 app.config['MAIL_SERVER']   = 'smtp.gmail.com'
 app.config['MAIL_PORT']     = 587
 app.config['MAIL_USE_TLS']  = True
-app.config['MAIL_USERNAME'] = 'l.kevenmedeiros.c@gmail.com'          # e-mail remetente
-app.config['MAIL_PASSWORD'] = 'koad lmgo ppxj phbd'     # senha de a
-app.config['MAIL_DEFAULT_SENDER'] = ('Igreja de Cristo', 'l.kevenmedeiros.c@gmail.com')
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = ('Igreja de Cristo', os.environ.get('MAIL_USERNAME'))
 mail = Mail(app)
 
 @login_manager.user_loader
