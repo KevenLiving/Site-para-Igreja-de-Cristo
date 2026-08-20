@@ -62,7 +62,7 @@ if IS_PRODUCTION:
     # dos trabalhadores. 
     # IS_PRODUCTION ativa a segurança máxima no sistema que está em funcionamento ativo. 
     Talisman(app, 
-            force_https = True, # Obriga a usar método seguro para realizar requisições ao servidor
+            force_https = False, # Obriga a usar método seguro para realizar requisições ao servidor
             strict_transport_security=True, # Mesmo que alguém tente usar outro método, ele é redirecionado para o protocolo HTTPS
             strict_transport_security_max_age=31536000,  # 1 ano de proteção contado em segundos
             strict_transport_security_include_subdomains=True, # Proteje subdominios além da rota principal 
@@ -105,7 +105,7 @@ else:
             app,
             force_https=False,
             strict_transport_security=False,
-
+            session_cookie_secure=False,
             content_security_policy={
                 'default-src': [
                     "'self'",

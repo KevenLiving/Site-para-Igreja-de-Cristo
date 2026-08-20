@@ -125,7 +125,7 @@ def two_factor_first():
 
     # Se o código dele já foi gerado, não deve gerar outro
 
-    if not session.get('generate_qr_code'):
+    if current_user.ADMIN_CODE is None:
         
         # Salvando mudanças no objeto
         check_secure_code = current_user.create_code()
@@ -269,6 +269,7 @@ def two_factor_authentication():
 @login_required
 def deslogar_do_sistema():
     logout_user()
+    session.clear()
     return redirect(url_for('auth.logar_no_sistema'))
 
 

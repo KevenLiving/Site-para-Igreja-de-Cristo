@@ -2,3 +2,9 @@ env/
 .env
 church.db
 __pycache__/
+*.pyc
+venv/
+*.log
+*.bak
+*.save
+

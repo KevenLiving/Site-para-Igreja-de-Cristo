@@ -464,7 +464,10 @@ def excluir_adm():
             # Deletando usuário
             return f"Usuário do id: {user_id}, foi deletado com sucesso"
         else:
-            return ('Digite a senha corretamente para realizar esta ação')
+            flash('Digite a senha corretamente para realizar esta ação')
+        with SessionFactory() as session_db:
+                administrador_selected = session_db.query(Administrador).filter(Administrador.ADMIN_ID == identificador).first()
+            return render_template('root_excluir_administrador.html', administrador_selected=administrador_selected, formulario=formulario, id=identificador, administrador=administrador)
   
     # Carregando formulário de senha de confirmação para execução
     formulario = PasswordConfirm()
@@ -472,7 +475,7 @@ def excluir_adm():
     identificador = int(request.args.get('id')) 
     with SessionFactory() as session_db:
         administrador_selected = session_db.query(Administrador).filter(Administrador.ADMIN_ID == identificador).first()
-    return render_template('root/excluir_administrador.html', administrador_selected=administrador_selected, formulario=formulario, id=identificador, administrador=administrador)
+    return render_template('root_excluir_administrador.html', administrador_selected=administrador_selected, formulario=formulario, id=identificador, administrador=administrador)
     
 
 
