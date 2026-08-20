@@ -511,3 +511,10 @@
 2026-08-20 07:46:05 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 
 2026-08-20 08:06:35 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 
 2026-08-20 08:08:05 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 
+2026-08-20 10:06:42 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-20 10:12:51 | security | WARNING | LOGIN_FAILURE: pedrão@gmail.com from 127.0.0.1
+2026-08-20 10:13:15 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-20 10:14:55 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-20 10:15:50 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-20 11:48:42 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1
+2026-08-20 11:49:39 | security | INFO | LOGIN_SUCESS: l.kevenmedeiros.c@gmail.com from 127.0.0.1

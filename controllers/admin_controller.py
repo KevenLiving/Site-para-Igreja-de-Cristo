@@ -409,7 +409,7 @@ def atualizarsenha_adm():
         else:
             return redirect(url_for('administrador.index'))
 
-    return render_template('root/atualizarsenha_adm.html', user_id=user_id, administrador_selected=administrador_selected, formulario=formulario, administrador=administrador)
+    return render_template('root_atualizar_senha.html', user_id=user_id, administrador_selected=administrador_selected, formulario=formulario, administrador=administrador)
 
 
 # Excluir administrador
@@ -467,7 +467,7 @@ def excluir_adm():
             flash('Digite a senha corretamente para realizar esta ação')
         with SessionFactory() as session_db:
                 administrador_selected = session_db.query(Administrador).filter(Administrador.ADMIN_ID == identificador).first()
-            return render_template('root_excluir_administrador.html', administrador_selected=administrador_selected, formulario=formulario, id=identificador, administrador=administrador)
+        return render_template('root_excluir_administrador.html', administrador_selected=administrador_selected, formulario=formulario, id=identificador, administrador=administrador)
   
     # Carregando formulário de senha de confirmação para execução
     formulario = PasswordConfirm()

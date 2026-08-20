@@ -19,6 +19,8 @@ import qrcode
 import time
 # Importando decorador que eu criei para impedir um usuário de entrar sem ter a autenticação de 2 fatores
 from security.two_factor_authentication.decorador import new_user_required
+# Bloquear usuários já logados de acessar a rota de login diretamente
+from security.two_factor_authentication.blocklogin_userlogado import login_already_required
 # Para importar as variáveis de ambiente
 from dotenv import load_dotenv
 # A biblioteca a seguir será utilizada no sistema de criptografia de dados sensiveis 
@@ -69,6 +71,7 @@ login = False
 # Rota para login
 @auth_bp.route('/login', methods=['GET', 'POST'])
 # Aqui eu limito para que só haja no máximo 5 requisições por minuto nessa rota
+@login_already_required
 @limiter.limit("5 per minute")
 def logar_no_sistema():
     # Resolvi realizar um formulário efetivamente seguro. Para não sujar meu código, coloquei ele dentro da pasta de segurança e importei ele aqui.
