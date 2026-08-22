@@ -4,4 +4,12 @@ __pycache__/
 *.log
 .env
 __pycache__/
+church.db
+__pycache__/
+*.pyc
+venv/
+*.log
+*.bak
+*.save
+
 

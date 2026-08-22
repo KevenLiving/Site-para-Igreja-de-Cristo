@@ -229,7 +229,7 @@
 			</div>
 			<div class="ed_stat">
 				<div class="ed_stat_icon" style="background:rgba(200,31,69,0.12);color:#c81f45;"><i class="fa fa-heart"></i></div>
-				<div><h3>{{ pedidos_oracao }}</h3><small>{{ pedidos_oracao_titulo }}</small></div>
+				<div><h3> {{ pedidos_oracao | length }}</h3><small>{{ pedidos_oracao_titulo }}</small></div>
 			</div>
 			<div class="ed_stat">
 				<div class="ed_stat_icon" style="background:rgba(34,167,94,0.13);color:#22a75e;"><i class="fa fa-calendar-check-o"></i></div>
@@ -313,7 +313,7 @@
 					<h4>Pedidos de oração</h4>
 					<p>Acompanhe os pedidos enviados pelo site. Marque como orado, encaminhe para a liderança e responda quando autorizado.</p>
 					<div class="ed_card_foot">
-						<div class="ed_card_count"><strong>{{ pedidos_oracao }}</strong><span>{{ pedidos_oracao_contexto }}</span></div>
+						<div class="ed_card_count"><strong>{{ pedidos_oracao | length }}</strong><span>{{ pedidos_oracao_contexto }}</span></div>
 						<div class="ed_card_arrow"><i class="fa fa-long-arrow-right"></i></div>
 					</div>
 				</a>

@@ -28,6 +28,7 @@ from dotenv import load_dotenv
 # Biblioteca para enviar mensagens via Email
 from flask_mail import Mail, Message
 
+
 app = Flask(__name__)
 
 # Para verificar se o sistema está em fase de desenvolvimento ou em produção
@@ -62,7 +63,7 @@ if IS_PRODUCTION:
     # dos trabalhadores. 
     # IS_PRODUCTION ativa a segurança máxima no sistema que está em funcionamento ativo. 
     Talisman(app, 
-            force_https = True, # Obriga a usar método seguro para realizar requisições ao servidor
+            force_https = False, # Obriga a usar método seguro para realizar requisições ao servidor
             strict_transport_security=True, # Mesmo que alguém tente usar outro método, ele é redirecionado para o protocolo HTTPS
             strict_transport_security_max_age=31536000,  # 1 ano de proteção contado em segundos
             strict_transport_security_include_subdomains=True, # Proteje subdominios além da rota principal 
@@ -105,7 +106,7 @@ else:
             app,
             force_https=False,
             strict_transport_security=False,
-
+            session_cookie_secure=False,
             content_security_policy={
                 'default-src': [
                     "'self'",
@@ -151,8 +152,18 @@ def after_request(response):
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin' # Protege a privaciadade do usuario de sua página, não revelando a outros servidores de qual site ele veio
         # Remove headers que vazam informações
         response.headers.pop('Server', None) # Impede usuários maliciosos de saber detalhes acerca de meu servidor 
+
+    # Evita cache do HTML e das imagens
+    if (
+        response.content_type.startswith('text/html')
+        or response.content_type.startswith('image/')
+    ):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
+    return response   
     
-    return response
 
 
 

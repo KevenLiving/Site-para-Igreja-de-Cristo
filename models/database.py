@@ -12,7 +12,7 @@ meubanco = 'sqlite:///church.db'
 
 
 #Criando minha engine
-myengine = create_engine(meubanco, echo=True)
+myengine = create_engine(meubanco, echo=False)
 
 #Criando minha session
 SessionFactory = sessionmaker(bind=myengine)
