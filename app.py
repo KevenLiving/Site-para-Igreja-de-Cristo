@@ -28,6 +28,7 @@ from dotenv import load_dotenv
 # Biblioteca para enviar mensagens via Email
 from flask_mail import Mail, Message
 
+
 app = Flask(__name__)
 
 # Para verificar se o sistema está em fase de desenvolvimento ou em produção
@@ -151,8 +152,18 @@ def after_request(response):
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin' # Protege a privaciadade do usuario de sua página, não revelando a outros servidores de qual site ele veio
         # Remove headers que vazam informações
         response.headers.pop('Server', None) # Impede usuários maliciosos de saber detalhes acerca de meu servidor 
+
+    # Evita cache do HTML e das imagens
+    if (
+        response.content_type.startswith('text/html')
+        or response.content_type.startswith('image/')
+    ):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
+    return response   
     
-    return response
 
 
 

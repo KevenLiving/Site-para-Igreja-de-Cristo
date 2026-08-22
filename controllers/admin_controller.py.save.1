@@ -42,6 +42,7 @@ import re
 import requests
 import random
 
+
 administrador_bp = Blueprint('administrador', __name__, url_prefix='/admin')
 
 
@@ -538,9 +539,8 @@ def cadastrar_estudo():
             # Se a foto de estudo for enviada
             if banner:
             # Salvando a imagem
-                numero = random.randint(1000, 9999)
                 extensao = os.path.splitext(secure_filename(banner.filename))[1]
-                nome_foto = f'estudo_{novo_estudo_biblico.STUDY_ID}_{numero}{extensao}'
+                nome_foto = f'estudo_{novo_estudo_biblico.STUDY_ID}{extensao}'
                 banner.save(
                     os.path.join(current_app.config['UPLOADS_FOLDER'], "estudos", nome_foto)
                 )
@@ -605,21 +605,7 @@ def atualizar_estudo():
             # só troca banner se veio um arquivo novo de verdade
             if banner and banner.filename:
                 extensao = os.path.splitext(secure_filename(banner.filename))[1]
-               
-                # Pega o número aleatório anterior, se existir
-                numero_anterior = None
-                if estudo_selected.STUDY_BANNER:
-                    match = re.search(r'_(\d+)\.[^.]+$', estudo_selected.STUDY_BANNER)
-                    if match:
-                         numero_anterior = int(match.group(1))
-
-                # Gera um novo número diferente do anterior
-                numero = random.randint(1000, 9999)
-
-                while numero == numero_anterior:
-                    numero = random.randint(1000, 9999)
-
-                nome_foto = f'estudo_{estudo_selected.STUDY_ID}_{numero}{extensao}'
+                nome_foto = f'estudo_{estudo_selected.STUDY_ID}{extensao}'
                 banner.save(os.path.join(
                     current_app.config['UPLOADS_FOLDER'], 'estudos', nome_foto
                 ))
@@ -1196,8 +1182,7 @@ def adicionar_devocional():
 
             # Salvando a imagem
             extensao = os.path.splitext(secure_filename(banner.filename))[1]
-            numero = random.randint(1000, 9999)
-            nome_banner = f'devocional_{devotional.DEVOTIONAL_ID}_{numero}{extensao}'
+            nome_banner = f'devocional_{devotional.DEVOTIONAL_ID}{extensao}'
             banner.save(
                 os.path.join(current_app.config['UPLOADS_FOLDER'], "devocionais", nome_banner)
             )
@@ -1310,22 +1295,7 @@ def editar_devocional():
                         os.remove(caminho)
 
                 extensao = os.path.splitext(secure_filename(banner.filename))[1]
-
-                # Pega o número aleatório anterior, se existir
-                numero_anterior = None
-                if devotional.DEVOTIONAL_BANNER:
-                    match = re.search(r'_(\d+)\.[^.]+$', devotional.DEVOTIONAL_BANNER)
-                    if match:
-                        numero_anterior = int(match.group(1))
-
-                # Gera um novo número diferente do anterior
-                numero = random.randint(1000, 9999)
-
-                while numero == numero_anterior:
-                    numero = random.randint(1000, 9999)
-
-
-                nome_banner = f'devocional_{devotional.DEVOTIONAL_ID}_{numero}{extensao}'
+                nome_banner = f'devocional_{devotional.DEVOTIONAL_ID}{extensao}'
                 banner.save(os.path.join(
                     current_app.config['UPLOADS_FOLDER'], 'devocionais', nome_banner
                 ))
@@ -1875,8 +1845,7 @@ def adicionar_historia():
                 extensao = os.path.splitext(
                     secure_filename(imagem.filename)
                 )[1].lower()
-                numero = random.randint(1000, 9999)
-                nome_imagem = f'historia_{nova_etapa.HISTORY_ID}_{numero}{extensao}'
+                nome_imagem = f'historia_{nova_etapa.HISTORY_ID}{extensao}'
                 imagem.save(os.path.join(pasta, nome_imagem))
                 nova_etapa.HISTORY_IMAGE = nome_imagem
 
@@ -1989,22 +1958,7 @@ def editar_historia():
                 extensao = os.path.splitext(
                     secure_filename(imagem.filename)
                 )[1].lower()
-
-                # Pega o número aleatório anterior, se existir
-                numero_anterior = None
-                if etapa.HISTORY_IMAGE:
-                    match = re.search(r'_(\d+)\.[^.]+$', etapa.HISTORY_IMAGE)
-                    if match:
-                        numero_anterior = int(match.group(1))
-
-                # Gera um novo número diferente do anterior
-                numero = random.randint(1000, 9999)
-
-                while numero == numero_anterior:
-                    numero = random.randint(1000, 9999)
-
-
-                nome_imagem = f'historia_{etapa.HISTORY_ID}_{numero}{extensao}'
+                nome_imagem = f'historia_{etapa.HISTORY_ID}{extensao}'
                 imagem.save(os.path.join(pasta, nome_imagem))
                 etapa.HISTORY_IMAGE = nome_imagem
 
@@ -2377,11 +2331,9 @@ def adicionar_departamento():
                     nome_original_seguro
                 )[1].lower()
 
-                numero = random.randint(1000, 9999)
                 nome_foto = (
                     f'departamento_'
-                    f'{novo_departamento.DEPARTMENT_ID}_'
-                    f'{numero}'
+                    f'{novo_departamento.DEPARTMENT_ID}'
                     f'{extensao}'
                 )
 
@@ -2481,24 +2433,10 @@ def editar_departamento():
                         )
                         if os.path.exists(caminho):
                             os.remove(caminho)
-                    
-                    # Pega o número aleatório anterior, se existir
-                    numero_anterior = None
-                    if departamento.DEPARTMENT_LEADER_PHOTO:
-                        match = re.search(r'_(\d+)\.[^.]+$', departamento.DEPARTMENT_LEADER_PHOTO)
-                        if match:
-                            numero_anterior = int(match.group(1))
-
-                    # Gera um novo número diferente do anterior
-                    numero = random.randint(1000, 9999)
-
-                    while numero == numero_anterior:
-                        numero = random.randint(1000, 9999)
-
 
                     # Salvando a imagem
                     extensao = os.path.splitext(secure_filename(lider_foto.filename))[1]
-                    nome_foto = f'departamento_{departamento.DEPARTMENT_ID}_{numero}{extensao}'
+                    nome_foto = f'departamento_{departamento.DEPARTMENT_ID}{extensao}'
                     lider_foto.save(
                         os.path.join(current_app.config['UPLOADS_FOLDER'], "departamentos", nome_foto)
                     )
@@ -2651,8 +2589,7 @@ def adicionar_evento():
             # Se um banner foi enviado
             if banner:
                 extensao = os.path.splitext(secure_filename(banner.filename))[1]
-                numero = random.randint(1000, 9999)
-                nome_banner = (f'evento_{novo_evento.EVENT_ID}_{numero}{extensao}')
+                nome_banner = (f'evento_{novo_evento.EVENT_ID}{extensao}')
                 banner.save(os.path.join(current_app.config['UPLOADS_FOLDER'],"eventos",nome_banner))
                 # Salvando caminho no banco de dados
                 novo_evento.EVENT_BANNER = nome_banner
@@ -2721,25 +2658,10 @@ def editar_evento():
                         caminho = os.path.join(current_app.config['UPLOADS_FOLDER'], 'eventos', evento.EVENT_BANNER)
                         if os.path.exists(caminho):
                             os.remove(caminho)
-                    
-
-                    # Pega o número aleatório anterior, se existir
-                    numero_anterior = None
-                    if evento.EVENT_BANNER:
-                        match = re.search(r'_(\d+)\.[^.]+$', evento.EVENT_BANNER)
-                        if match:
-                            numero_anterior = int(match.group(1))
-
-                    # Gera um novo número diferente do anterior
-                    numero = random.randint(1000, 9999)
-
-                    while numero == numero_anterior:
-                        numero = random.randint(1000, 9999)
-
 
                     # Salvando a nova imagem
                     extensao = os.path.splitext(secure_filename(banner.filename))[1]
-                    nome_banner = (f'evento_{evento.EVENT_ID}_{numero}{extensao}')
+                    nome_banner = (f'evento_{evento.EVENT_ID}{extensao}')
                     banner.save(os.path.join(current_app.config['UPLOADS_FOLDER'],"eventos",nome_banner))
                     evento.EVENT_BANNER = nome_banner
 
